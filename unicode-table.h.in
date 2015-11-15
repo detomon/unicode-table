@@ -59,13 +59,13 @@ typedef enum {
  * Character info
  */
 typedef struct {
-	uint16_t info;      // flags of `{n:Flag}`
+	uint16_t flags;     // flags of `{n:Flag}`
 	uint16_t category;  // one of `{n:Category}`
 	int32_t cases [3];  // indexable with `{n:Case}`
 	union {
 		int64_t i;      // number value if `info & {n:FlagNumber}`
 		char const * s; // fraction string if `info & {n:FlagFraction}`
-	} numValue;
+	} number;
 } {n:Info};
 
 /**
