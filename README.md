@@ -1,7 +1,7 @@
 Unicode Lookup Table
 ====================
 
-This script generates a Unicode character lookup table with linear access time. It creates a header and source file usable within C/C++. The data is contained in the files [UnicodeData.txt](http://www.unicode.org/Public/8.0.0/ucd/UnicodeData.txt) and [SpecialCasing.txt](http://www.unicode.org/Public/8.0.0/ucd/SpecialCasing.txt) and can be found on [http://www.unicode.org](). Currently Unicode version 8.0.0 is used, but the files can be replaced with newer versions in the future.
+This script generates an Unicode character lookup table with linear access time. It creates a header and source file usable within C/C++. The data is contained in the files [UnicodeData.txt](http://www.unicode.org/Public/8.0.0/ucd/UnicodeData.txt) and [SpecialCasing.txt](http://www.unicode.org/Public/8.0.0/ucd/SpecialCasing.txt) and can be found on [http://www.unicode.org](). Currently Unicode version 8.0.0 is used, but the files can be replaced with newer versions in the future.
 
 Available Informations
 ----------------------
@@ -52,7 +52,7 @@ Looking up character informations using an Unicode value:
 UTRune rune = 0x0110;
 UTInfo const * info = UTLookupRune (rune);
 
-// get lower-case variant
+// get lowercase variant
 UTRune lower = rune + info -> cases [UTCaseLower];
 
 printf ("Lowercase variant of %04X is %04X \n", rune, lower);
@@ -72,9 +72,9 @@ int length = UTSpecialCases [index];
 // character sequence
 UTRune const * sequence = &UTSpecialCases [index + 1];
 
-printf ("Uppercase %04X expands to %d chars in upper-case\n", rune, length);
+printf ("Uppercase %04X expands to %d chars in uppercase\n", rune, length);
 
-// upper-case characters
+// uppercase characters
 for (int i = 0; i < length; i ++) {
 	printf ("%d: %04X\n", i, sequence [i]);
 }
