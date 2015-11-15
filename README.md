@@ -39,8 +39,8 @@ Available Informations
 
 - `info` contains flags listed in `UTFlag`
 
-- `cases` contains relative values which can be added to the character value to convert it to the desired case variant (uppercase, lowercase or titlecase). The field is indexable with `UTRuneCase`. If a character can be case-folded, the `info` flag `UTFlagUppercase`, `UTFlagLowercase` or `UTFlagTitlecase` is set. If either `UTUpperExpandsRuneInfo`, `UTLowerExpandsRuneInfo` or `UTTitleExpandsRuneInfo` is set, the character expands to multiple characters when case-folding. For example, the lowercase character "ß" (`\u00DF`) expands to 2 uppercase characters "SS" (`\u0053\u0053`). `cases` then contains an index usable for `UTSpecialCases`. The index itself points to the value which gives the number of character following the index (see example below).
-- `numValue` contains numeric values for digits, number-like and characters representing fractions. For example, the roman number "Ⅶ" (`\u2166`) has the integer value `7` in `numValue.i`. Whereas fractions are represented by a string that contains the nominator and denominater separated by `/` (`"n/d"`). For example, the fraction character "¼" has the value `"1/4"` in `numValue.s`.
+- `cases` contains relative values which can be added to the character value to convert it to the desired case variant (uppercase, lowercase or titlecase). The field is indexable with `UTRuneCase`. If a character can be case-folded, the `info` flag `UTFlagUppercase`, `UTFlagLowercase` or `UTFlagTitlecase` is set. If either `UTUpperExpandsRuneInfo`, `UTLowerExpandsRuneInfo` or `UTTitleExpandsRuneInfo` is set, the character expands to multiple characters when case-folding. For example, the lowercase character "ß" (`00DF`) expands to 2 uppercase characters "SS" (`0053 0053`). `cases` then contains an index usable for `UTSpecialCases`. The index itself points to the value which gives the number of character following the index (see example below).
+- `numValue` contains numeric values for digits, number-like and characters representing fractions. For example, the roman number "Ⅶ" (`2166`) has the integer value `7` in `numValue.i`. Whereas fractions are represented by a string that contains the nominator and denominater separated by `/` (`"n/d"`). For example, the fraction character "¼" has the value `"1/4"` in `numValue.s`.
 
 Lookup Character
 ----------------
@@ -52,8 +52,10 @@ Looking up character informations using an Unicode value:
 UTRune rune = 0x0110;
 UTInfo const * info = UTLookupRune (rune);
 
+// get lower-case variant
 UTRune lower = rune + info -> cases [UTCaseLower];
-printf ("Lowercase variant of %04X: %04X \n", rune, lower);
+
+printf ("Lowercase variant of %04X is %04X \n", rune, lower);
 ```
 
 Handling expanding characters:
@@ -67,11 +69,12 @@ UTInfo const * info = UTLookupRune (rune);
 int index = info -> cases [UTCaseUpper];
 int length = UTSpecialCases [index];
 
-// character  sequence
+// character sequence
 UTRune const * sequence = &UTSpecialCases [index + 1];
 
-printf ("Uppercase %04X: %d chars\n", rune, length);
+printf ("Uppercase %04X expands to %d chars in upper-case\n", rune, length);
 
+// upper-case characters
 for (int i = 0; i < length; i ++) {
 	printf ("%d: %04X\n", i, sequence [i]);
 }
