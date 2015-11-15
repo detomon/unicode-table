@@ -5,6 +5,10 @@
 #ifndef _{c:UNICODE_TABLE}_H_
 #define _{c:UNICODE_TABLE}_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -107,5 +111,9 @@ static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
 
 	return & {n:Infos} [{n:CategoryLetterInvalid}];
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ! _{c:UNICODE_TABLE}_H_ */
