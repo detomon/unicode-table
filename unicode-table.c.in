@@ -1,0 +1,36 @@
+/**
+##header
+ */
+
+#include "{v:outName}.h"
+
+{n:Info} const {n:Infos} [] = {
+##infos
+};
+
+/**
+ * All Unicode pages
+ * Points to {n:InfoIndex}
+ */
+uint16_t const {n:PageIndex} [] = {
+##pageIndex
+};
+
+/**
+ * Indexes of rune_types
+ * {n:InfoIndex} [page index][index in page]
+ */
+uint16_t const {n:InfoIndex} [][256] = {
+##infoIndex
+};
+
+/**
+ * ([length][charcode]{length})*
+ */
+{n:Rune} const {n:SpecialCases} [] = {
+##specialCases
+};
+
+char const * const {n:CategoryNames} [] = {
+##categoryNames
+};
