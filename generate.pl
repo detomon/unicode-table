@@ -586,7 +586,7 @@ my %printMethods = (
 
 			$key = toUserCase $key;
 
-			printf $out "\t%-39s = '%s',\n", "[$key]", $_;
+			printf $out "\t%-39s = \"%s\",\n", "[$key]", $_;
 		}
 	},
 );
