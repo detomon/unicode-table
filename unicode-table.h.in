@@ -33,7 +33,6 @@ typedef enum {
 	{n:FlagUpperExpands} = 1 << 13,
 	{n:FlagLowerExpands} = 1 << 14,
 	{n:FlagTitleExpands} = 1 << 15,
-	{n:FlagCasedMask}    = ({n:FlagUppercase} | {n:FlagLowercase} | {n:FlagTitlecase}),
 } {n:Flag};
 
 /**
