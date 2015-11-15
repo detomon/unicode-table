@@ -98,7 +98,7 @@ extern char const * const {n:CategoryNames} [];
 /**
  * Lookup character by value
  */
-inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
+static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
 	if (rune <= {c:MAX_VALUE}) {
 		unsigned page   = {n:PageIndex} [rune >> 8];
 		unsigned offset = {n:InfoIndex} [page][rune & 0xFF];
