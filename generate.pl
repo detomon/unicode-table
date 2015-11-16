@@ -281,7 +281,7 @@ sub makeCharSequence {
 	my $offset   = $#specialCasing + 1;
 
 	# ignore single character
-	return 0 if ($#sequence == 0);
+	return -1 if ($#sequence == 0);
 
 	push @specialCasing, $#sequence + 1;
 	push @specialCasing, hex ($_) foreach (@sequence);
@@ -300,6 +300,7 @@ open SPECIAL, "<$ARGV[1]" or die "File '$ARGV[1]' not found";
 while (<SPECIAL>) {
 	chomp;
 
+	# ignore empty lines and comments
 	next if ($_ =~ /^$|^#/);
 
 	$_ =~ /(.+);\s*#/;
@@ -310,15 +311,15 @@ while (<SPECIAL>) {
 	next if ($line [4]);
 
 	my $code  = hex ($line [0]);
-	my $lower = makeCharSequence ($line [1]);
-	my $title = makeCharSequence ($line [2]);
-	my $upper = makeCharSequence ($line [3]);
+	my $lower = makeCharSequence $line [1];
+	my $title = makeCharSequence $line [2];
+	my $upper = makeCharSequence $line [3];
 
 	my @cases = ($upper, $lower, $title);
 
 	@{$special {$code}} = @cases;
 
-	my @line = split ';', $_;
+	@line = split ';', $_;
 }
 
 close SPECIAL;
@@ -410,42 +411,40 @@ while (<DATA>) {
 
 	$data [$code] = $type;
 
-	# Read private use pages separatly
-	last if ($code >= 0xF0000);
-}
+	# read private use pages
+	if ($code >= 0xF0000) {
+		while (<DATA>) {
+			my @line2 = split /;/, $_;
+			my $code2 = hex ($line2 [0]);
 
-#-------------------------------------------------------------------------------
-#
-# Read private use pages
-#
-#-------------------------------------------------------------------------------
+			my $type = sprintf (infoFormat, $info, $categoryIndexes {$cat}, 0, 0, 0, 0);
 
-while (<DATA>) {
-	my @line = split /;/, $_;
-	my $code = hex ($line [0]);
-	my $cat  = $line [2];
-	my $info = $categoryFlags {$cat};
+			if ($types {$type}) {
+				$type = $types {$type};
+			}
+			else {
+				my $count = keys %types;
 
-	$pages [$code >> 8] = 1;
+				$types {$type} = $count;
+				$type = $count;
+			}
 
-	my @line2 = <DATA>;
-	my $code2 = hex ($line2 [0]);
+			for (; $code <= $code2; $code ++) {
+				$pages [$code >> 8] = 1;
+				$data [$code] = $type;
+			}
 
-	my $type = sprintf (infoFormat, $info, $categoryIndexes {$cat}, 0, 0, 0, 0);
+			my $line = <DATA>;
 
-	if ($types {$type}) {
-		$type = $types {$type};
-	}
-	else {
-		my $count = keys %types;
+			last unless ($line);
 
-		$types {$type} = $count;
-		$type = $count;
-	}
+			@line = split /;/, $line;
+			$code = hex ($line [0]);
+			$cat  = $line [2];
+			$info = $categoryFlags {$cat};
+		}
 
-	for (; $code <= $code2; $code ++) {
-		$pages [$code >> 8] = 1;
-		$data [$code] = $type;
+		last;
 	}
 }
 
