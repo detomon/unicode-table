@@ -138,7 +138,7 @@ my %categoryIndexes = (
 );
 
 my %categoryName = (
-	'',  => 'CategoryLetterInvalid',
+	'',  => 'CategoryInvalid',
 	'Lu' => 'CategoryLetterUppercase',
 	'Ll' => 'CategoryLetterLowercase',
 	'Lt' => 'CategoryLetterTitlecase',

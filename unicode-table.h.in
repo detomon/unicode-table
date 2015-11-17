@@ -109,7 +109,7 @@ static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
 		return & {n:Infos} [offset];
 	}
 
-	return & {n:Infos} [{n:CategoryLetterInvalid}];
+	return & {n:Infos} [{n:CategoryInvalid}];
 }
 
 #ifdef __cplusplus
