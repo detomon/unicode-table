@@ -95,7 +95,7 @@ else {
 Building the Table
 ------------------
 
-Run `./autogen.sh` to generate the build system. Then run `./configure` and `make` to build `libunicodetable.a` in the base directory:
+Run `./autogen.sh` to generate the build system. Then run `./configure` and `make` to build `libunicodetable.a` in the `src` directory:
 
 ```sh
 ./autogen.sh
