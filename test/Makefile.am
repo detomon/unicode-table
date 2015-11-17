@@ -1,5 +1,5 @@
-AM_CFLAGS = -I$(srcdir)/.. -L$(srcdir)/..
-LDADD = $(srcdir)/../libunicodetable.a
+AM_CFLAGS = -I$(srcdir)/../src -L$(srcdir)/../src
+LDADD = $(srcdir)/../src/libunicodetable.a
 
 check_PROGRAMS = \
 	test-category \

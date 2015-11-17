@@ -2,7 +2,13 @@
 
 int main (int argc, char const * argv [])
 {
-	FILE * data = fopen ("../UnicodeData.txt", "r");
+	char const * dataName = "../src/UnicodeData.txt";
+	FILE * data = fopen (dataName, "r");
+
+	if (!data) {
+		fprintf (stderr, "File  '%s' not found\n", dataName);
+		return RESULT_ERROR;
+	}
 
 	char line [1024];
 	unsigned value;

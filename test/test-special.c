@@ -7,7 +7,13 @@ static int getSequence (char const * sequence, int values [])
 
 int main (int argc, char const * argv [])
 {
-	FILE * specialCasing = fopen ("../SpecialCasing.txt", "r");
+	char const * specialCasingName = "../src/SpecialCasing.txt";
+	FILE * specialCasing = fopen (specialCasingName, "r");
+
+	if (!specialCasing) {
+		fprintf (stderr, "File  '%s' not found\n", specialCasingName);
+		return RESULT_ERROR;
+	}
 
 	char line [1024];
 	unsigned value;
