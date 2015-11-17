@@ -43,6 +43,7 @@ AC_TYPE_UINT32_T
 
 AC_CONFIG_FILES([
 	Makefile
+	test/Makefile
 ])
 
 # Flags

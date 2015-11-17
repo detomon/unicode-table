@@ -1,0 +1,2 @@
+usage: ./test-table UnicodeData.txt SpecialCasing.txt
+ERROR test-table (exit status: 99)

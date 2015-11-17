@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include "unicode-test.h"
+#include "test.h"
 
 static int getSequence (char const * sequence, int values [])
 {
@@ -9,41 +7,11 @@ static int getSequence (char const * sequence, int values [])
 
 int main (int argc, char const * argv [])
 {
-	if (argc <= 1) {
-		fprintf (stderr, "usage: %s UnicodeData.txt SpecialCasing.txt\n", argv [0]);
-		return 1;
-	}
-
-	char const * dataFile = argv [1];
-	char const * specialCasingFile = argv [2];
-
-	FILE * data = fopen (dataFile, "r");
-	FILE * specialCasing = fopen (specialCasingFile, "r");
+	FILE * specialCasing = fopen ("../SpecialCasing.txt", "r");
 
 	char line [1024];
 	unsigned value;
 	char name [63];
-	char categoryName [3];
-
-	UTInfo const * info;
-	UTCategory category;
-
-	printf ("checking...\n");
-	printf ("reading %s...\n", dataFile);
-
-	// read UnicodeData.txt
-	while (fgets (line, 1024, data)) {
-		sscanf (line, "%x;%63[^;];%2[^;]", &value, name, categoryName);
-
-		info = UTLookupRune (value);
-		category = info -> category;
-
-		// test category
-		if (strcmp (UTCategoryNames [category], categoryName) != 0) {
-			fprintf (stderr, "ERROR: %x: %s != %s (%d)\n", value, categoryName, UTCategoryNames [category], category);
-			return 1;
-		}
-	}
 
 	char upperSequence [64];
 	char lowerSequence [64];
@@ -51,7 +19,7 @@ int main (int argc, char const * argv [])
 	int length;
 	int values [4];
 
-	printf ("reading %s...\n", specialCasingFile);
+	UTInfo const * info;
 
 	// read SpecialCasing.txt
 	while (fgets (line, 1024, specialCasing)) {
@@ -77,7 +45,7 @@ int main (int argc, char const * argv [])
 
 		if (!(info -> flags & (UTFlagUpperExpands | UTFlagLowerExpands | UTFlagTitleExpands))) {
 			fprintf (stderr, "No special case found for '%04x'\n", value);
-			return 1;
+			return RESULT_ERROR;
 		}
 
 		length = getSequence (upperSequence, values);
@@ -85,12 +53,12 @@ int main (int argc, char const * argv [])
 		if (length > 1) {
 			if (!(info -> flags & UTFlagUpperExpands)) {
 				fprintf (stderr, "Missing upper special seqeunce for '%04x'", value);
-				return 1;
+				return RESULT_ERROR;
 			}
 
 			if (UTSpecialCases [info -> cases [UTCaseUpper]] != length) {
 				fprintf (stderr, "Wrong upper seqeunce length for '%04x'", value);
-				return 1;
+				return RESULT_ERROR;
 			}
 		}
 
@@ -99,12 +67,12 @@ int main (int argc, char const * argv [])
 		if (length > 1) {
 			if (!(info -> flags & UTFlagLowerExpands)) {
 				fprintf (stderr, "Missing lower special seqeunce for '%04x'", value);
-				return 1;
+				return RESULT_ERROR;
 			}
 
 			if (UTSpecialCases [info -> cases [UTCaseLower]] != length) {
 				fprintf (stderr, "Wrong lower seqeunce length for '%04x'", value);
-				return 1;
+				return RESULT_ERROR;
 			}
 		}
 
@@ -113,20 +81,17 @@ int main (int argc, char const * argv [])
 		if (length > 1) {
 			if (!(info -> flags & UTFlagTitleExpands)) {
 				fprintf (stderr, "Missing title special seqeunce for '%04x'", value);
-				return 1;
+				return RESULT_ERROR;
 			}
 
 			if (UTSpecialCases [info -> cases [UTCaseTitle]] != length) {
 				fprintf (stderr, "Wrong title seqeunce length for '%04x'", value);
-				return 1;
+				return RESULT_ERROR;
 			}
 		}
 	}
 
-	fclose (data);
 	fclose (specialCasing);
 
-	printf ("-- all good --\n");
-
-	return 0;
+	return RESULT_PASS;
 }

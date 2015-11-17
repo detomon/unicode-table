@@ -1,5 +1,5 @@
-#SUBDIRS = test
-#DIST_SUBDIRS = $(SUBDIRS)
+SUBDIRS = test
+DIST_SUBDIRS = $(SUBDIRS)
 
 UNICODE_FILES = UnicodeData.txt SpecialCasing.txt
 SRC_TEMPLATES = unicode-table.h.in unicode-table.c.in
