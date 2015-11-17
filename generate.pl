@@ -171,10 +171,15 @@ my %categoryName = (
 	'Cn' => 'CategoryOtherNotAssigned',
 );
 
-my $outName       = $ENV {'OUT_NAME'}      || 'unicode-table';
-my $prefix        = $ENV {'SYMBOL_PREFIX'} || 'UT';
-my $makeSnakeCase = $ENV {'SNAKE_CASE'}    || 0;
+my $args = join ' ', @ARGV;
 
+$args =~ /--symbol-prefix=([\w_]+)/;
+my $prefix = $1 || 'UT';
+
+$args =~ /--snake-case=([\w_]+)/;
+my $makeSnakeCase = int $1;
+
+my $outName   = 'unicode-table';
 my $hdrFile   = "$outName.h";
 my $hdrFileIn = "unicode-table.h.in";
 my $srcFile   = "$outName.c";

@@ -7,11 +7,32 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Checks for programs.
 AC_PROG_CC
-AM_PROG_AR
 AC_PROG_RANLIB
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdint.h stdlib.h])
+
+AC_ARG_ENABLE([symbol-prefix],
+	[  --disable-symbol-prefix use default symbol prefix],
+	[SYMBOL_PREFIX=${enableval}],
+	[SYMBOL_PREFIX='UT'])
+
+AC_ARG_ENABLE([snake-case],
+	[  --disable-snake-case    use camel-case symbols],
+	[SNAKE_CASE=${enableval}],
+	[SNAKE_CASE=0])
+
+if test "x${SNAKE_CASE}" = xyes; then
+	SNAKE_CASE=1
+fi
+
+if test "x${SNAKE_CASE}" = xno; then
+	SNAKE_CASE=0
+fi
+
+AC_SUBST([SYMBOL_PREFIX])
+AC_SUBST([SNAKE_CASE])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE

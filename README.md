@@ -87,22 +87,21 @@ else {
 Building the Table
 ------------------
 
-Run `make` to build the table with the default settings:
+Run `./autogen.sh` to generate the build system. Then run `./configure` and `make` to build `libunicodetable.a` in the base directory.
 
 ```sh
+./autogen.sh
+./configure
 make
 ```
 
-`make` can take some enviroment variables:
+`configure` can also take some options:
 
-- `OUT_NAME` sets the output file names for the header and source file.
-- You can also change the used symbol prefix with `SYMBOL_PREFIX` to match you project's namespace.
-- Use `SNAKE_CASE=1` to use snake-case symbol names.
-
-This runs `make` with the default settings:
+- `--enable-symbol-prefix=bla` changes the prefix used for the library symbols to `bla`.
+- `--enable-snake-case`, `--disable-snake-case` enables or disables snake-case symbol names (For example, `bla_lookup_rune` instead of `blaLookupRune`).
 
 ```sh
-make OUT_NAME=unicode-table SYMBOL_PREFIX=UT SNAKE_CASE=0
+./configure --enable-symbol-prefix=bla --enable-snake-case
 ```
 
 Source Templates
