@@ -51,7 +51,7 @@ int main (int argc, char const * argv [])
 
 		if (!(info -> flags & (UTFlagUpperExpands | UTFlagLowerExpands | UTFlagTitleExpands))) {
 			fprintf (stderr, "No special case found for '%04x'\n", value);
-			return RESULT_ERROR;
+			return RESULT_FAIL;
 		}
 
 		length = getSequence (upperSequence, values);
@@ -59,12 +59,12 @@ int main (int argc, char const * argv [])
 		if (length > 1) {
 			if (!(info -> flags & UTFlagUpperExpands)) {
 				fprintf (stderr, "Missing upper special seqeunce for '%04x'", value);
-				return RESULT_ERROR;
+				return RESULT_FAIL;
 			}
 
 			if (UTSpecialCases [info -> cases [UTCaseUpper]] != length) {
 				fprintf (stderr, "Wrong upper seqeunce length for '%04x'", value);
-				return RESULT_ERROR;
+				return RESULT_FAIL;
 			}
 		}
 
@@ -73,12 +73,12 @@ int main (int argc, char const * argv [])
 		if (length > 1) {
 			if (!(info -> flags & UTFlagLowerExpands)) {
 				fprintf (stderr, "Missing lower special seqeunce for '%04x'", value);
-				return RESULT_ERROR;
+				return RESULT_FAIL;
 			}
 
 			if (UTSpecialCases [info -> cases [UTCaseLower]] != length) {
 				fprintf (stderr, "Wrong lower seqeunce length for '%04x'", value);
-				return RESULT_ERROR;
+				return RESULT_FAIL;
 			}
 		}
 
@@ -87,12 +87,12 @@ int main (int argc, char const * argv [])
 		if (length > 1) {
 			if (!(info -> flags & UTFlagTitleExpands)) {
 				fprintf (stderr, "Missing title special seqeunce for '%04x'", value);
-				return RESULT_ERROR;
+				return RESULT_FAIL;
 			}
 
 			if (UTSpecialCases [info -> cases [UTCaseTitle]] != length) {
 				fprintf (stderr, "Wrong title seqeunce length for '%04x'", value);
-				return RESULT_ERROR;
+				return RESULT_FAIL;
 			}
 		}
 	}
