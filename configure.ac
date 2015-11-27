@@ -11,7 +11,7 @@ AC_PROG_RANLIB
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdint.h stdlib.h])
+AC_CHECK_HEADERS([stdint.h stdlib.h string.h])
 
 AC_ARG_ENABLE([symbol-prefix],
 	[  --disable-symbol-prefix use default symbol prefix],
