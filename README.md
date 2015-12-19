@@ -21,11 +21,11 @@ Lookup Character
 Looking up a character with its Unicode value:
 
 ```c
-// character 0x0110 (Đ)
+// character 0x0110 (Đ) (LATIN CAPITAL LETTER D WITH STROKE)
 UTRune rune = 0x0110;
 UTInfo const * info = UTLookupRune (rune);
 
-// get lowercase variant 0x0111 (đ)
+// get lowercase variant 0x0111 (đ) (LATIN SMALL LETTER D WITH STROKE)
 UTRune lower = rune + info -> cases [UTCaseLower];
 
 // prints "Lowercase variant of 0110: 0111"
@@ -41,20 +41,25 @@ Get the representing integer or fraction value:
 UTRune rune;
 UTInfo const * info;
 
-// character 0x2166 (Ⅶ)
+// character 0x2166 (Ⅶ) (ROMAN NUMERAL SEVEN)
 rune = 0x2166;
 info = UTLookupRune (rune);
 
-// prints "Integer value of 2166: 7"
-printf ("Integer value of %04X: %lld\n", rune, info -> number.i);
+// check if character is a number
+if (info -> flags & UTFlagNumber) {
+	// prints "Integer value of 2166: 7"
+	printf ("Integer value of %04X: %lld\n", rune, info -> number.i);
+}
 
-// character 0x00BC (¼)
+// character 0x00BC (¼) (VULGAR FRACTION ONE QUARTER)
 rune = 0x00BC;
 info = UTLookupRune (rune);
 
-// prints "String representation of 00BC: 1/4"
-printf ("String representation of %04X: %s \n", rune, info -> number.s);
-
+// check if character is a fraction
+if (info -> flags & UTFlagFraction) {
+	// prints "String representation of 00BC: 1/4"
+	printf ("String representation of %04X: %s \n", rune, info -> number.s);
+}
 ```
 
 Case-Fold Expansion
@@ -63,7 +68,7 @@ Case-Fold Expansion
 Handling cases, where case-folding expands to multiple characters:
 
 ```c
-// character 0x00DF (ß)
+// character 0x00DF (ß) (LATIN SMALL LETTER SHARP S)
 UTRune rune = 0x00DF;
 UTInfo const * info = UTLookupRune (rune);
 
@@ -105,7 +110,7 @@ make
 
 `configure` can take some options:
 
-- `--enable-symbol-prefix=bla` changes the prefix for library symbols to `bla`.
+- `--enable-symbol-prefix=bla` changes the prefix for library symbols to `bla` (instead of the default `UT`).
 - `--enable-snake-case`, `--disable-snake-case` enables or disables snake-case symbol names (For example, `bla_lookup_rune` instead of `blaLookupRune`).
 
 ```sh
