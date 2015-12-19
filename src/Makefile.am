@@ -17,5 +17,10 @@ HEADER_LIST = \
 
 pkginclude_HEADERS = $(HEADER_LIST)
 
+EXTRA_DIST = \
+	$(UNICODE_FILES) \
+	$(SRC_TEMPLATES) \
+	$(GENERATE_PROG)
+
 clean-local:
 	-rm -f $(BUILT_SOURCES)
