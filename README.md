@@ -25,7 +25,7 @@ Looking up a character with its Unicode value:
 UTRune rune = 0x0110;
 UTInfo const * info = UTLookupRune (rune);
 
-// get lowercase variant
+// get lowercase variant 0x0111 (đ)
 UTRune lower = rune + info -> cases [UTCaseLower];
 
 // prints "Lowercase variant of 0110: 0111"
