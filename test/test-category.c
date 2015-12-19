@@ -6,7 +6,7 @@ int main (int argc, char const * argv [])
 	FILE * data = fopen (dataName, "r");
 
 	if (!data) {
-		fprintf (stderr, "File  '%s' not found\n", dataName);
+		fprintf (stderr, "File '%s' not found\n", dataName);
 		return RESULT_ERROR;
 	}
 
