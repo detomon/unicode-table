@@ -1,7 +1,7 @@
 Unicode Lookup Table
 ====================
 
-This script generates an Unicode character lookup table with linear access time. It creates a header files and source file and compiles a static library usable within C/C++. The source data is contained in the files [UnicodeData.txt](http://www.unicode.org/Public/8.0.0/ucd/UnicodeData.txt) and [SpecialCasing.txt](http://www.unicode.org/Public/8.0.0/ucd/SpecialCasing.txt) and can be found on [http://www.unicode.org](). Currently Unicode version 8.0.0 is used, but the files can be replaced with newer versions in the future.
+This script generates an Unicode character lookup table with linear access time. It creates a header and source file and compiles a static library usable within C/C++. The source data is contained in the files [UnicodeData.txt](http://www.unicode.org/Public/8.0.0/ucd/UnicodeData.txt) and [SpecialCasing.txt](http://www.unicode.org/Public/8.0.0/ucd/SpecialCasing.txt) and can be found on [http://www.unicode.org](). Currently Unicode version 8.0.0 is used, but the files can be replaced with newer versions in the future.
 
 The only function is `UTLookupRune` that looks up a single character by its Unicode value. It returns a pointer to an `UTInfo` struct containing the character informations. It always returns a valid pointer, even for invalid characters. In this case, the field `category` has the value `UTCategoryInvalid` assigned.
 
@@ -12,7 +12,7 @@ Available Informations
 
 - `category` contains one of the character categories listed in `UTCategory`
 - `flags` contains multiple flags listed in `UTFlag`
-- `cases` contains values to be added to the character value in order to convert it to the desired case variant (uppercase, lowercase or titlecase). The field is indexable with `UTRuneCase`. If a `case` field is `0`, that specific case variant does not exist. If one of the flags `UTFlagUpperExpands`, `UTFlagLowerExpands` or `UTFlagTitleExpands` is set in `flags`, the character expands to multiple characters when case-folding. For example, the lowercase letter "ß" (`0x00DF`) expands to the 2 uppercase letter "SS" (`0x0053 0x0053`). `cases` then contains an index usable for the array `UTSpecialCases`. The index itself points to the number of character in the expanded sequence. The following indexes contain the character values (see [example below](#user-content-case-fold-expansion)).
+- `cases` contains values to be added to the character value in order to convert it to the desired case variant (uppercase, lowercase or titlecase). The field is indexable with `UTRuneCase`. If a `case` field is `0`, that specific case variant does not exist. If one of the flags `UTFlagUpperExpands`, `UTFlagLowerExpands` or `UTFlagTitleExpands` is set in `flags`, the character expands to multiple characters when case-folding. For example, the lowercase letter "ß" (`0x00DF`) expands to the 2 uppercase letter "SS" (`0x0053 0x0053`). `cases` then contains an index usable for the array `UTSpecialCases`. The index itself points to the number of character in the expanded sequence. The following indexes contain the expanded sequence's character values (see [example below](#user-content-case-fold-expansion)).
 - `number` contains numeric values for digits, number-like and fraction characters. For example, the roman number "Ⅶ" (`0x2166`) has the value `7` in `number.i`. Fractions are represented by strings that contain the nominator and denominater separated by `/` (`"n/d"`). For example, the fraction character "¼" (`0x00BC`) has the value `"1/4"` in `number.s`.
 
 Lookup Character
@@ -103,9 +103,9 @@ Run `./autogen.sh` to generate the build system. Then run `./configure` and `mak
 make
 ```
 
-`configure` can also take some options:
+`configure` can take some options:
 
-- `--enable-symbol-prefix=bla` changes the prefix used for the library symbols to `bla`.
+- `--enable-symbol-prefix=bla` changes the prefix for library symbols to `bla`.
 - `--enable-snake-case`, `--disable-snake-case` enables or disables snake-case symbol names (For example, `bla_lookup_rune` instead of `blaLookupRune`).
 
 ```sh
