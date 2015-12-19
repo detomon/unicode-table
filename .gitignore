@@ -22,3 +22,6 @@
 /test-driver
 Makefile
 Makefile.in
+
+unicode-table.c
+unicode-table.h
