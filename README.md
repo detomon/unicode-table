@@ -120,4 +120,4 @@ make
 Source Templates
 ----------------
 
-The source templates `unicode-table.h.in` and `unicode-table.c.in` contain the structure and data placeholders for the header and source file. They can be editted if needed.
+The source templates `unicode-table.h.in` and `unicode-table.c.in` located in `src` contain the structure and data placeholders for the header and source file. They can be editted if needed.
