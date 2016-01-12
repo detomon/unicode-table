@@ -102,14 +102,16 @@ extern char const * const {n:CategoryNames} [];
  * Lookup character by value
  */
 static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
-	if (rune <= {c:MAX_VALUE}) {
-		unsigned page   = {n:PageIndex} [rune >> 8];
-		unsigned offset = {n:InfoIndex} [page][rune & 0xFF];
+	uint32_t page, offset;
 
-		return & {n:Infos} [offset];
+	if (rune > {c:MAX_VALUE}) {
+		return & {n:Infos} [{n:CategoryInvalid}];
 	}
 
-	return & {n:Infos} [{n:CategoryInvalid}];
+	page   = {n:PageIndex} [rune >> 8];
+	offset = {n:InfoIndex} [page][rune & 0xFF];
+
+	return & {n:Infos} [offset];
 }
 
 #ifdef __cplusplus
