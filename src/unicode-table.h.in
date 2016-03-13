@@ -21,22 +21,22 @@ extern "C" {
  * Flags for determining character type
  */
 typedef enum {
-	{n:FlagLetter}       = 1 << 0,
-	{n:FlagUppercase}    = 1 << 1,
-	{n:FlagLowercase}    = 1 << 2,
-	{n:FlagTitlecase}    = 1 << 3,
-	{n:FlagSpace}        = 1 << 4,
-	{n:FlagLinebreak}    = 1 << 5,
-	{n:FlagPunctuation}  = 1 << 6,
-	{n:FlagDigit}        = 1 << 7,
-	{n:FlagNumber}       = 1 << 8,
-	{n:FlagFraction}     = 1 << 9,
-	{n:FlagControl}      = 1 << 10,
-	{n:FlagSymbol}       = 1 << 11,
-	{n:FlagOther}        = 1 << 12,
-	{n:FlagUpperExpands} = 1 << 13,
-	{n:FlagLowerExpands} = 1 << 14,
-	{n:FlagTitleExpands} = 1 << 15,
+	{c:FlagLetter}       = 1 << 0,
+	{c:FlagUppercase}    = 1 << 1,
+	{c:FlagLowercase}    = 1 << 2,
+	{c:FlagTitlecase}    = 1 << 3,
+	{c:FlagSpace}        = 1 << 4,
+	{c:FlagLinebreak}    = 1 << 5,
+	{c:FlagPunctuation}  = 1 << 6,
+	{c:FlagDigit}        = 1 << 7,
+	{c:FlagNumber}       = 1 << 8,
+	{c:FlagFraction}     = 1 << 9,
+	{c:FlagControl}      = 1 << 10,
+	{c:FlagSymbol}       = 1 << 11,
+	{c:FlagOther}        = 1 << 12,
+	{c:FlagUpperExpands} = 1 << 13,
+	{c:FlagLowerExpands} = 1 << 14,
+	{c:FlagTitleExpands} = 1 << 15,
 } {n:Flag};
 
 /**
@@ -50,21 +50,21 @@ typedef enum {
  * Index usable for `cases` in `{n:Info}`
  */
 typedef enum {
-	{n:CaseUpper} = 0,
-	{n:CaseLower} = 1,
-	{n:CaseTitle} = 2,
+	{c:CaseUpper} = 0,
+	{c:CaseLower} = 1,
+	{c:CaseTitle} = 2,
 } {n:Case};
 
 /**
  * Character info
  */
 typedef struct {
-	uint32_t flags;    // flags of `{n:Flag}`
+	uint32_t flags;    // flags of `{c:Flag}`
 	uint32_t category; // one of `{n:Category}`
-	int32_t cases [3]; // indexable with `{n:Case}`
+	int32_t cases [3]; // indexable with `{c:Case}`
 	union {
-		int64_t i;     // number value if `info & {n:FlagNumber}`
-		char const* s; // fraction string if `info & {n:FlagFraction}`
+		int64_t i;      // number value if `info & {c:FlagNumber}`
+		char const * s; // fraction string if `info & {c:FlagFraction}`
 	} number;
 } {n:Info};
 
@@ -96,16 +96,16 @@ extern {n:Rune} const {n:SpecialCases} [];
 /**
  * Category name indexable with `{n:Category}`
  */
-extern char const* const {n:CategoryNames} [];
+extern char const * const {n:CategoryNames} [];
 
 /**
  * Lookup character by value
  */
-static inline {n:Info} const* {n:LookupRune} ({n:Rune} rune) {
+static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
 	uint32_t page, offset;
 
 	if (rune > {c:MAX_VALUE}) {
-		return & {n:Infos} [{n:CategoryInvalid}];
+		return & {n:Infos} [{c:CategoryInvalid}];
 	}
 
 	page   = {n:PageIndex} [rune >> 8];

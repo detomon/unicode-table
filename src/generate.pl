@@ -510,7 +510,7 @@ my %printMethods = (
 		foreach (sort { $categoryIndexes {$a} <=> $categoryIndexes {$b} } keys %categoryIndexes) {
 			my $line = $categoryName {$_};
 
-			$line = toUserCase $line;
+			$line = toConstant $line, $prefix;
 			$line = sprintf "\t%-39s // %s", "$line,", $_;
 			$line =~ s/\s+$//;
 
@@ -588,7 +588,7 @@ my %printMethods = (
 		foreach (sort { $categoryIndexes {$a} <=> $categoryIndexes {$b} } keys %categoryIndexes) {
 			my $key = $categoryName {$_};
 
-			$key = toUserCase $key;
+			$key = toConstant $key, $prefix;
 
 			printf $out "\t%-39s = \"%s\",\n", "[$key]", $_;
 		}

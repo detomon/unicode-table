@@ -13,15 +13,23 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 # Checks for header files.
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h])
 
+if test "x${SYMBOL_PREFIX}" = x; then
+	SYMBOL_PREFIX="UT"
+fi
+
+if test "x${SNAKE_CASE}" = x; then
+	SNAKE_CASE=0
+fi
+
 AC_ARG_ENABLE([symbol-prefix],
 	[  --disable-symbol-prefix use default symbol prefix],
 	[SYMBOL_PREFIX=${enableval}],
-	[SYMBOL_PREFIX='UT'])
+	[])
 
 AC_ARG_ENABLE([snake-case],
 	[  --disable-snake-case    use camel-case symbols],
 	[SNAKE_CASE=${enableval}],
-	[SNAKE_CASE=0])
+	[])
 
 if test "x${SNAKE_CASE}" = xyes; then
 	SNAKE_CASE=1
