@@ -5,7 +5,7 @@ GENERATE_PROG = generate.pl
 BUILT_SOURCES = unicode-table.h unicode-table.c
 
 $(BUILT_SOURCES): $(GENERATE_PROG) $(UNICODE_FILES) $(SRC_TEMPLATES)
-	/usr/bin/env perl $(srcdir)/$(GENERATE_PROG) $(UNICODE_FILES) --symbol-prefix=@SYMBOL_PREFIX@ --snake-case=@SNAKE_CASE@
+	/usr/bin/env perl $(srcdir)/$(GENERATE_PROG) $(UNICODE_FILES) --symbol-prefix=@UT_SYMBOL_PREFIX@ --snake-case=@UT_SNAKE_CASE@
 
 lib_LIBRARIES = libunicodetable.a
 
