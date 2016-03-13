@@ -49,7 +49,7 @@ int main (int argc, char const * argv [])
 
 		info = UTLookupRune (value);
 
-		if (!(info -> flags & (UTFlagUpperExpands | UTFlagLowerExpands | UTFlagTitleExpands))) {
+		if (!(info -> flags & (UT_FLAG_UPPER_EXPANDS | UT_FLAG_LOWER_EXPANDS | UT_FLAG_TITLE_EXPANDS))) {
 			fprintf (stderr, "No special case found for '%04x'\n", value);
 			return RESULT_FAIL;
 		}
@@ -57,12 +57,12 @@ int main (int argc, char const * argv [])
 		length = getSequence (upperSequence, values);
 
 		if (length > 1) {
-			if (!(info -> flags & UTFlagUpperExpands)) {
+			if (!(info -> flags & UT_FLAG_UPPER_EXPANDS)) {
 				fprintf (stderr, "Missing upper special seqeunce for '%04x'", value);
 				return RESULT_FAIL;
 			}
 
-			if (UTSpecialCases [info -> cases [UTCaseUpper]] != length) {
+			if (UTSpecialCases [info -> cases [UT_CASE_UPPER]] != length) {
 				fprintf (stderr, "Wrong upper seqeunce length for '%04x'", value);
 				return RESULT_FAIL;
 			}
@@ -71,12 +71,12 @@ int main (int argc, char const * argv [])
 		length = getSequence (lowerSequence, values);
 
 		if (length > 1) {
-			if (!(info -> flags & UTFlagLowerExpands)) {
+			if (!(info -> flags & UT_FLAG_LOWER_EXPANDS)) {
 				fprintf (stderr, "Missing lower special seqeunce for '%04x'", value);
 				return RESULT_FAIL;
 			}
 
-			if (UTSpecialCases [info -> cases [UTCaseLower]] != length) {
+			if (UTSpecialCases [info -> cases [UT_CASE_LOWER]] != length) {
 				fprintf (stderr, "Wrong lower seqeunce length for '%04x'", value);
 				return RESULT_FAIL;
 			}
@@ -85,12 +85,12 @@ int main (int argc, char const * argv [])
 		length = getSequence (titleSequence, values);
 
 		if (length > 1) {
-			if (!(info -> flags & UTFlagTitleExpands)) {
+			if (!(info -> flags & UT_FLAG_TITLE_EXPANDS)) {
 				fprintf (stderr, "Missing title special seqeunce for '%04x'", value);
 				return RESULT_FAIL;
 			}
 
-			if (UTSpecialCases [info -> cases [UTCaseTitle]] != length) {
+			if (UTSpecialCases [info -> cases [UT_CASE_TITLE]] != length) {
 				fprintf (stderr, "Wrong title seqeunce length for '%04x'", value);
 				return RESULT_FAIL;
 			}

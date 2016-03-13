@@ -7,9 +7,9 @@ int main (int argc, char const * argv [])
 	UTInfo const * info = UTLookupRune (rune);
 
 	// check if expansion occurs to prevent invalid index
-	if (info -> flags & UTFlagUpperExpands) {
+	if (info -> flags & UT_FLAG_UPPER_EXPANDS) {
 		// sequence index for uppercase variant
-		int idx = info -> cases [UTCaseUpper];
+		int idx = info -> cases [UT_CASE_UPPER];
 		int length = UTSpecialCases [idx];
 
 		// character sequence

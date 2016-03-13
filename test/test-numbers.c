@@ -10,7 +10,7 @@ int main (int argc, char const * argv [])
 	info = UTLookupRune (rune);
 
 	// check if character is a number
-	if (info -> flags & UTFlagNumber) {
+	if (info -> flags & UT_FLAG_NUMBER) {
 		// prints "Integer value of 2166: 7"
 		printf ("Integer value of %04X: %lld\n", rune, info -> number.i);
 	}
@@ -23,7 +23,7 @@ int main (int argc, char const * argv [])
 	info = UTLookupRune (rune);
 
 	// check if character is a fraction
-	if (info -> flags & UTFlagFraction) {
+	if (info -> flags & UT_FLAG_FRACTION) {
 		// prints "String representation of 00BC: 1/4"
 		printf ("String representation of %04X: %s \n", rune, info -> number.s);
 	}
