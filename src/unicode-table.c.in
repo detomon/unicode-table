@@ -31,6 +31,6 @@ uint16_t const {n:InfoIndex} [][256] = {
 ##specialCases
 };
 
-char const * const {n:CategoryNames} [] = {
+char const* const {n:CategoryNames} [] = {
 ##categoryNames
 };

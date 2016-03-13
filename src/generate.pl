@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Simon Schoenenberger
+# Copyright (c) 2016 Simon Schoenenberger
 # https://github.com/detomon/unicode-table
 #
 # Permission is hereby granted, free of charge, to any person obtaining

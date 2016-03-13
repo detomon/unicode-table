@@ -59,12 +59,12 @@ typedef enum {
  * Character info
  */
 typedef struct {
-	uint32_t flags;     // flags of `{n:Flag}`
-	uint32_t category;  // one of `{n:Category}`
-	int32_t cases [3];  // indexable with `{n:Case}`
+	uint32_t flags;    // flags of `{n:Flag}`
+	uint32_t category; // one of `{n:Category}`
+	int32_t cases [3]; // indexable with `{n:Case}`
 	union {
-		int64_t i;      // number value if `info & {n:FlagNumber}`
-		char const * s; // fraction string if `info & {n:FlagFraction}`
+		int64_t i;     // number value if `info & {n:FlagNumber}`
+		char const* s; // fraction string if `info & {n:FlagFraction}`
 	} number;
 } {n:Info};
 
@@ -96,12 +96,12 @@ extern {n:Rune} const {n:SpecialCases} [];
 /**
  * Category name indexable with `{n:Category}`
  */
-extern char const * const {n:CategoryNames} [];
+extern char const* const {n:CategoryNames} [];
 
 /**
  * Lookup character by value
  */
-static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
+static inline {n:Info} const* {n:LookupRune} ({n:Rune} rune) {
 	uint32_t page, offset;
 
 	if (rune > {c:MAX_VALUE}) {
