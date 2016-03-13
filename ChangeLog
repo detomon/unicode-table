@@ -1,3 +1,10 @@
+unicode-table 0.2:
+  Release date: 2016-03-13
+
+* Update symbol names
+* Use uppercase constants
+* Add better support as Automake subproject
+
 unicode-table 0.1:
   Release date: 2015-11-17
 
