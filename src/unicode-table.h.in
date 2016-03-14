@@ -74,21 +74,6 @@ typedef struct {
 typedef uint32_t {n:Rune};
 
 /**
- * Character info
- */
-extern {n:Info} const {n:Infos} [];
-
-/**
- * Lookup table page indexes
- */
-extern uint16_t const {n:PageIndex} [];
-
-/**
- * Lookup table info indexes
- */
-extern uint16_t const {n:InfoIndex} [][256];
-
-/**
  * Special case-folding characters
  */
 extern {n:Rune} const {n:SpecialCases} [];
@@ -102,6 +87,9 @@ extern char const * const {n:CategoryNames} [];
  * Lookup character by value
  */
 static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
+	extern json5_ut_info const json5_ut_infos [];
+	extern uint16_t const json5_ut_page_index [];
+	extern uint16_t const json5_ut_info_index [][256];
 	uint32_t page, offset;
 
 	if (rune > {c:MAX_VALUE}) {
