@@ -61,7 +61,7 @@ typedef enum {
 typedef struct {
 	uint32_t flags;    // flags of `{c:Flag}`
 	uint32_t category; // one of `{n:Category}`
-	int32_t cases [3]; // indexable with `{c:Case}`
+	int32_t cases [3]; // indexable with `{n:Case}`
 	union {
 		int64_t i;      // number value if `info & {c:FlagNumber}`
 		char const * s; // fraction string if `info & {c:FlagFraction}`
