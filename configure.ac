@@ -21,6 +21,10 @@ if test "x${UT_SNAKE_CASE}" = x; then
 	UT_SNAKE_CASE=0
 fi
 
+if test "x${UT_CATEGORIES}" = x; then
+	UT_CATEGORIES=0
+fi
+
 AC_ARG_ENABLE([symbol-prefix],
 	[  --disable-symbol-prefix use default symbol prefix],
 	[UT_SYMBOL_PREFIX=${enableval}],
@@ -29,6 +33,11 @@ AC_ARG_ENABLE([symbol-prefix],
 AC_ARG_ENABLE([snake-case],
 	[  --disable-snake-case    use camel-case symbols],
 	[UT_SNAKE_CASE=${enableval}],
+	[])
+
+AC_ARG_ENABLE([categories],
+	[  --disable-categories    only include certain character categories],
+	[UT_CATEGORIES=${enableval}],
 	[])
 
 if test "x${SNAKE_CASE}" = xyes; then
@@ -41,6 +50,7 @@ fi
 
 AC_SUBST([UT_SYMBOL_PREFIX])
 AC_SUBST([UT_SNAKE_CASE])
+AC_SUBST([UT_CATEGORIES])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE

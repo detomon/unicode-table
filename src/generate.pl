@@ -172,12 +172,28 @@ my %categoryName = (
 );
 
 my $args = join ' ', @ARGV;
+my $prefix = 'UT';
+my $makeSnakeCase = 0;
+my $useCategories = 0;
+my %useCategories = ();
 
-$args =~ /--symbol-prefix=([\w_]+)/;
-my $prefix = $1 || 'UT';
+if ($args =~ /--symbol-prefix=([\w_]+)/) {
+	$prefix = $1;
+}
 
-$args =~ /--snake-case=([\w_]+)/;
-my $makeSnakeCase = int $1;
+if ($args =~ /--snake-case=([\w_]+)/) {
+	$makeSnakeCase = int $1;
+}
+
+if ($args =~ /--categories=([\w_,]+)/) {
+	if ($1) {
+		foreach (split /,/g, $1) {
+			$useCategories {$_} = 1;
+		}
+
+		$useCategories = 1;
+	}
+}
 
 my $outName   = 'unicode-table';
 my $hdrFile   = "$outName.h";
@@ -354,51 +370,60 @@ while (<DATA>) {
 	my $cat  = $line [2];
 	my $info = $categoryFlags {$cat};
 
-	if (exists $specialChars {$code}) {
-		$info |= $specialChars {$code};
-	}
-
-	$pages [$code >> 8] = 1;
-
-	my $upper = hex ($line [12]);
-	my $lower = hex ($line [13]);
-	my $title = hex ($line [14]);
-
-	$upper = $upper - $code if ($upper);
-	$lower = $lower - $code if ($lower);
-	$title = $title - $code if ($title);
-
 	my $number = $line [8];
+	my $upper  = hex ($line [12]);
+	my $lower  = hex ($line [13]);
+	my $title  = hex ($line [14]);
 
-	if ($number =~ /\//) {
-		my ($v1, $v2) = split '/', $number;
-
-		$number = ".s=\"$v1/$v2\"";
-		$info |= moFractionRuneInfo;
-	}
-	elsif ($info & moNumberRuneInfo) {
-		$number = int ($number);
+	if ($useCategories && !exists $useCategories {$cat}) {
+		$info   = moOtherRuneInfo;
+		$cat    = 'Cn';
+		$number = 0;
+		$upper  = 0;
+		$lower  = 0;
+		$title  = 0;
 	}
 	else {
-		$number = 0;
-	}
-
-	if ($special {$code}) {
-		my @cases = @{$special {$code}};
-
-		if ($cases [0] != -1) {
-			$upper = $cases [0];
-			$info |= moUpperExpandsRuneInfo;
+		if (exists $specialChars {$code}) {
+			$info |= $specialChars {$code};
 		}
 
-		if ($cases [1] != -1) {
-			$lower = $cases [1];
-			$info |= moLowerExpandsRuneInfo;
+		$pages [$code >> 8] = 1;
+
+		$upper = $upper - $code if ($upper);
+		$lower = $lower - $code if ($lower);
+		$title = $title - $code if ($title);
+
+		if ($number =~ /\//) {
+			my ($v1, $v2) = split '/', $number;
+
+			$number = ".s=\"$v1/$v2\"";
+			$info |= moFractionRuneInfo;
+		}
+		elsif ($info & moNumberRuneInfo) {
+			$number = int ($number);
+		}
+		else {
+			$number = 0;
 		}
 
-		if ($cases [2] != -1) {
-			$title = $cases [2];
-			$info |= moTitleExpandsRuneInfo;
+		if ($special {$code}) {
+			my @cases = @{$special {$code}};
+
+			if ($cases [0] != -1) {
+				$upper = $cases [0];
+				$info |= moUpperExpandsRuneInfo;
+			}
+
+			if ($cases [1] != -1) {
+				$lower = $cases [1];
+				$info |= moLowerExpandsRuneInfo;
+			}
+
+			if ($cases [2] != -1) {
+				$title = $cases [2];
+				$info |= moTitleExpandsRuneInfo;
+			}
 		}
 	}
 

@@ -112,6 +112,7 @@ make
 
 - `--enable-symbol-prefix=bla` changes the prefix for library symbols to `bla` (instead of the default `UT`).
 - `--enable-snake-case`, `--disable-snake-case` enables or disables snake-case symbol names (For example, `bla_lookup_rune` instead of `blaLookupRune`).
+- `--enable-categories=Lu,Ll,Lt` sets the required Unicode character categories to be include in the table. This can reduce the table size. All other characters will have their category set to `UT_CATEGORY_OTHER_NOT_ASSIGNED`. If omitted, all categories are included.
 
 ```sh
 ./configure --enable-symbol-prefix=bla --enable-snake-case
@@ -128,6 +129,8 @@ This project is designed to be used as an Automake subproject. To match your pro
 # put before `AC_CONFIG_SUBDIRS`
 export UT_SYMBOL_PREFIX="myprefix"
 export UT_SNAKE_CASE=1
+# omit if all categories should be included
+export UT_CATEGORIES=Lu,Ll,Lt
 
 AC_CONFIG_SUBDIRS([unicode-table])
 
