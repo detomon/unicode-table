@@ -31,7 +31,6 @@ use strict;
 
 use constant unicodeVersion => '8.0.0';
 use constant tableSize      => 0x110000;
-use constant infoFormat     => "{%5d,%3d,{%6d,%6d,%6d}, {%s}},";
 
 use constant moLetterRuneInfo       => 1 << 0;
 use constant moUppercaseRuneInfo    => 1 << 1;
@@ -171,11 +170,20 @@ my %categoryName = (
 	'Cn' => 'CategoryOtherNotAssigned',
 );
 
+my $outName   = 'unicode-table';
+my $hdrFile   = "$outName.h";
+my $hdrFileIn = "unicode-table.h.in";
+my $srcFile   = "$outName.c";
+my $srcFileIn = "unicode-table.c.in";
+
 my $args = join ' ', @ARGV;
 my $prefix = 'UT';
 my $makeSnakeCase = 0;
 my $useCategories = 0;
 my %useCategories = ();
+my $includeInfos = 'flags,categories,casing,numbers';
+my %includeInfos = ();
+my %conditionalFlags = ();
 
 if ($args =~ /--symbol-prefix=([\w_]+)/) {
 	$prefix = $1;
@@ -186,20 +194,51 @@ if ($args =~ /--snake-case=([\w_]+)/) {
 }
 
 if ($args =~ /--categories=([\w_,]+)/) {
-	if ($1) {
-		foreach (split /,/g, $1) {
-			$useCategories {$_} = 1;
-		}
-
-		$useCategories = 1;
+	foreach (split /,/g, $1) {
+		$useCategories {$_} = 1;
 	}
+
+	$useCategories = 1;
 }
 
-my $outName   = 'unicode-table';
-my $hdrFile   = "$outName.h";
-my $hdrFileIn = "unicode-table.h.in";
-my $srcFile   = "$outName.c";
-my $srcFileIn = "unicode-table.c.in";
+if ($args =~ /--include-info=([\w_,]+)/) {
+	$includeInfos = $1;
+}
+
+# full format: '{%1$5d,%2$3d,{%3$6d,%4$6d,%5$6d}, {%6$s}},'
+my $infoFormat = '';
+my %infoFormat = ();
+my @infoFormat = ();
+
+foreach (split /,/g, $includeInfos) {
+	$infoFormat {$_} = 1;
+}
+
+if (exists $infoFormat {'flags'}) {
+	push @infoFormat, '%1$5d';
+	$conditionalFlags {'addFlags'} = 1;
+}
+
+if (exists $infoFormat {'categories'}) {
+	push @infoFormat, '%2$3d';
+	$conditionalFlags {'addCategories'} = 1;
+}
+
+if (exists $infoFormat {'casing'}) {
+	push @infoFormat, '{%3$6d,%4$6d,%5$6d}';
+	$conditionalFlags {'addCassing'} = 1;
+}
+
+if (exists $infoFormat {'numbers'}) {
+	push @infoFormat, ' {%6$s}';
+	$conditionalFlags {'addNumbers'} = 1;
+}
+
+$infoFormat = (join ',', @infoFormat);
+$infoFormat =~ s/^\s+|\s+$//g;
+$infoFormat = "{$infoFormat},";
+
+print %conditionalFlags;
 
 #-------------------------------------------------------------------------------
 #
@@ -220,7 +259,7 @@ if (($#ARGV + 1) < 2) {
 
 my @data          = (0 .. (tableSize - 1));
 my %special       = ();
-my %types         = (sprintf (infoFormat, 0, 0, 0, 0, 0, 0) => 0);
+my %types         = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
 my @pages         = (0 .. (tableSize >> 8) - 1);
 my %pageCache     = ();
 my @specialCasing = ();
@@ -427,7 +466,7 @@ while (<DATA>) {
 		}
 	}
 
-	my $type = sprintf (infoFormat, $info, $categoryIndexes {$cat}, $upper, $lower, $title, $number);
+	my $type = sprintf ($infoFormat, $info, $categoryIndexes {$cat}, $upper, $lower, $title, $number);
 
 	if ($types {$type}) {
 		$type = $types {$type};
@@ -628,18 +667,40 @@ sub handleLine {
 		next;
 	}
 
+	# handle if:
+	if ($line =~ /{(if:)([\w_]+)}/) {
+		return exists $conditionalFlags {$2};
+	}
+	# ignore endif:
+	elsif ($line =~ /{(endif:)([\w_]*)}/) {
+		return 1;
+	}
+
 	$line =~ s/{((\w+):)([\w_]+)}/replaceName($2, $3)/ge;
 
 	print $out $line;
 
+	return 1;
+}
+
+sub readToEndIf {
+	my $file = shift;
+
+	while (<$file>) {
+		return if ($_ =~ /{(endif:)([\w_]*)}/);
+	}
 }
 
 while (<$hdrin>) {
-	handleLine $_, $hdrout;
+	if (!handleLine $_, $hdrout) {
+		readToEndIf $hdrin;
+	}
 }
 
 while (<$srcin>) {
-	handleLine $_, $srcout;
+	if (!handleLine $_, $srcout) {
+		readToEndIf $srcin;
+	}
 }
 
 close $hdrin;

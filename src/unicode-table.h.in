@@ -17,6 +17,7 @@ extern "C" {
  */
 #define {c:MAX_VALUE} 0x10FFFF
 
+{if:addFlags}
 /**
  * Flags for determining character type
  */
@@ -38,14 +39,18 @@ typedef enum {
 	{c:FlagLowerExpands} = 1 << 14,
 	{c:FlagTitleExpands} = 1 << 15,
 } {n:Flag};
+{endif:}
 
+{if:addCategories}
 /**
  * Character categories
  */
 typedef enum {
 ##categories
 } {n:Category};
+{endif:}
 
+{if:addCasing}
 /**
  * Index usable for `cases` in `{n:Info}`
  */
@@ -54,18 +59,27 @@ typedef enum {
 	{c:CaseLower} = 1,
 	{c:CaseTitle} = 2,
 } {n:Case};
+{endif:}
 
 /**
  * Character info
  */
 typedef struct {
-	uint32_t flags;    // flags of `{c:Flag}`
+{if:addFlags}
+	uint32_t flags;    // flags of `{n:Flag}`
+{endif:}
+{if:addCategories}
 	uint32_t category; // one of `{n:Category}`
+{endif:}
+{if:addCasing}
 	int32_t cases [3]; // indexable with `{n:Case}`
+{endif:}
+{if:addNumbers}
 	union {
 		int64_t i;      // number value if `info & {c:FlagNumber}`
 		char const * s; // fraction string if `info & {c:FlagFraction}`
 	} number;
+{endif:}
 } {n:Info};
 
 /**
@@ -73,15 +87,19 @@ typedef struct {
  */
 typedef uint32_t {n:Rune};
 
+{if:addCasing}
 /**
  * Special case-folding characters
  */
 extern {n:Rune} const {n:SpecialCases} [];
+{endif:}
 
+{if:addCategories}
 /**
  * Category name indexable with `{n:Category}`
  */
 extern char const * const {n:CategoryNames} [];
+{endif:}
 
 /**
  * Lookup character by value
@@ -94,7 +112,7 @@ static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
 	uint32_t page, offset;
 
 	if (rune > {c:MAX_VALUE}) {
-		return & {n:Infos} [{c:CategoryInvalid}];
+		return & {n:Infos} [0];
 	}
 
 	page   = {n:PageIndex} [rune >> 8];

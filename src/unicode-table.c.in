@@ -24,13 +24,17 @@ uint16_t const {n:InfoIndex} [][256] = {
 ##infoIndex
 };
 
+{if:addCasing}
 /**
  * ([length][charcode]{length})*
  */
 {n:Rune} const {n:SpecialCases} [] = {
 ##specialCases
 };
+{endif:}
 
+{if:addCategories}
 char const * const {n:CategoryNames} [] = {
 ##categoryNames
 };
+{endif:}
