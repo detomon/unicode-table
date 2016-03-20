@@ -441,40 +441,18 @@ while (<DATA>) {
 
 	$data [$code] = $type;
 
-	# read private use pages
-	if ($code >= 0xF0000) {
-		while (<DATA>) {
-			my @line2 = split /;/, $_;
-			my $code2 = hex ($line2 [0]);
+	# read range
+	if ($line [1] =~ /First>$/) {
+		$_ = <DATA>;
+		chomp;
 
-			my $type = sprintf (infoFormat, $info, $categoryIndexes {$cat}, 0, 0, 0, 0);
+		my @line2 = split /;/, $_;
+		my $code2 = hex ($line2 [0]);
 
-			if ($types {$type}) {
-				$type = $types {$type};
-			}
-			else {
-				my $count = keys %types;
-
-				$types {$type} = $count;
-				$type = $count;
-			}
-
-			for (; $code <= $code2; $code ++) {
-				$pages [$code >> 8] = 1;
-				$data [$code] = $type;
-			}
-
-			my $line = <DATA>;
-
-			last unless ($line);
-
-			@line = split /;/, $line;
-			$code = hex ($line [0]);
-			$cat  = $line [2];
-			$info = $categoryFlags {$cat};
+		for (; $code <= $code2; $code ++) {
+			$pages [$code >> 8] = 1;
+			$data [$code] = $type;
 		}
-
-		last;
 	}
 }
 
