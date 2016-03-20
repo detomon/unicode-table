@@ -226,7 +226,7 @@ if (exists $infoFormat {'categories'}) {
 
 if (exists $infoFormat {'casing'}) {
 	push @infoFormat, '{%3$6d,%4$6d,%5$6d}';
-	$conditionalFlags {'addCassing'} = 1;
+	$conditionalFlags {'addCasing'} = 1;
 }
 
 if (exists $infoFormat {'numbers'}) {
@@ -237,8 +237,6 @@ if (exists $infoFormat {'numbers'}) {
 $infoFormat = (join ',', @infoFormat);
 $infoFormat =~ s/^\s+|\s+$//g;
 $infoFormat = "{$infoFormat},";
-
-print %conditionalFlags;
 
 #-------------------------------------------------------------------------------
 #

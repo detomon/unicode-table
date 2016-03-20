@@ -22,7 +22,7 @@ if test "x${UT_SNAKE_CASE}" = x; then
 fi
 
 if test "x${UT_CATEGORIES}" = x; then
-	UT_CATEGORIES=0
+	UT_CATEGORIES=""
 fi
 
 if test "x${UT_INCLUDE_INFO}" = x; then
