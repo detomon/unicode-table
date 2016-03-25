@@ -1,3 +1,8 @@
+unicode-table 0.3.1:
+  Release date: 2016-03-25
+
+* Set optimal integer type to reduce table size
+
 unicode-table 0.3:
   Release date: 2016-03-20
 
