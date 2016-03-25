@@ -12,7 +12,7 @@
  * All Unicode pages
  * Points to {n:InfoIndex}
  */
-uint16_t const {n:PageIndex} [] = {
+{v:pagesType} const {n:PageIndex} [] = {
 ##pageIndex
 };
 
@@ -20,7 +20,7 @@ uint16_t const {n:PageIndex} [] = {
  * Indexes of rune_types
  * {n:InfoIndex} [page index][index in page]
  */
-uint16_t const {n:InfoIndex} [][256] = {
+{v:infoType} const {n:InfoIndex} [][256] = {
 ##infoIndex
 };
 

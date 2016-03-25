@@ -106,8 +106,8 @@ extern char const * const {n:CategoryNames} [];
  */
 static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
 	extern {n:Info} const {n:Infos} [];
-	extern uint16_t const {n:PageIndex} [];
-	extern uint16_t const {n:InfoIndex} [][256];
+	extern {v:pagesType} const {n:PageIndex} [];
+	extern {v:infoType} const {n:InfoIndex} [][256];
 
 	uint32_t page, offset;
 

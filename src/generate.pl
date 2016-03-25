@@ -537,6 +537,13 @@ my %vars = (
 	'outName' => $outName,
 );
 
+my @infoKeys  = keys %types;
+my $infoSize  = @infoKeys;
+my $pagesSize = @pages;
+
+$vars {'infoType'}  = $infoSize >= 256 ? 'uint16_t' : 'uint8_t';
+$vars {'pagesType'} = $pagesSize >= 256 ? 'uint16_t' : 'uint8_t';
+
 my %printMethods = (
 	'header' => sub {
 		my $out = shift;
