@@ -22,7 +22,7 @@ int main (int argc, char const * argv [])
 	while (fgets (line, 1024, data)) {
 		sscanf (line, "%x;%63[^;];%2[^;]", &value, name, categoryName);
 
-		info = UTLookupRune (value);
+		info = UTLookupGlyph (value);
 		category = info -> category;
 
 		// test category

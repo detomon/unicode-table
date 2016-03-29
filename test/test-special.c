@@ -47,7 +47,7 @@ int main (int argc, char const * argv [])
 			continue;
 		}
 
-		info = UTLookupRune (value);
+		info = UTLookupGlyph (value);
 
 		if (!(info -> flags & (UT_FLAG_UPPER_EXPANDS | UT_FLAG_LOWER_EXPANDS | UT_FLAG_TITLE_EXPANDS))) {
 			fprintf (stderr, "No special case found for '%04x'\n", value);

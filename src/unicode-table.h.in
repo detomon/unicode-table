@@ -85,13 +85,13 @@ typedef struct {
 /**
  * The character
  */
-typedef uint32_t {n:Rune};
+typedef uint32_t {n:Glyph};
 
 {if:addCasing}
 /**
  * Special case-folding characters
  */
-extern {n:Rune} const {n:SpecialCases} [];
+extern {n:Glyph} const {n:SpecialCases} [];
 {endif:}
 
 {if:addCategories}
@@ -104,19 +104,19 @@ extern char const * const {n:CategoryNames} [];
 /**
  * Lookup character by value
  */
-static inline {n:Info} const * {n:LookupRune} ({n:Rune} rune) {
+static inline {n:Info} const * {n:LookupGlyph} ({n:Glyph} glyph) {
 	extern {n:Info} const {n:Infos} [];
 	extern {v:pagesType} const {n:PageIndex} [];
 	extern {v:infoType} const {n:InfoIndex} [][256];
 
 	uint32_t page, offset;
 
-	if (rune > {c:MAX_VALUE}) {
+	if (glyph > {c:MAX_VALUE}) {
 		return & {n:Infos} [0];
 	}
 
-	page   = {n:PageIndex} [rune >> 8];
-	offset = {n:InfoIndex} [page][rune & 0xFF];
+	page   = {n:PageIndex} [glyph >> 8];
+	offset = {n:InfoIndex} [page][glyph & 0xFF];
 
 	return & {n:Infos} [offset];
 }

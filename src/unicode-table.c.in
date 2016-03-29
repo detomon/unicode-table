@@ -17,7 +17,7 @@
 };
 
 /**
- * Indexes of rune_types
+ * Indexes of glyph_types
  * {n:InfoIndex} [page index][index in page]
  */
 {v:infoType} const {n:InfoIndex} [][256] = {
@@ -28,7 +28,7 @@
 /**
  * ([length][charcode]{length})*
  */
-{n:Rune} const {n:SpecialCases} [] = {
+{n:Glyph} const {n:SpecialCases} [] = {
 ##specialCases
 };
 {endif:}

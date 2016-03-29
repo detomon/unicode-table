@@ -32,74 +32,74 @@ use strict;
 use constant unicodeVersion => '8.0.0';
 use constant tableSize      => 0x110000;
 
-use constant moLetterRuneInfo       => 1 << 0;
-use constant moUppercaseRuneInfo    => 1 << 1;
-use constant moLowercaseRuneInfo    => 1 << 2;
-use constant moTitlecaseRuneInfo    => 1 << 3;
-use constant moSpaceRuneInfo        => 1 << 4;
-use constant moLinebreakRuneInfo    => 1 << 5;
-use constant moPunctuationRuneInfo  => 1 << 6;
-use constant moDigitRuneInfo        => 1 << 7;
-use constant moNumberRuneInfo       => 1 << 8;
-use constant moFractionRuneInfo     => 1 << 9;
-use constant moControlRuneInfo      => 1 << 10;
-use constant moSymbolRuneInfo       => 1 << 11;
-use constant moOtherRuneInfo        => 1 << 12;
-use constant moUpperExpandsRuneInfo => 1 << 13;
-use constant moLowerExpandsRuneInfo => 1 << 14;
-use constant moTitleExpandsRuneInfo => 1 << 15;
+use constant moLetterGlyphInfo       => 1 << 0;
+use constant moUppercaseGlyphInfo    => 1 << 1;
+use constant moLowercaseGlyphInfo    => 1 << 2;
+use constant moTitlecaseGlyphInfo    => 1 << 3;
+use constant moSpaceGlyphInfo        => 1 << 4;
+use constant moLinebreakGlyphInfo    => 1 << 5;
+use constant moPunctuationGlyphInfo  => 1 << 6;
+use constant moDigitGlyphInfo        => 1 << 7;
+use constant moNumberGlyphInfo       => 1 << 8;
+use constant moFractionGlyphInfo     => 1 << 9;
+use constant moControlGlyphInfo      => 1 << 10;
+use constant moSymbolGlyphInfo       => 1 << 11;
+use constant moOtherGlyphInfo        => 1 << 12;
+use constant moUpperExpandsGlyphInfo => 1 << 13;
+use constant moLowerExpandsGlyphInfo => 1 << 14;
+use constant moTitleExpandsGlyphInfo => 1 << 15;
 
 my %flagNames = (
-	moLetterRuneInfo       => 'moLetterRuneInfo',
-	moUppercaseRuneInfo    => 'moUppercaseRuneInfo',
-	moLowercaseRuneInfo    => 'moLowercaseRuneInfo',
-	moTitlecaseRuneInfo    => 'moTitlecaseRuneInfo',
-	moSpaceRuneInfo        => 'moSpaceRuneInfo',
-	moLinebreakRuneInfo    => 'moLinebreakRuneInfo',
-	moPunctuationRuneInfo  => 'moPunctuationRuneInfo',
-	moDigitRuneInfo        => 'moDigitRuneInfo',
-	moNumberRuneInfo       => 'moNumberRuneInfo',
-	moFractionRuneInfo     => 'moFractionRuneInfo',
-	moControlRuneInfo      => 'moControlRuneInfo',
-	moSymbolRuneInfo       => 'moSymbolRuneInfo',
-	moOtherRuneInfo        => 'moOtherRuneInfo',
-	moUpperExpandsRuneInfo => 'moUpperExpandsRuneInfo',
-	moLowerExpandsRuneInfo => 'moLowerExpandsRuneInfo',
-	moTitleExpandsRuneInfo => 'moTitleExpandsRuneInfo',
+	moLetterGlyphInfo       => 'moLetterGlyphInfo',
+	moUppercaseGlyphInfo    => 'moUppercaseGlyphInfo',
+	moLowercaseGlyphInfo    => 'moLowercaseGlyphInfo',
+	moTitlecaseGlyphInfo    => 'moTitlecaseGlyphInfo',
+	moSpaceGlyphInfo        => 'moSpaceGlyphInfo',
+	moLinebreakGlyphInfo    => 'moLinebreakGlyphInfo',
+	moPunctuationGlyphInfo  => 'moPunctuationGlyphInfo',
+	moDigitGlyphInfo        => 'moDigitGlyphInfo',
+	moNumberGlyphInfo       => 'moNumberGlyphInfo',
+	moFractionGlyphInfo     => 'moFractionGlyphInfo',
+	moControlGlyphInfo      => 'moControlGlyphInfo',
+	moSymbolGlyphInfo       => 'moSymbolGlyphInfo',
+	moOtherGlyphInfo        => 'moOtherGlyphInfo',
+	moUpperExpandsGlyphInfo => 'moUpperExpandsGlyphInfo',
+	moLowerExpandsGlyphInfo => 'moLowerExpandsGlyphInfo',
+	moTitleExpandsGlyphInfo => 'moTitleExpandsGlyphInfo',
 );
 
 my %categoryFlags = (
 	''   => 0,
-	'Lu' => moLetterRuneInfo | moUppercaseRuneInfo,
-	'Ll' => moLetterRuneInfo | moLowercaseRuneInfo,
-	'Lt' => moLetterRuneInfo | moTitlecaseRuneInfo,
-	'Lm' => moLetterRuneInfo,
-	'Lo' => moLetterRuneInfo,
-	'Mn' => moOtherRuneInfo,
-	'Mc' => moOtherRuneInfo,
-	'Me' => moOtherRuneInfo,
-	'Nd' => moLetterRuneInfo | moDigitRuneInfo | moNumberRuneInfo,
-	'Nl' => moLetterRuneInfo | moNumberRuneInfo,
-	'No' => moLetterRuneInfo | moNumberRuneInfo,
-	'Pc' => moPunctuationRuneInfo,
-	'Pd' => moPunctuationRuneInfo,
-	'Ps' => moPunctuationRuneInfo,
-	'Pe' => moPunctuationRuneInfo,
-	'Pi' => moPunctuationRuneInfo,
-	'Pf' => moPunctuationRuneInfo,
-	'Po' => moPunctuationRuneInfo,
-	'Sm' => moSymbolRuneInfo,
-	'Sc' => moSymbolRuneInfo,
-	'Sk' => moSymbolRuneInfo,
-	'So' => moSymbolRuneInfo,
-	'Zs' => moSpaceRuneInfo,
-	'Zl' => moSpaceRuneInfo | moLinebreakRuneInfo,
-	'Zp' => moSpaceRuneInfo | moLinebreakRuneInfo,
-	'Cc' => moControlRuneInfo,
-	'Cf' => moOtherRuneInfo,
-	'Cs' => moOtherRuneInfo,
-	'Co' => moOtherRuneInfo,
-	'Cn' => moOtherRuneInfo,
+	'Lu' => moLetterGlyphInfo | moUppercaseGlyphInfo,
+	'Ll' => moLetterGlyphInfo | moLowercaseGlyphInfo,
+	'Lt' => moLetterGlyphInfo | moTitlecaseGlyphInfo,
+	'Lm' => moLetterGlyphInfo,
+	'Lo' => moLetterGlyphInfo,
+	'Mn' => moOtherGlyphInfo,
+	'Mc' => moOtherGlyphInfo,
+	'Me' => moOtherGlyphInfo,
+	'Nd' => moLetterGlyphInfo | moDigitGlyphInfo | moNumberGlyphInfo,
+	'Nl' => moLetterGlyphInfo | moNumberGlyphInfo,
+	'No' => moLetterGlyphInfo | moNumberGlyphInfo,
+	'Pc' => moPunctuationGlyphInfo,
+	'Pd' => moPunctuationGlyphInfo,
+	'Ps' => moPunctuationGlyphInfo,
+	'Pe' => moPunctuationGlyphInfo,
+	'Pi' => moPunctuationGlyphInfo,
+	'Pf' => moPunctuationGlyphInfo,
+	'Po' => moPunctuationGlyphInfo,
+	'Sm' => moSymbolGlyphInfo,
+	'Sc' => moSymbolGlyphInfo,
+	'Sk' => moSymbolGlyphInfo,
+	'So' => moSymbolGlyphInfo,
+	'Zs' => moSpaceGlyphInfo,
+	'Zl' => moSpaceGlyphInfo | moLinebreakGlyphInfo,
+	'Zp' => moSpaceGlyphInfo | moLinebreakGlyphInfo,
+	'Cc' => moControlGlyphInfo,
+	'Cf' => moOtherGlyphInfo,
+	'Cs' => moOtherGlyphInfo,
+	'Co' => moOtherGlyphInfo,
+	'Cn' => moOtherGlyphInfo,
 );
 
 my %categoryIndexes = (
@@ -389,12 +389,12 @@ close SPECIAL;
 #-------------------------------------------------------------------------------
 
 my %specialChars = (
-	0x0009 => moSpaceRuneInfo,                       # CHARACTER TABULATION
-	0x000A => moSpaceRuneInfo | moLinebreakRuneInfo, # LINE FEED (LF)
-	0x000B => moSpaceRuneInfo,                       # LINE TABULATION
-	0x000C => moSpaceRuneInfo,                       # FORM FEED (FF)
-	0x000D => moSpaceRuneInfo | moLinebreakRuneInfo, # CARRIAGE RETURN (CR)
-	0xFEFF => moSpaceRuneInfo,                       # ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)
+	0x0009 => moSpaceGlyphInfo,                       # CHARACTER TABULATION
+	0x000A => moSpaceGlyphInfo | moLinebreakGlyphInfo, # LINE FEED (LF)
+	0x000B => moSpaceGlyphInfo,                       # LINE TABULATION
+	0x000C => moSpaceGlyphInfo,                       # FORM FEED (FF)
+	0x000D => moSpaceGlyphInfo | moLinebreakGlyphInfo, # CARRIAGE RETURN (CR)
+	0xFEFF => moSpaceGlyphInfo,                       # ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)
 );
 
 open DATA, "<$ARGV[0]" or die "File '$ARGV[0]' not found";
@@ -413,7 +413,7 @@ while (<DATA>) {
 	my $title  = hex ($line [14]);
 
 	if ($useCategories && !exists $useCategories {$cat}) {
-		$info   = moOtherRuneInfo;
+		$info   = moOtherGlyphInfo;
 		$cat    = 'Cn';
 		$number = 0;
 		$upper  = 0;
@@ -435,9 +435,9 @@ while (<DATA>) {
 			my ($v1, $v2) = split '/', $number;
 
 			$number = ".s=\"$v1/$v2\"";
-			$info |= moFractionRuneInfo;
+			$info |= moFractionGlyphInfo;
 		}
-		elsif ($info & moNumberRuneInfo) {
+		elsif ($info & moNumberGlyphInfo) {
 			$number = int ($number);
 		}
 		else {
@@ -449,17 +449,17 @@ while (<DATA>) {
 
 			if ($cases [0] != -1) {
 				$upper = $cases [0];
-				$info |= moUpperExpandsRuneInfo;
+				$info |= moUpperExpandsGlyphInfo;
 			}
 
 			if ($cases [1] != -1) {
 				$lower = $cases [1];
-				$info |= moLowerExpandsRuneInfo;
+				$info |= moLowerExpandsGlyphInfo;
 			}
 
 			if ($cases [2] != -1) {
 				$title = $cases [2];
-				$info |= moTitleExpandsRuneInfo;
+				$info |= moTitleExpandsGlyphInfo;
 			}
 		}
 	}

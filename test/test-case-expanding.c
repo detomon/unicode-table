@@ -3,8 +3,8 @@
 int main (int argc, char const * argv [])
 {
 	// character 0x00DF (ß) (LATIN SMALL LETTER SHARP S)
-	UTRune rune = 0x00DF;
-	UTInfo const * info = UTLookupRune (rune);
+	UTGlyph glyph = 0x00DF;
+	UTInfo const * info = UTLookupGlyph (glyph);
 
 	// check if expansion occurs to prevent invalid index
 	if (info -> flags & UT_FLAG_UPPER_EXPANDS) {
@@ -13,10 +13,10 @@ int main (int argc, char const * argv [])
 		int length = UTSpecialCases [idx];
 
 		// character sequence
-		UTRune const * sequence = &UTSpecialCases [idx + 1];
+		UTGlyph const * sequence = &UTSpecialCases [idx + 1];
 
 		// prints "00DF expands to 2 chars in uppercase"
-		printf ("%04X expands to %d chars in uppercase\n", rune, length);
+		printf ("%04X expands to %d chars in uppercase\n", glyph, length);
 
 		assert (length == 2);
 
@@ -29,7 +29,7 @@ int main (int argc, char const * argv [])
 		}
 	}
 	else {
-		printf ("Character %04X does not expand\n", rune);
+		printf ("Character %04X does not expand\n", glyph);
 
 		return RESULT_FAIL;
 	}
