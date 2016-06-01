@@ -76,8 +76,8 @@ typedef struct {
 {endif:}
 {if:addNumbers}
 	union {
-		int64_t i;      // number value if `info & {c:FlagNumber}`
-		char const * s; // fraction string if `info & {c:FlagFraction}`
+		int64_t i;      // number value if `flags & {c:FlagNumber}`
+		char const * s; // fraction string if `flags & {c:FlagFraction}`
 	} number;
 {endif:}
 } {n:Info};
