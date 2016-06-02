@@ -17,7 +17,7 @@
 };
 
 /**
- * Indexes of glyph_types.
+ * Indexes of {n:Infos}.
  * {n:InfoIndex}[page index][index in page].
  */
 {v:infoType} const {n:InfoIndex}[][256] = {
