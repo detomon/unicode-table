@@ -4,23 +4,23 @@
 
 #include "{v:outName}.h"
 
-{n:Info} const {n:Infos} [] = {
+{n:Info} const {n:Infos}[] = {
 ##infos
 };
 
 /**
- * All Unicode pages
- * Points to {n:InfoIndex}
+ * All Unicode pages.
+ * Points to {n:InfoIndex}.
  */
-{v:pagesType} const {n:PageIndex} [] = {
+{v:pagesType} const {n:PageIndex}[] = {
 ##pageIndex
 };
 
 /**
- * Indexes of glyph_types
- * {n:InfoIndex} [page index][index in page]
+ * Indexes of glyph_types.
+ * {n:InfoIndex}[page index][index in page].
  */
-{v:infoType} const {n:InfoIndex} [][256] = {
+{v:infoType} const {n:InfoIndex}[][256] = {
 ##infoIndex
 };
 
@@ -28,13 +28,13 @@
 /**
  * ([length][charcode]{length})*
  */
-{n:Glyph} const {n:SpecialCases} [] = {
+{n:Glyph} const {n:SpecialCases}[] = {
 ##specialCases
 };
 {endif:}
 
 {if:addCategories}
-char const * const {n:CategoryNames} [] = {
+char const* const {n:CategoryNames}[] = {
 ##categoryNames
 };
 {endif:}

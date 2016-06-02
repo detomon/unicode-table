@@ -434,7 +434,7 @@ while (<DATA>) {
 		if ($number =~ /\//) {
 			my ($v1, $v2) = split '/', $number;
 
-			$number = ".s=\"$v1/$v2\"";
+			$number = ".frac=\"$v1/$v2\"";
 			$info |= moFractionGlyphInfo;
 		}
 		elsif ($info & moNumberGlyphInfo) {

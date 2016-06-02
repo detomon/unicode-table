@@ -12,7 +12,7 @@ int main (int argc, char const * argv [])
 	// check if character is a number
 	if (info -> flags & UT_FLAG_NUMBER) {
 		// prints "Integer value of 2166: 7"
-		printf ("Integer value of %04X: %lld\n", glyph, info -> number.i);
+		printf ("Integer value of %04X: %lld\n", glyph, info -> num);
 	}
 	else {
 		return RESULT_FAIL;
@@ -25,7 +25,7 @@ int main (int argc, char const * argv [])
 	// check if character is a fraction
 	if (info -> flags & UT_FLAG_FRACTION) {
 		// prints "String representation of 00BC: 1/4"
-		printf ("String representation of %04X: %s \n", glyph, info -> number.s);
+		printf ("String representation of %04X: %s \n", glyph, info -> frac);
 	}
 	else {
 		return RESULT_FAIL;

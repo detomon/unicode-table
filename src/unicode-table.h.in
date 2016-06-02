@@ -2,14 +2,12 @@
 ##header
  */
 
-#ifndef _{c:UNICODE_TABLE}_H_
-#define _{c:UNICODE_TABLE}_H_
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdlib.h>
 #include <stdint.h>
 
 /**
@@ -52,7 +50,7 @@ typedef enum {
 
 {if:addCasing}
 /**
- * Index usable for `cases` in `{n:Info}`
+ * Index usable for `cases` in `{n:Info}`.
  */
 typedef enum {
 	{c:CaseUpper} = 0,
@@ -62,7 +60,7 @@ typedef enum {
 {endif:}
 
 /**
- * Character info
+ * Character info.
  */
 typedef struct {
 {if:addFlags}
@@ -72,57 +70,55 @@ typedef struct {
 	uint32_t category; // one of `{n:Category}`
 {endif:}
 {if:addCasing}
-	int32_t cases [3]; // indexable with `{n:Case}`
+	int32_t cases[3];  // indexable with `{n:Case}`
 {endif:}
 {if:addNumbers}
 	union {
-		int64_t i;      // number value if `flags & {c:FlagNumber}`
-		char const * s; // fraction string if `flags & {c:FlagFraction}`
-	} number;
+		int64_t num;      // number value if `flags & {c:FlagNumber}`
+		char const* frac; // fraction string if `flags & {c:FlagFraction}`
+	};
 {endif:}
 } {n:Info};
 
 /**
- * The character
+ * The character.
  */
 typedef uint32_t {n:Glyph};
 
 {if:addCasing}
 /**
- * Special case-folding characters
+ * Special case-folding characters.
  */
-extern {n:Glyph} const {n:SpecialCases} [];
+extern {n:Glyph} const {n:SpecialCases}[];
 {endif:}
 
 {if:addCategories}
 /**
- * Category name indexable with `{n:Category}`
+ * Category name indexable with `{n:Category}`.
  */
-extern char const * const {n:CategoryNames} [];
+extern char const* const {n:CategoryNames}[];
 {endif:}
 
 /**
- * Lookup character by value
+ * Lookup character by value.
  */
-static inline {n:Info} const * {n:LookupGlyph} ({n:Glyph} glyph) {
-	extern {n:Info} const {n:Infos} [];
-	extern {v:pagesType} const {n:PageIndex} [];
-	extern {v:infoType} const {n:InfoIndex} [][256];
+static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
+	extern {n:Info} const {n:Infos}[];
+	extern {v:pagesType} const {n:PageIndex}[];
+	extern {v:infoType} const {n:InfoIndex}[][256];
 
 	uint32_t page, offset;
 
 	if (glyph > {c:MAX_VALUE}) {
-		return & {n:Infos} [0];
+		return &{n:Infos}[0];
 	}
 
-	page   = {n:PageIndex} [glyph >> 8];
-	offset = {n:InfoIndex} [page][glyph & 0xFF];
+	page = {n:PageIndex}[glyph >> 8];
+	offset = {n:InfoIndex}[page][glyph & 0xFF];
 
-	return & {n:Infos} [offset];
+	return &{n:Infos}[offset];
 }
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* ! _{c:UNICODE_TABLE}_H_ */
