@@ -112,7 +112,7 @@ make
 
 - `--enable-symbol-prefix=bla` changes the prefix for library symbols to `bla` (instead of the default `UT`).
 - `--enable-snake-case`, `--disable-snake-case` enables or disables snake-case symbol names (For example, `bla_lookup_glyph` instead of `blaLookupGlyph`).
-- `--enable-categories=Lu,Ll,Lt` sets the required Unicode character categories to be include in the table. This can reduce the table size. All other characters will have their category set to `UT_CATEGORY_OTHER_NOT_ASSIGNED`. If omitted, all categories are included.
+- `--enable-categories=Lu,Ll,Lt,Lm,Lo,Mn,Mc,Me,Nd,Nl,No,Pc,Pd,Ps,Pe,Pi,Pf,Po,Sm,Sc,Sk,So,Zs,Zl,Zp,Cc,Cf,Cs,Co,Cn` sets the required Unicode character categories to be include in the table. This can reduce the table size. All other characters will have their category set to `UT_CATEGORY_OTHER_NOT_ASSIGNED`. If omitted, all categories are included.
 - `--enable-include-info=flags,categories,casing,numbers` sets the required character informations to be included in the table. If omitted, all available informations are included.
 
 ```sh
