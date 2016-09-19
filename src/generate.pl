@@ -29,7 +29,7 @@ use strict;
 #
 #-------------------------------------------------------------------------------
 
-use constant unicodeVersion => '8.0.0';
+use constant unicodeVersion => '9.0.0';
 use constant tableSize      => 0x110000;
 
 use constant moLetterGlyphInfo       => 1 << 0;
