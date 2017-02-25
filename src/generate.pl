@@ -183,6 +183,7 @@ my $useCategories = 0;
 my %useCategories = ();
 my $includeInfos = 'flags,categories,casing,numbers';
 my %includeInfos = ();
+my $excludeSurrogates = 0;
 my %conditionalFlags = ();
 
 if ($args =~ /--symbol-prefix=([\w_]+)/) {
@@ -203,6 +204,10 @@ if ($args =~ /--categories=([\w_,]+)/) {
 
 if ($args =~ /--include-info=([\w_,]+)/) {
 	$includeInfos = $1;
+}
+
+if ($args =~ /--strict-level=(\d+)/) {
+	$excludeSurrogates = int $1 > 0;
 }
 
 # full format: '{%1$5d,%2$3d,{%3$6d,%4$6d,%5$6d}, {%6$s}},'
@@ -485,6 +490,12 @@ while (<DATA>) {
 
 		my @line2 = split /;/, $_;
 		my $code2 = hex ($line2 [0]);
+
+		if ($excludeSurrogates) {
+			if ($line [1] =~ /Surrogate/i) {
+				next;
+			}
+		}
 
 		for (; $code <= $code2; $code ++) {
 			$pages [$code >> 8] = 1;

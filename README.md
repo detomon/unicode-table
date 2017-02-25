@@ -112,30 +112,50 @@ make
 
 `configure` can take some options:
 
-- `--enable-symbol-prefix=bla` changes the prefix for library symbols to `bla` (instead of the default `UT`).
-- `--enable-snake-case`, `--disable-snake-case` enables or disables snake-case symbol names (For example, `bla_lookup_glyph` instead of `blaLookupGlyph`).
+- `--enable-symbol-prefix=bla` changes the prefix for library symbols to `bla`. The default is `UT`.
+- `--enable-snake-case`, `--disable-snake-case` enables or disables snake-case symbol names (For example, `bla_lookup_glyph` instead of `blaLookupGlyph`). The default is `disable`.
 - `--enable-categories=Lu,Ll,Lt,Lm,Lo,Mn,Mc,Me,Nd,Nl,No,Pc,Pd,Ps,Pe,Pi,Pf,Po,Sm,Sc,Sk,So,Zs,Zl,Zp,Cc,Cf,Cs,Co,Cn` sets the required Unicode character categories to be include in the table. This can reduce the table size. All other characters will have their category set to `UT_CATEGORY_OTHER_NOT_ASSIGNED`. If omitted, all categories are included.
 - `--enable-include-info=flags,categories,casing,numbers` sets the required character informations to be included in the table. If omitted, all available informations are included.
+- `--enable-strict-level=0` sets the strict level, which excludes certain characters considered as unsafe, for example, surrogates. Defaut is 0.  
+0: do not exclude any characters  
+1: define surrogates as invalid  
+
+### Example
 
 ```sh
-./configure --enable-symbol-prefix=bla --enable-snake-case
+./configure \  
+    --enable-symbol-prefix=bla \  
+    --enable-categories=Lu,Ll,Lt,Lm,Lo \  
+    --enable-snake-case \  
+    --enable-strict-level=1
 ```
 
 Using as Automake Subproject
 ----------------------------
 
-This project is designed to be used as an Automake subproject. To match your projects namespace, export the enviroment variables `UT_SYMBOL_PREFIX` and `UT_SNAKE_CASE` inside the main project's `configure.ac`:
+This project is designed to be used as an Automake subproject. To match your projects namespace, export the enviroment variables inside the main project's `configure.ac`:
 
 ```sh
 ...
 
 # put before `AC_CONFIG_SUBDIRS`
+
+# use symbol prefix
+# omit for default prefix
 export UT_SYMBOL_PREFIX="myprefix"
+# use snake case symbols
 export UT_SNAKE_CASE=1
-# omit if all categories should be included
+# define character categories to include
+# omit to include all categories
 export UT_CATEGORIES=Lu,Ll,Lt
-# omit if all available informations should be included
+# define character information to include
+# omit to include all available information
 export UT_INCLUDE_INFO=flags,categories
+# exclude additional characters, for example, surrogates
+# omit for using default (0)
+# 0: do not exclude any characters
+# 1: define surrogates as invalid
+export UT_STRICT_LEVEL=0
 
 AC_CONFIG_SUBDIRS([unicode-table])
 

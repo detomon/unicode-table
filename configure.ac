@@ -29,6 +29,10 @@ if test "x${UT_INCLUDE_INFO}" = x; then
 	UT_INCLUDE_INFO=""
 fi
 
+if test "x${UT_STRICT_LEVEL}" = x; then
+	UT_STRICT_LEVEL=0
+fi
+
 AC_ARG_ENABLE([symbol-prefix],
 	[  --disable-symbol-prefix use default symbol prefix],
 	[UT_SYMBOL_PREFIX=${enableval}],
@@ -49,6 +53,11 @@ AC_ARG_ENABLE([include-info],
 	[UT_INCLUDE_INFO=${enableval}],
 	[])
 
+AC_ARG_ENABLE([strict-level],
+	[  --strict-level          define certain characters as invalid, e.g., surrogates],
+	[UT_STRICT_LEVEL=${enableval}],
+	[])
+
 if test "x${SNAKE_CASE}" = xyes; then
 	UT_SNAKE_CASE=1
 fi
@@ -61,6 +70,7 @@ AC_SUBST([UT_SYMBOL_PREFIX])
 AC_SUBST([UT_SNAKE_CASE])
 AC_SUBST([UT_CATEGORIES])
 AC_SUBST([UT_INCLUDE_INFO])
+AC_SUBST([UT_STRICT_LEVEL])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
