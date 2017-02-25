@@ -49,25 +49,6 @@ use constant moUpperExpandsGlyphInfo => 1 << 13;
 use constant moLowerExpandsGlyphInfo => 1 << 14;
 use constant moTitleExpandsGlyphInfo => 1 << 15;
 
-my %flagNames = (
-	moLetterGlyphInfo       => 'moLetterGlyphInfo',
-	moUppercaseGlyphInfo    => 'moUppercaseGlyphInfo',
-	moLowercaseGlyphInfo    => 'moLowercaseGlyphInfo',
-	moTitlecaseGlyphInfo    => 'moTitlecaseGlyphInfo',
-	moSpaceGlyphInfo        => 'moSpaceGlyphInfo',
-	moLinebreakGlyphInfo    => 'moLinebreakGlyphInfo',
-	moPunctuationGlyphInfo  => 'moPunctuationGlyphInfo',
-	moDigitGlyphInfo        => 'moDigitGlyphInfo',
-	moNumberGlyphInfo       => 'moNumberGlyphInfo',
-	moFractionGlyphInfo     => 'moFractionGlyphInfo',
-	moControlGlyphInfo      => 'moControlGlyphInfo',
-	moSymbolGlyphInfo       => 'moSymbolGlyphInfo',
-	moOtherGlyphInfo        => 'moOtherGlyphInfo',
-	moUpperExpandsGlyphInfo => 'moUpperExpandsGlyphInfo',
-	moLowerExpandsGlyphInfo => 'moLowerExpandsGlyphInfo',
-	moTitleExpandsGlyphInfo => 'moTitleExpandsGlyphInfo',
-);
-
 my %categoryFlags = (
 	''   => 0,
 	'Lu' => moLetterGlyphInfo | moUppercaseGlyphInfo,
@@ -190,7 +171,7 @@ if ($args =~ /--symbol-prefix=([\w_]+)/) {
 	$prefix = $1;
 }
 
-if ($args =~ /--snake-case=([\w_]+)/) {
+if ($args =~ /--snake-case=(\d+)/) {
 	$makeSnakeCase = int $1;
 }
 
@@ -260,12 +241,12 @@ if (($#ARGV + 1) < 2) {
 #
 #-------------------------------------------------------------------------------
 
-my @data          = (0 .. (tableSize - 1));
-my %special       = ();
-my %types         = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
-my @pages         = (0 .. (tableSize >> 8) - 1);
-my %pageCache     = ();
-my @specialCasing = ();
+my @data           = (0 .. (tableSize - 1));
+my %special        = ();
+my %types          = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
+my @pages          = (0 .. (tableSize >> 8) - 1);
+my %pageCache      = ();
+my @specialCasing  = ();
 
 for (my $i = 0; $i < tableSize; $i ++) {
 	$data [$i] = 0;
@@ -343,13 +324,36 @@ sub makeCharSequence {
 	my @sequence = split /\s+/, $1;
 	my $offset   = $#specialCasing + 1;
 
-	# ignore single character
+	# ignore single glyph
 	return -1 if ($#sequence == 0);
 
 	push @specialCasing, $#sequence + 1;
 	push @specialCasing, hex ($_) foreach (@sequence);
 
 	return $offset;
+}
+
+sub getTypeIndex {
+	my $info = shift;
+	my $catIdx = shift;
+	my $upper = shift;
+	my $lower = shift;
+	my $title = shift;
+	my $number = shift;
+
+	my $type = sprintf ($infoFormat, $info, $catIdx, $upper, $lower, $title, $number);
+
+	if ($types {$type}) {
+		$type = $types {$type};
+	}
+	else {
+		my $count = keys %types;
+
+		$types {$type} = $count;
+		$type = $count;
+	}
+
+	return $type;
 }
 
 #-------------------------------------------------------------------------------
@@ -394,12 +398,12 @@ close SPECIAL;
 #-------------------------------------------------------------------------------
 
 my %specialChars = (
-	0x0009 => moSpaceGlyphInfo,                       # CHARACTER TABULATION
+	0x0009 => moSpaceGlyphInfo,                        # CHARACTER TABULATION
 	0x000A => moSpaceGlyphInfo | moLinebreakGlyphInfo, # LINE FEED (LF)
-	0x000B => moSpaceGlyphInfo,                       # LINE TABULATION
-	0x000C => moSpaceGlyphInfo,                       # FORM FEED (FF)
+	0x000B => moSpaceGlyphInfo,                        # LINE TABULATION
+	0x000C => moSpaceGlyphInfo,                        # FORM FEED (FF)
 	0x000D => moSpaceGlyphInfo | moLinebreakGlyphInfo, # CARRIAGE RETURN (CR)
-	0xFEFF => moSpaceGlyphInfo,                       # ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)
+	0xFEFF => moSpaceGlyphInfo,                        # ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)
 );
 
 open DATA, "<$ARGV[0]" or die "File '$ARGV[0]' not found";
@@ -417,7 +421,7 @@ while (<DATA>) {
 	my $lower  = hex ($line [13]);
 	my $title  = hex ($line [14]);
 
-	if ($useCategories && !exists $useCategories {$cat}) {
+	if ($useCategories && !$useCategories {$cat}) {
 		$info   = moOtherGlyphInfo;
 		$cat    = 'Cn';
 		$number = 0;
@@ -426,11 +430,9 @@ while (<DATA>) {
 		$title  = 0;
 	}
 	else {
-		if (exists $specialChars {$code}) {
+		if ($specialChars {$code}) {
 			$info |= $specialChars {$code};
 		}
-
-		$pages [$code >> 8] = 1;
 
 		$upper = $upper - $code if ($upper);
 		$lower = $lower - $code if ($lower);
@@ -469,22 +471,10 @@ while (<DATA>) {
 		}
 	}
 
-	my $type = sprintf ($infoFormat, $info, $categoryIndexes {$cat}, $upper, $lower, $title, $number);
-
-	if ($types {$type}) {
-		$type = $types {$type};
-	}
-	else {
-		my $count = keys %types;
-
-		$types {$type} = $count;
-		$type = $count;
-	}
-
-	$data [$code] = $type;
+	my $type = getTypeIndex ($info, $categoryIndexes {$cat}, $upper, $lower, $title, $number);
 
 	# read range
-	if ($line [1] =~ /First>$/) {
+	if ($line [1] =~ /First>$/i) {
 		$_ = <DATA>;
 		chomp;
 
@@ -501,6 +491,10 @@ while (<DATA>) {
 			$pages [$code >> 8] = 1;
 			$data [$code] = $type;
 		}
+	}
+	else {
+		$pages [$code >> 8] = 1;
+		$data [$code] = $type;
 	}
 }
 

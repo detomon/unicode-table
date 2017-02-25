@@ -10,8 +10,8 @@ int main (int argc, char const * argv [])
 		return RESULT_ERROR;
 	}
 
+	uint32_t value;
 	char line [1024];
-	unsigned value;
 	char name [63];
 	char categoryName [3];
 
