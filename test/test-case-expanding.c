@@ -2,7 +2,7 @@
 
 int main (int argc, char const * argv [])
 {
-	// character 0x00DF (ß) (LATIN SMALL LETTER SHARP S)
+	// character `ß` (0x00DF; LATIN SMALL LETTER SHARP S)
 	UTGlyph glyph = 0x00DF;
 	UTInfo const * info = UTLookupGlyph (glyph);
 
@@ -15,21 +15,21 @@ int main (int argc, char const * argv [])
 		// character sequence
 		UTGlyph const * sequence = &UTSpecialCases [idx + 1];
 
-		// prints "00DF expands to 2 chars in uppercase"
-		printf ("%04X expands to %d chars in uppercase\n", glyph, length);
+		// prints "0x00DF expands to 2 chars in uppercase"
+		printf ("0x%04X expands to %d chars in uppercase\n", glyph, length);
 
 		assert (length == 2);
 
 		// uppercase characters
 		// prints:
-		// "0: 0053"
-		// "1: 0053"
+		// "0: 0x0053"
+		// "1: 0x0053"
 		for (int i = 0; i < length; i ++) {
-			printf ("%d: %04X\n", i, sequence [i]);
+			printf ("%d: 0x%04X\n", i, sequence [i]);
 		}
 	}
 	else {
-		printf ("Character %04X does not expand\n", glyph);
+		printf ("Character 0x%04X does not expand\n", glyph);
 
 		return RESULT_FAIL;
 	}

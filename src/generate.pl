@@ -564,7 +564,7 @@ my %printMethods = (
 			my $line = $categoryName {$_};
 
 			$line = toConstant $line, $prefix;
-			$line = sprintf "\t%-39s // %s", "$line,", $_;
+			$line = sprintf "\t%-39s ///< %s", "$line,", $_;
 			$line =~ s/\s+$//;
 
 			print $out "$line\n";
