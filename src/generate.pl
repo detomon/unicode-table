@@ -23,6 +23,8 @@
 
 use strict;
 
+use Functions;
+
 #-------------------------------------------------------------------------------
 #
 # Unicode definitions
@@ -269,52 +271,6 @@ $pageCache {join ',', @emptyPage} = 0;
 # Functions
 #
 #-------------------------------------------------------------------------------
-
-sub toCamelCase {
-	my $var = shift;
-	my $prefix = shift;
-
-	$var = "$prefix$var" if ($prefix);
-
-	$var =~ s/_([a-z])/uc($1)/ge;
-	$var =~ s/^(\w)/lc($1)/ge unless ($prefix);
-
-	return $var;
-}
-
-sub toSnakeCase {
-	my $var = shift;
-	my $prefix = shift;
-
-	$var = "$prefix"."_$var" if ($prefix);
-
-	$var =~ s/([a-z])([A-Z])/"$1_$2"/ge;
-	$var = lc $var;
-
-	return $var;
-}
-
-sub toUserCase {
-	my $var = shift;
-
-	if ($makeSnakeCase) {
-		return toSnakeCase $var, $prefix;
-	}
-	else {
-		return toCamelCase $var, $prefix;
-	}
-}
-
-sub toConstant {
-	my $var = shift;
-	my $prefix = shift;
-
-	$var = "$prefix"."_$var" if ($prefix);
-
-	$var = uc (toSnakeCase $var);
-
-	return $var;
-}
 
 sub makeCharSequence {
 	my $codes = shift;
@@ -653,7 +609,7 @@ sub replaceName {
 	my $name = shift;
 
 	if ($type eq 'n') {
-		$name = toUserCase $name;
+		$name = toUserCase $name, $prefix, $makeSnakeCase;
 	}
 	elsif ($type eq 'c') {
 		$name = toConstant $name, $prefix;
