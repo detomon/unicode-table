@@ -25,6 +25,18 @@ int main (int argc, char const * argv [])
 		info = UTLookupGlyph (value);
 		category = info -> category;
 
+#if UT_STRICT_LEVEL >= 1
+		// is surrogate
+		if ((value & ~0x07FF) == 0xD800) {
+			if (category != UT_CATEGORY_INVALID) {
+				fprintf (stderr, "ERROR: %x should be invalid (strict_level=%u)\n", value, UT_STRICT_LEVEL);
+				return RESULT_ERROR;
+			}
+
+			continue;
+		}
+#endif
+
 		// test category
 		if (strcmp (UTCategoryNames [category], categoryName) != 0) {
 			fprintf (stderr, "ERROR: %x: %s != %s (%d)\n", value, categoryName, UTCategoryNames [category], category);

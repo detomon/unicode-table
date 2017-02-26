@@ -3,6 +3,9 @@
 
 AC_PREREQ([2.63])
 AC_INIT([unicode-table], [0.4], [simon@monoxid.net], [unicode-table], [https://github.com/detomon/unicode-table])
+
+AC_CONFIG_HEADER([config.h])
+
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Checks for programs.
@@ -58,13 +61,11 @@ AC_ARG_ENABLE([strict-level],
 	[UT_STRICT_LEVEL=${enableval}],
 	[])
 
-if test "x${SNAKE_CASE}" = xyes; then
-	UT_SNAKE_CASE=1
-fi
-
-if test "x${SNAKE_CASE}" = xno; then
-	UT_SNAKE_CASE=0
-fi
+AC_DEFINE_UNQUOTED(UT_SYMBOL_PREFIX, ["$UT_SYMBOL_PREFIX"], [Define to value given by option --enable-symbol-prefix])
+AC_DEFINE_UNQUOTED(UT_SNAKE_CASE, [$UT_SNAKE_CASE], [Define to 1 if configure had option --enable-snake-case])
+AC_DEFINE_UNQUOTED(UT_CATEGORIES, ["$UT_CATEGORIES"], [Define to value given by option --enable-categories])
+AC_DEFINE_UNQUOTED(UT_INCLUDE_INFO, ["$UT_INCLUDE_INFO"], [Define to value given by option --enable-include-info])
+AC_DEFINE_UNQUOTED(UT_STRICT_LEVEL, [$UT_STRICT_LEVEL], [Define to value given by option --enable-strict-level])
 
 AC_SUBST([UT_SYMBOL_PREFIX])
 AC_SUBST([UT_SNAKE_CASE])
