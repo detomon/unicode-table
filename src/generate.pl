@@ -176,7 +176,7 @@ if ($args =~ /--snake-case=(\d+)/) {
 }
 
 if ($args =~ /--categories=([\w_,]+)/) {
-	foreach (split /,/g, $1) {
+	foreach (split /,/, $1) {
 		$useCategories {$_} = 1;
 	}
 
@@ -196,7 +196,7 @@ my $infoFormat = '';
 my %infoFormat = ();
 my @infoFormat = ();
 
-foreach (split /,/g, $includeInfos) {
+foreach (split /,/, $includeInfos) {
 	$infoFormat {$_} = 1;
 }
 
