@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2016 Simon Schoenenberger
+# Copyright (c) 2016-2017 Simon Schoenenberger
 # https://github.com/detomon/unicode-table
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -22,8 +22,9 @@
 # IN THE SOFTWARE.
 
 use strict;
+use warnings;
 
-use Functions;
+use Template;
 
 #-------------------------------------------------------------------------------
 #
@@ -153,6 +154,17 @@ my %categoryName = (
 	'Cn' => 'CategoryOtherNotAssigned',
 );
 
+#-------------------------------------------------------------------------------
+#
+# Arguments
+#
+#-------------------------------------------------------------------------------
+
+if (($#ARGV + 1) < 2) {
+	print "usage $0 UnicodeData.txt SpecialCasing.txt\n";
+	exit 1;
+}
+
 my $outName   = 'unicode-table';
 my $hdrFile   = "$outName.h";
 my $hdrFileIn = "unicode-table.h.in";
@@ -225,17 +237,6 @@ if (exists $infoFormat {'numbers'}) {
 $infoFormat = (join ',', @infoFormat);
 $infoFormat =~ s/^\s+|\s+$//g;
 $infoFormat = "{$infoFormat},";
-
-#-------------------------------------------------------------------------------
-#
-# Check arguments
-#
-#-------------------------------------------------------------------------------
-
-if (($#ARGV + 1) < 2) {
-	print "usage $0 UnicodeData.txt SpecialCasing.txt\n";
-	exit 1;
-}
 
 #-------------------------------------------------------------------------------
 #
@@ -373,9 +374,9 @@ while (<DATA>) {
 	my $info = $categoryFlags {$cat};
 
 	my $number = $line [8];
-	my $upper  = hex ($line [12]);
-	my $lower  = hex ($line [13]);
-	my $title  = hex ($line [14]);
+	my $upper  = hex ($line [12] || 0);
+	my $lower  = hex ($line [13] || 0);
+	my $title  = hex ($line [14] || 0);
 
 	if ($useCategories && !$useCategories {$cat}) {
 		$info   = moOtherGlyphInfo;
@@ -487,24 +488,6 @@ for (my $i = 0; $i <= $#pages; $i ++) {
 #
 #-------------------------------------------------------------------------------
 
-open my $hdrin,  "<$hdrFileIn" or die "File '$hdrFileIn' not found";
-open my $hdrout, ">$hdrFile" or die "File '$hdrFile' not found";
-
-open my $srcin,  "<$srcFileIn" or die "File '$srcFileIn' not found";
-open my $srcout, ">$srcFile" or die "File '$srcFile' not found";
-
-my %vars = (
-	'prefix'  => $prefix,
-	'outName' => $outName,
-);
-
-my @infoKeys  = keys %types;
-my $infoSize  = @infoKeys;
-my $pagesSize = @pages;
-
-$vars {'infoType'}  = $infoSize >= 256 ? 'uint16_t' : 'uint8_t';
-$vars {'pagesType'} = $pagesSize >= 256 ? 'uint16_t' : 'uint8_t';
-
 my %printMethods = (
 	'header' => sub {
 		my $out = shift;
@@ -519,7 +502,7 @@ my %printMethods = (
 		foreach (sort { $categoryIndexes {$a} <=> $categoryIndexes {$b} } keys %categoryIndexes) {
 			my $line = $categoryName {$_};
 
-			$line = toConstant $line, $prefix;
+			$line = Template::toConstant $line;
 			$line = sprintf "\t%-39s ///< %s", "$line,", $_;
 			$line =~ s/\s+$//;
 
@@ -597,78 +580,44 @@ my %printMethods = (
 		foreach (sort { $categoryIndexes {$a} <=> $categoryIndexes {$b} } keys %categoryIndexes) {
 			my $key = $categoryName {$_};
 
-			$key = toConstant $key, $prefix;
+			$key = Template::toConstant $key;
 
 			printf $out "\t%-39s = \"%s\",\n", "[$key]", $_;
 		}
 	},
 );
 
-sub replaceName {
-	my $type = shift;
+open my $hdrin,  "<$hdrFileIn" or die "File '$hdrFileIn' not found";
+open my $hdrout, ">$hdrFile" or die "File '$hdrFile' not found";
+
+open my $srcin,  "<$srcFileIn" or die "File '$srcFileIn' not found";
+open my $srcout, ">$srcFile" or die "File '$srcFile' not found";
+
+my @infoKeys  = keys %types;
+my $infoSize  = @infoKeys;
+my $pagesSize = @pages;
+
+my %vars = (
+	'outName'   => $outName,
+	'infoType'  => $infoSize >= 256 ? 'uint16_t' : 'uint8_t',
+	'pagesType' => $pagesSize >= 256 ? 'uint16_t' : 'uint8_t',
+);
+
+%Template::vars = %vars;
+$Template::prefix = $prefix;
+$Template::makeSnakeCase = $makeSnakeCase;
+
+Template::readLines $hdrin, $hdrout, \%printMethods, sub {
 	my $name = shift;
 
-	if ($type eq 'n') {
-		$name = toUserCase $name, $prefix, $makeSnakeCase;
-	}
-	elsif ($type eq 'c') {
-		$name = toConstant $name, $prefix;
-	}
-	elsif ($type eq 'v') {
-		$name = $vars {$name};
-	}
+	return exists $conditionalFlags {$name};
+};
 
-	return $name;
-}
+Template::readLines $srcin, $srcout, \%printMethods, sub {
+	my $name = shift;
 
-sub handleLine {
-	my $line = shift;
-	my $out = shift;
-
-	if ($line =~ /##([\w_]+)/) {
-		my $method = $1;
-
-		die "Print method '$method' does not exist" unless (exists $printMethods {$method});
-
-		$printMethods {$method} -> ($out);
-		next;
-	}
-
-	# handle if:
-	if ($line =~ /{(if:)([\w_]+)}/) {
-		return exists $conditionalFlags {$2};
-	}
-	# ignore endif:
-	elsif ($line =~ /{(endif:)([\w_]*)}/) {
-		return 1;
-	}
-
-	$line =~ s/{((\w+):)([\w_]+)}/replaceName($2, $3)/ge;
-
-	print $out $line;
-
-	return 1;
-}
-
-sub readToEndIf {
-	my $file = shift;
-
-	while (<$file>) {
-		return if ($_ =~ /{(endif:)([\w_]*)}/);
-	}
-}
-
-while (<$hdrin>) {
-	if (!handleLine $_, $hdrout) {
-		readToEndIf $hdrin;
-	}
-}
-
-while (<$srcin>) {
-	if (!handleLine $_, $srcout) {
-		readToEndIf $srcin;
-	}
-}
+	return exists $conditionalFlags {$name};
+};
 
 close $hdrin;
 close $hdrout;

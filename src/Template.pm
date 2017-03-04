@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 # Copyright (c) 2016-2017 Simon Schoenenberger
 # https://github.com/detomon/unicode-table
 #
@@ -22,10 +20,17 @@
 # IN THE SOFTWARE.
 
 use strict;
+use warnings;
+
+package Template;
+
+our %vars = ();
+our $prefix = '';
+our $makeSnakeCase = 0;
 
 sub toCamelCase {
 	my $var = shift;
-	my $prefix = shift;
+	my $prefix = $Template::prefix;
 
 	$var = "$prefix$var" if ($prefix);
 
@@ -37,7 +42,7 @@ sub toCamelCase {
 
 sub toSnakeCase {
 	my $var = shift;
-	my $prefix = shift;
+	my $prefix = $Template::prefix;
 
 	$var = "$prefix"."_$var" if ($prefix);
 
@@ -49,26 +54,94 @@ sub toSnakeCase {
 
 sub toUserCase {
 	my $var = shift;
-	my $prefix = shift;
-	my $makeSnakeCase = shift;
 
 	if ($makeSnakeCase) {
-		return toSnakeCase $var, $prefix;
+		return toSnakeCase $var;
 	}
 	else {
-		return toCamelCase $var, $prefix;
+		return toCamelCase $var;
 	}
 }
 
 sub toConstant {
 	my $var = shift;
-	my $prefix = shift;
-
-	$var = "$prefix"."_$var" if ($prefix);
 
 	$var = uc (toSnakeCase $var);
 
 	return $var;
+}
+
+sub replaceName {
+	my $type = shift;
+	my $name = shift;
+	my %vars = %Template::vars;
+
+	if ($type eq 'n') {
+		$name = toUserCase $name;
+	}
+	elsif ($type eq 'c') {
+		$name = toConstant $name;
+	}
+	elsif ($type eq 'v') {
+		$name = $vars {$name};
+	}
+
+	return $name;
+}
+
+sub readLine {
+	my $line = shift;
+	my $out = shift;
+	my %methods = %{(shift)};
+	my $conditions = shift;
+
+	if ($line =~ /##([\w_]+)/) {
+		my $method = $1;
+
+		unless (exists $methods {$method}) {
+			die "Print method '$method' does not exist\n";
+		}
+
+		$methods {$method} -> ($out);
+
+		# do not output line
+		return 1;
+	}
+	# handle if:
+	elsif ($line =~ /{(if:)([\w_]+)}/) {
+		return $conditions -> ($2);
+	}
+	# ignore endif:
+	elsif ($line =~ /{(endif:)([\w_]*)}/) {
+		return 1;
+	}
+
+	$line =~ s/{((\w+):)([\w_]+)}/replaceName($2, $3)/ge;
+
+	print $out $line;
+
+	return 1;
+}
+
+sub readToEndIf {
+	my $file = shift;
+
+	while (<$file>) {
+		return if ($_ =~ /{(endif:)([\w_]*)}/);
+	}
+}
+
+sub readLines {
+	my $infile = shift;
+	my $outfile = shift;
+	my %methods = %{(shift)};
+	my $conditions = shift;
+
+	while (<$infile>) {
+		if (!readLine $_, $outfile, \%methods, $conditions) {
+			readToEndIf $infile;
+		}
+	}
 }
 
 1;
