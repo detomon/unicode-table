@@ -439,7 +439,7 @@ while (<DATA>) {
 		my $code2 = hex ($line2 [0]);
 
 		if ($excludeSurrogates) {
-			if ($line [1] =~ /Surrogate/i) {
+			if ($cat =~ /Cs/i) {
 				next;
 			}
 		}
