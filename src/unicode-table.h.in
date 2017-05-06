@@ -136,8 +136,8 @@ extern char const* const {n:CategoryNames}[];
 /**
  * Lookup character by value.
  *
- * @param {n:Glyph} glyph A Unicode character value.
- * @return {n:Info} Character info.
+ * @param glyph A Unicode character value.
+ * @return Character info.
  */
 static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
 	extern {n:Info} const {n:Infos}[];
