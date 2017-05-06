@@ -165,12 +165,6 @@ if (($#ARGV + 1) < 2) {
 	exit 1;
 }
 
-my $outName   = 'unicode-table';
-my $hdrFile   = "$outName.h";
-my $hdrFileIn = "unicode-table.h.in";
-my $srcFile   = "$outName.c";
-my $srcFileIn = "unicode-table.c.in";
-
 my $args = join ' ', @ARGV;
 my $prefix = 'UT';
 my $makeSnakeCase = 0;
@@ -237,6 +231,12 @@ if (exists $infoFormat {'numbers'}) {
 $infoFormat = (join ',', @infoFormat);
 $infoFormat =~ s/^\s+|\s+$//g;
 $infoFormat = "{$infoFormat},";
+
+my $outName   = 'unicode-table';
+my $hdrFile   = "$outName.h";
+my $hdrFileIn = "unicode-table.h.in";
+my $srcFile   = "$outName.c";
+my $srcFileIn = "unicode-table.c.in";
 
 #-------------------------------------------------------------------------------
 #
