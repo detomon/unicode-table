@@ -126,6 +126,21 @@ typedef struct {
 extern {n:Glyph} const {n:SpecialCases}[];
 {endif:}
 
+/**
+ * Character information indexable with values from {n:InfoIndex}.
+ */
+extern {n:Info} const {n:Infos}[];
+
+/**
+ * Character page lookup table.
+ */
+extern {v:pagesType} const {n:PageIndex}[];
+
+/**
+ * Character lookup table.
+ */
+extern {v:infoType} const {n:InfoIndex}[][256];
+
 {if:addCategories}
 /**
  * Category name indexable with {n:Category}.
@@ -140,18 +155,13 @@ extern char const* const {n:CategoryNames}[];
  * @return Character info.
  */
 static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
-	extern {n:Info} const {n:Infos}[];
-	extern {v:pagesType} const {n:PageIndex}[];
-	extern {v:infoType} const {n:InfoIndex}[][256];
+	{v:pagesType} page;
+	{v:infoType} offset = 0;
 
-	uint32_t page, offset;
-
-	if (glyph > {c:MAX_VALUE}) {
-		return &{n:Infos}[0];
+	if (glyph <= {c:MAX_VALUE}) {
+		page = {n:PageIndex}[glyph >> 8];
+		offset = {n:InfoIndex}[page][glyph & 0xFF];
 	}
-
-	page = {n:PageIndex}[glyph >> 8];
-	offset = {n:InfoIndex}[page][glyph & 0xFF];
 
 	return &{n:Infos}[offset];
 }
