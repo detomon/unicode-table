@@ -166,6 +166,7 @@ static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
 	return &{n:Infos}[offset];
 }
 
+{if:addCasing}
 /**
  * Get special case-folding sequence of character.
  *
@@ -174,7 +175,6 @@ static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
  * @param variant Case variant.
  * @return Case-folding sequence or `NULL` if none exists for given case variant.
  */
-{if:addCasing}
 static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Glyph} glyph, {n:Info} const* info, {n:Case} variant) {
 	if (info->flags & ({c:FlagUpperExpands} << variant)) {
 		return ({n:SpecialCase} const*) &{n:SpecialCases}[glyph + info->cases[variant]];
