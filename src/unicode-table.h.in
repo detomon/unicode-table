@@ -28,16 +28,16 @@ extern "C" {
  * 110XXXXX 10XXXXXX                                      (1 << 7)
  * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
  * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
- * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 22)
- * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 29)
+ * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
+ * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
  * ```
  */
-#define {c:VALID_RANGES} ((7UL << 5) | (11UL << 10) | (16UL << 15) | (22UL << 20) | (29UL << 25))
-
-/**
- * Calculate minimum valid value for UTF-8 sequence with @p count continuation bytes.
- */
-#define {c:MIN_VALID_GLYPH}(count) (1UL << ((({c:VALID_RANGES} >> ((count) * 5)) & 0x1F)))
+#define {c:VALID_RANGES} (\
+	(7UL << 5) | \
+	(11UL << 10) | \
+	(16UL << 15) | \
+	(21UL << 20) | \
+	(26UL << 25))
 
 {if:addFlags}
 /**
