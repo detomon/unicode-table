@@ -184,6 +184,16 @@ static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Glyph} glyph, {n:Info
 }
 {endif:}
 
+/**
+ * Get minimum valid glyph value for UTF-8 sequence with @p length continuation bytes.
+ *
+ * @param length Number of UTF-8 continuation bytes.
+ * @return Minimum valid glyph value.
+ */
+static inline {n:Glyph} {n:MinValidGlyph}(int length) {
+	return 1U << (({c:VALID_RANGES} >> (length * 5)) & 0x1F);
+}
+
 #ifdef __cplusplus
 }
 #endif
