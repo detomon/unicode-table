@@ -109,10 +109,10 @@ typedef struct {
 {endif:}
 } {n:Info};
 
+{if:addCasing}
 /**
  * Helper struct for reading special case-folding sequences.
  */
-{if:addCasing}
 typedef struct {
 	{n:Glyph} count;    ///< Number of characters.
 	{n:Glyph} glyphs[]; ///< Sequence of characters.
