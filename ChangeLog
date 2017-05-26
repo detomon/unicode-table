@@ -1,3 +1,11 @@
+unicode-table 0.4.1:
+  Release date: 2017-05-26
+
+* Update header template
+* Update generation script
+* Added function to check UTF-8 glyph for overlong sequence
+* Adel function to lookup special casing
+
 unicode-table 0.4:
   Release date: 2017-02-25
 
