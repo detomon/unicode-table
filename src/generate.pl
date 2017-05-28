@@ -623,17 +623,23 @@ my $template = new Template(
 	},
 );
 
-open my $hdrin,  "<$hdrFileIn" or die "File '$hdrFileIn' not found";
-open my $hdrout, ">$hdrFile" or die "File '$hdrFile' not found";
+sub main {
+	open my $hdrin,  "<$hdrFileIn" or die "File '$hdrFileIn' not found";
+	open my $hdrout, ">$hdrFile" or die "File '$hdrFile' not found";
 
-open my $srcin,  "<$srcFileIn" or die "File '$srcFileIn' not found";
-open my $srcout, ">$srcFile" or die "File '$srcFile' not found";
+	open my $srcin,  "<$srcFileIn" or die "File '$srcFileIn' not found";
+	open my $srcout, ">$srcFile" or die "File '$srcFile' not found";
 
-$template->readLines($hdrin, $hdrout);
-$template->readLines($srcin, $srcout);
+	$template->readLines($hdrin, $hdrout);
+	$template->readLines($srcin, $srcout);
 
-close $hdrin;
-close $hdrout;
+	close $hdrin;
+	close $hdrout;
 
-close $srcin;
-close $srcout;
+	close $srcin;
+	close $srcout;
+
+	return 0;
+}
+
+exit main @ARGV;
