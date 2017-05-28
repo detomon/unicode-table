@@ -313,6 +313,20 @@ sub getTypeIndex {
 	return $type;
 }
 
+sub unsignedTypeFromSize {
+	my $size = shift;
+	my $type = 'uint32_t';
+
+	if ($size <= 0xFF) {
+		$type = 'uint8_t';
+	}
+	elsif ($size <= 0xFFFF) {
+		$type = 'uint16_t';
+	}
+
+	return $type;
+}
+
 #-------------------------------------------------------------------------------
 #
 # Read special cases
@@ -488,7 +502,29 @@ for (my $i = 0; $i <= $#pages; $i ++) {
 #
 #-------------------------------------------------------------------------------
 
-my %printMethods = (
+my @infoKeys  = keys %types;
+my $infoSize  = @infoKeys;
+my $pagesSize = @pages;
+my $infoType  = unsignedTypeFromSize $infoSize;
+my $pagesType = unsignedTypeFromSize $pagesSize;
+
+my %printMethods = ();
+
+my $template = new Template(
+	'vars' => {
+		'outName'   => $outName,
+		'infoType'  => $infoType,
+		'pagesType' => $pagesType,
+	},
+	'prefix' => $prefix,
+	'makeSnakeCase' => $makeSnakeCase,
+	'printMethods' => \%printMethods,
+	'conditional' => sub {
+		return exists $conditionalFlags {$_[0]};
+	},
+);
+
+%printMethods = (
 	'header' => sub {
 		my $out = shift;
 
@@ -502,7 +538,7 @@ my %printMethods = (
 		foreach (sort { $categoryIndexes {$a} <=> $categoryIndexes {$b} } keys %categoryIndexes) {
 			my $line = $categoryName {$_};
 
-			$line = Template::toConstant $line;
+			$line = $template->toConstant($line);
 			$line = sprintf "\t%-39s ///< %s", "$line,", $_;
 			$line =~ s/\s+$//;
 
@@ -580,7 +616,7 @@ my %printMethods = (
 		foreach (sort { $categoryIndexes {$a} <=> $categoryIndexes {$b} } keys %categoryIndexes) {
 			my $key = $categoryName {$_};
 
-			$key = Template::toConstant $key;
+			$key = $template->toConstant($key);
 
 			printf $out "\t%-39s = \"%s\",\n", "[$key]", $_;
 		}
@@ -593,31 +629,8 @@ open my $hdrout, ">$hdrFile" or die "File '$hdrFile' not found";
 open my $srcin,  "<$srcFileIn" or die "File '$srcFileIn' not found";
 open my $srcout, ">$srcFile" or die "File '$srcFile' not found";
 
-my @infoKeys  = keys %types;
-my $infoSize  = @infoKeys;
-my $pagesSize = @pages;
-
-my %vars = (
-	'outName'   => $outName,
-	'infoType'  => $infoSize >= 256 ? 'uint16_t' : 'uint8_t',
-	'pagesType' => $pagesSize >= 256 ? 'uint16_t' : 'uint8_t',
-);
-
-%Template::vars = %vars;
-$Template::prefix = $prefix;
-$Template::makeSnakeCase = $makeSnakeCase;
-
-Template::readLines $hdrin, $hdrout, \%printMethods, sub {
-	my $name = shift;
-
-	return exists $conditionalFlags {$name};
-};
-
-Template::readLines $srcin, $srcout, \%printMethods, sub {
-	my $name = shift;
-
-	return exists $conditionalFlags {$name};
-};
+$template->readLines($hdrin, $hdrout);
+$template->readLines($srcin, $srcout);
 
 close $hdrin;
 close $hdrout;

@@ -24,13 +24,9 @@ use warnings;
 
 package Template;
 
-our %vars = ();
-our $prefix = '';
-our $makeSnakeCase = 0;
-
 sub toCamelCase {
-	my $var = shift;
-	my $prefix = $Template::prefix;
+	my ($self, $var) = @_;
+	my $prefix = $self->{prefix};
 
 	$var = "$prefix$var" if ($prefix);
 
@@ -41,8 +37,8 @@ sub toCamelCase {
 }
 
 sub toSnakeCase {
-	my $var = shift;
-	my $prefix = $Template::prefix;
+	my ($self, $var) = @_;
+	my $prefix = $self->{prefix};
 
 	$var = "$prefix"."_$var" if ($prefix);
 
@@ -53,47 +49,47 @@ sub toSnakeCase {
 }
 
 sub toUserCase {
-	my $var = shift;
+	my ($self, $var) = @_;
 
-	if ($makeSnakeCase) {
-		return toSnakeCase $var;
+	if ($self->{makeSnakeCase}) {
+		return $self->toSnakeCase($var);
 	}
 	else {
-		return toCamelCase $var;
+		return $self->toCamelCase($var);
 	}
 }
 
 sub toConstant {
-	my $var = shift;
+	my ($self, $var) = @_;
 
-	$var = uc (toSnakeCase $var);
+	$var = uc $self->toSnakeCase($var);
 
 	return $var;
 }
 
 sub replaceName {
-	my $type = shift;
-	my $name = shift;
-	my %vars = %Template::vars;
+	my ($self, $type, $name) = @_;
+	my %vars = %{$self->{vars}};
 
 	if ($type eq 'n') {
-		$name = toUserCase $name;
+		$name = $self->toUserCase($name);
 	}
 	elsif ($type eq 'c') {
-		$name = toConstant $name;
+		$name = $self->toConstant($name);
 	}
 	elsif ($type eq 'v') {
-		$name = $vars {$name};
+		$name = $self->{vars} {$name};
 	}
 
 	return $name;
 }
 
 sub readLine {
+	my $self = shift;
 	my $line = shift;
 	my $out = shift;
-	my %methods = %{(shift)};
-	my $conditions = shift;
+	my %methods = %{$self->{printMethods}};
+	my $conditions = $self->{conditional};
 
 	if ($line =~ /##([\w_]+)/) {
 		my $method = $1;
@@ -116,7 +112,7 @@ sub readLine {
 		return 1;
 	}
 
-	$line =~ s/{((\w+):)([\w_]+)}/replaceName($2, $3)/ge;
+	$line =~ s/{((\w+):)([\w_]+)}/$self->replaceName($2, $3)/ge;
 
 	print $out $line;
 
@@ -124,7 +120,7 @@ sub readLine {
 }
 
 sub readToEndIf {
-	my $file = shift;
+	my ($self, $file) = @_;
 
 	while (<$file>) {
 		return if ($_ =~ /{(endif:)([\w_]*)}/);
@@ -132,16 +128,32 @@ sub readToEndIf {
 }
 
 sub readLines {
+	my $self = shift;
 	my $infile = shift;
 	my $outfile = shift;
-	my %methods = %{(shift)};
-	my $conditions = shift;
 
 	while (<$infile>) {
-		if (!readLine $_, $outfile, \%methods, $conditions) {
-			readToEndIf $infile;
+		if (!$self->readLine($_, $outfile)) {
+			$self->readToEndIf($infile);
 		}
 	}
+}
+
+sub new {
+	my $class = shift;
+	my $self = {
+		'vars' => {},
+		'prefix' => '',
+		'makeSnakeCase' => 0,
+		'printMethods' => {},
+		'conditional' => sub {},
+		# overwrite default values
+		@_,
+	};
+
+	bless $self, $class;
+
+    return $self;
 }
 
 1;
