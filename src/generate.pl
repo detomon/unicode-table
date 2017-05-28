@@ -504,7 +504,7 @@ for (my $i = 0; $i <= $#pages; $i ++) {
 
 my @infoKeys  = keys %types;
 my $infoSize  = @infoKeys;
-my $pagesSize = @pages;
+my $pagesSize = keys %pageCache;
 my $infoType  = unsignedTypeFromSize $infoSize;
 my $pagesType = unsignedTypeFromSize $pagesSize;
 
