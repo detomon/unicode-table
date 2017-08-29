@@ -3,7 +3,7 @@ Unicode Lookup Table
 
 [![Build Status](https://api.travis-ci.org/detomon/unicode-table.svg?branch=master)](https://travis-ci.org/detomon/unicode-table)
 
-This script generates a Unicode character lookup table with linear access time. It creates a header and source file and compiles a static library usable within C/C++. The source data is contained in the files [UnicodeData.txt](http://www.unicode.org/Public/10.0.0/ucd/UnicodeData.txt) and [SpecialCasing.txt](http://www.unicode.org/Public/10.0.0/ucd/SpecialCasing.txt) and can be found on <http://www.unicode.org>. Currently Unicode version 10.0.0 is used, but the files can be replaced with newer versions in the future.
+This script generates a Unicode character lookup table with linear access time. It creates a header and source file and compiles a static library usable within C/C++. The source data is contained in the files [UnicodeData.txt](https://www.unicode.org/Public/10.0.0/ucd/UnicodeData.txt) and [SpecialCasing.txt](https://www.unicode.org/Public/10.0.0/ucd/SpecialCasing.txt) and can be found on <https://www.unicode.org/Public/UNIDATA/>. Currently Unicode version 10.0.0 is used, but the files can be replaced with newer versions in the future.
 
 The only function is `UTLookupGlyph` that looks up a single character by its Unicode value. It returns a pointer to a `UTInfo` struct containing the character informations. It always returns a valid pointer, even for invalid characters. In this case, the field `category` has the value `UT_CATEGORY_INVALID` assigned.
 
@@ -14,13 +14,13 @@ Available Informations
 
 ```c
 typedef struct {
-	uint32_t flags;    ///< Combination of UTFlag.
-	uint32_t category; ///< One of UTCategory.
-	int32_t cases[3];  ///< Distance to case variant. Indexable with UTCase.
-	union {
-		int64_t num;      ///< Number value if `flags & UT_FLAG_NUMBER`.
-		char const* frac; ///< Fraction string if `flags & UT_FLAG_FRACTION`.
-	};
+    uint32_t flags;    ///< Combination of UTFlag.
+    uint32_t category; ///< One of UTCategory.
+    int32_t cases[3];  ///< Distance to case variant. Indexable with UTCase.
+    union {
+        int64_t num;      ///< Number value if `flags & UT_FLAG_NUMBER`.
+        char const* frac; ///< Fraction string if `flags & UT_FLAG_FRACTION`.
+    };
 } UTInfo;
 ```
 
@@ -37,13 +37,13 @@ Looking up a character with its Unicode value:
 ```c
 // character `Đ` (0x0110; LATIN CAPITAL LETTER D WITH STROKE)
 UTGlyph glyph = 0x0110;
-UTInfo const * info = UTLookupGlyph (glyph);
+UTInfo const* info = UTLookupGlyph(glyph);
 
 // get lowercase variant `đ` (0x0111; LATIN SMALL LETTER D WITH STROKE)
-UTGlyph lower = glyph + info -> cases [UT_CASE_LOWER];
+UTGlyph lower = glyph + info->cases[UT_CASE_LOWER];
 
 // prints "Lowercase variant of 0x0110: 0x0111"
-printf ("Lowercase variant of 0x%04X: 0x%04X \n", glyph, lower);
+printf("Lowercase variant of 0x%04X: 0x%04X\n", glyph, lower);
 ```
 
 Numeric and Fraction Values
@@ -53,26 +53,26 @@ Get the representing integer or fraction value:
 
 ```c
 UTGlyph glyph;
-UTInfo const * info;
+UTInfo const* info;
 
 // character `Ⅶ` (0x2166; ROMAN NUMERAL SEVEN)
 glyph = 0x2166;
-info = UTLookupGlyph (glyph);
+info = UTLookupGlyph(glyph);
 
 // check if character is a number
-if (info -> flags & UT_FLAG_NUMBER) {
-	// prints "Integer value of 2166: 7"
-	printf ("Integer value of %04X: %lld\n", glyph, info -> num);
+if (info->flags & UT_FLAG_NUMBER) {
+    // prints "Integer value of 2166: 7"
+    printf("Integer value of %04X: %lld\n", glyph, info->num);
 }
 
 // character `¼` (0x00BC; VULGAR FRACTION ONE QUARTER)
 glyph = 0x00BC;
-info = UTLookupGlyph (glyph);
+info = UTLookupGlyph(glyph);
 
 // check if character is a fraction
-if (info -> flags & UT_FLAG_FRACTION) {
-	// prints "String representation of 0x00BC: 1/4"
-	printf ("String representation of 0x%04X: %s \n", glyph, info -> frac);
+if (info->flags & UT_FLAG_FRACTION) {
+    // prints "String representation of 0x00BC: 1/4"
+    printf("String representation of 0x%04X: %s\n", glyph, info->frac);
 }
 ```
 
@@ -84,30 +84,30 @@ Handling cases, where case-folding expands to multiple characters:
 ```c
 // character `ß` (0x00DF; LATIN SMALL LETTER SHARP S)
 UTGlyph glyph = 0x00DF;
-UTInfo const * info = UTLookupGlyph (glyph);
+UTInfo const* info = UTLookupGlyph(glyph);
 
 // check if expansion occurs to prevent invalid index
-if (info -> flags & UT_FLAG_UPPER_EXPANDS) {
-	// sequence index for uppercase variant
-	int idx = info -> cases [UT_CASE_UPPER];
-	int length = UTSpecialCases [idx];
+if (info->flags & UT_FLAG_UPPER_EXPANDS) {
+    // sequence index for uppercase variant
+    int idx = info->cases[UT_CASE_UPPER];
+    int length = UTSpecialCases[idx];
 
-	// character sequence
-	UTGlyph const * sequence = & UTSpecialCases [idx + 1];
+    // character sequence
+    UTGlyph const* sequence = &UTSpecialCases[idx + 1];
 
-	// prints "0x00DF expands to 2 chars in uppercase"
-	printf ("0x%04X expands to %d chars in uppercase\n", glyph, length);
+    // prints "0x00DF expands to 2 chars in uppercase"
+    printf("0x%04X expands to %d chars in uppercase\n", glyph, length);
 
-	// uppercase characters
-	// prints:
-	// "0: 0x0053"
-	// "1: 0x0053"
-	for (int i = 0; i < length; i ++) {
-		printf ("%d: 0x%04X\n", i, sequence [i]);
-	}
+    // uppercase characters
+    // prints:
+    // "0: 0x0053"
+    // "1: 0x0053"
+    for (int i = 0; i < length; i ++) {
+        printf("%d: 0x%04X\n", i, sequence[i]);
+    }
 }
 else {
-	printf ("Character %04X does not expand\n", glyph);
+    printf("Character %04X does not expand\n", glyph);
 }
 ```
 
