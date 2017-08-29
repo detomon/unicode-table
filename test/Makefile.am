@@ -1,4 +1,4 @@
-AM_CFLAGS = -I$(srcdir)/../src -L$(srcdir)/../src
+AM_CFLAGS = -I$(srcdir)/../src
 LDADD = $(srcdir)/../src/libunicodetable.a
 
 check_PROGRAMS = \
