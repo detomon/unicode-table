@@ -1,35 +1,35 @@
 #include "test.h"
 
-int main (int argc, char const * argv [])
+int main(int argc, char const* argv[])
 {
 	// character `ß` (0x00DF; LATIN SMALL LETTER SHARP S)
 	UTGlyph glyph = 0x00DF;
-	UTInfo const * info = UTLookupGlyph (glyph);
+	UTInfo const* info = UTLookupGlyph(glyph);
 
 	// check if expansion occurs to prevent invalid index
-	if (info -> flags & UT_FLAG_UPPER_EXPANDS) {
+	if (info->flags & UT_FLAG_UPPER_EXPANDS) {
 		// sequence index for uppercase variant
-		int idx = info -> cases [UT_CASE_UPPER];
-		int length = UTSpecialCases [idx];
+		int idx = info->cases[UT_CASE_UPPER];
+		int length = UTSpecialCases[idx];
 
 		// character sequence
-		UTGlyph const * sequence = &UTSpecialCases [idx + 1];
+		UTGlyph const* sequence = &UTSpecialCases[idx + 1];
 
 		// prints "0x00DF expands to 2 chars in uppercase"
-		printf ("0x%04X expands to %d chars in uppercase\n", glyph, length);
+		printf("0x%04X expands to %d chars in uppercase\n", glyph, length);
 
-		assert (length == 2);
+		assert(length == 2);
 
 		// uppercase characters
 		// prints:
 		// "0: 0x0053"
 		// "1: 0x0053"
 		for (int i = 0; i < length; i ++) {
-			printf ("%d: 0x%04X\n", i, sequence [i]);
+			printf("%d: 0x%04X\n", i, sequence[i]);
 		}
 	}
 	else {
-		printf ("Character 0x%04X does not expand\n", glyph);
+		printf("Character 0x%04X does not expand\n", glyph);
 
 		return RESULT_FAIL;
 	}
