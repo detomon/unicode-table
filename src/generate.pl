@@ -333,9 +333,9 @@ sub unsignedTypeFromSize {
 #
 #-------------------------------------------------------------------------------
 
-open SPECIAL, "<$ARGV[1]" or die "File '$ARGV[1]' not found";
+open my $specialFile, '<', $ARGV[1] or die "File '$ARGV[1]' not found";
 
-while (<SPECIAL>) {
+while (<$specialFile>) {
 	chomp;
 
 	# ignore empty lines and comments
@@ -360,7 +360,7 @@ while (<SPECIAL>) {
 	@line = split ';', $_;
 }
 
-close SPECIAL;
+close $specialFile;
 
 #-------------------------------------------------------------------------------
 #
@@ -377,9 +377,9 @@ my %specialChars = (
 	0xFEFF => moSpaceGlyphInfo,                        # ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)
 );
 
-open DATA, "<$ARGV[0]" or die "File '$ARGV[0]' not found";
+open my $dataFile, '<', $ARGV[0] or die "File '$ARGV[0]' not found";
 
-while (<DATA>) {
+while (<$dataFile>) {
 	chomp;
 
 	my @line = split /;/, $_;
@@ -446,7 +446,7 @@ while (<DATA>) {
 
 	# read range
 	if ($line [1] =~ /First>$/i) {
-		$_ = <DATA>;
+		$_ = <$dataFile>;
 		chomp;
 
 		my @line2 = split /;/, $_;
@@ -469,7 +469,7 @@ while (<DATA>) {
 	}
 }
 
-close DATA;
+close $dataFile;
 
 #-------------------------------------------------------------------------------
 #
@@ -624,11 +624,11 @@ my $template = new Template(
 );
 
 sub main {
-	open my $hdrin,  "<$hdrFileIn" or die "File '$hdrFileIn' not found";
-	open my $hdrout, ">$hdrFile" or die "File '$hdrFile' not found";
+	open my $hdrin,  '<', $hdrFileIn or die "File '$hdrFileIn' not found";
+	open my $hdrout, '>', $hdrFile or die "File '$hdrFile' not writable";
 
-	open my $srcin,  "<$srcFileIn" or die "File '$srcFileIn' not found";
-	open my $srcout, ">$srcFile" or die "File '$srcFile' not found";
+	open my $srcin,  '<', $srcFileIn or die "File '$srcFileIn' not found";
+	open my $srcout, '>', $srcFile or die "File '$srcFile' not writable";
 
 	$template->readLines($hdrin, $hdrout);
 	$template->readLines($srcin, $srcout);
