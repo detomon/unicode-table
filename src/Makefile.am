@@ -22,5 +22,5 @@ EXTRA_DIST = \
 	$(SRC_TEMPLATES) \
 	$(GENERATE_PROG)
 
-clean-local:
-	-rm -f $(BUILT_SOURCES)
+CLEANFILES = \
+	$(BUILT_SOURCES)
