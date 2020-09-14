@@ -244,28 +244,14 @@ my $srcFileIn = "unicode-table.c.in";
 #
 #-------------------------------------------------------------------------------
 
-my @data           = (0 .. (tableSize - 1));
+my @data           = (0) x tableSize;
 my %special        = ();
 my %types          = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
-my @pages          = (0 .. (tableSize >> 8) - 1);
+my @pages          = (0) x (tableSize >> 8);
 my %pageCache      = ();
 my @specialCasing  = ();
 
-for (my $i = 0; $i < tableSize; $i ++) {
-	$data [$i] = 0;
-}
-
-for (my $i = 0; $i < tableSize >> 8; $i ++) {
-	$pages [$i] = 0;
-}
-
-my @emptyPage = (0 .. 255);
-
-for (my $i = 0; $i < 256; $i ++) {
-	$emptyPage [$i] = 0;
-}
-
-$pageCache {join ',', @emptyPage} = 0;
+$pageCache {join ',', ((0) x 256)} = 0;
 
 #-------------------------------------------------------------------------------
 #
