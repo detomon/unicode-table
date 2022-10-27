@@ -32,7 +32,7 @@ use Template;
 #
 #-------------------------------------------------------------------------------
 
-use constant unicodeVersion => '10.0.0';
+use constant unicodeVersion => '15.0.0';
 use constant tableSize      => 0x110000;
 
 use constant moLetterGlyphInfo       => 1 << 0;
