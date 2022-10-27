@@ -1,3 +1,9 @@
+unicode-table 0.5.4:
+  Release date: 2022-10-27
+
+* Update Unicode data version to 15.0.0
+* Update build config
+
 unicode-table 0.5.3:
   Release date: 2020-09-14
 
