@@ -12,7 +12,7 @@ int main(int argc, char const* argv[])
 	// check if character is a number
 	if (info->flags & UT_FLAG_NUMBER) {
 		// prints "Integer value of 0x2166: 7"
-		printf("Integer value of 0x%04X: %zd\n", glyph, info->num);
+		printf("Integer value of 0x%04X: %lld\n", glyph, info->num);
 	}
 	else {
 		return RESULT_FAIL;
