@@ -1,7 +1,7 @@
 Unicode Lookup Table
 ====================
 
-[![Build Status](https://api.travis-ci.org/detomon/unicode-table.svg?branch=master)](https://travis-ci.org/detomon/unicode-table)
+[![Build Status](https://github.com/detomon/unicode-table/actions/workflows/c.yml/badge.svg?branch=master)](https://github.com/detomon/unicode-table/actions/workflows/c.yml)
 
 This script generates a Unicode character lookup table with linear access time. It creates a header and source file and compiles a static library usable within C/C++. The source data is contained in the files [UnicodeData.txt](https://www.unicode.org/Public/15.0.0/ucd/UnicodeData.txt) and [SpecialCasing.txt](https://www.unicode.org/Public/15.0.0/ucd/SpecialCasing.txt) and can be found on <https://www.unicode.org/Public/UNIDATA/>. Currently Unicode version 15.0.0 is used, but the files can be replaced with newer versions in the future.
 
