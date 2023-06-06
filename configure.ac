@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([unicode-table], [0.5.2], [simon@monoxid.net], [unicode-table], [https://github.com/detomon/unicode-table])
+AC_INIT([unicode-table], [0.5.5], [simon@monoxid.net], [unicode-table], [https://github.com/detomon/unicode-table])
 
 AC_CONFIG_HEADER([config.h])
 
