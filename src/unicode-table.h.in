@@ -177,7 +177,7 @@ static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
  */
 static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Glyph} glyph, {n:Info} const* info, {n:Case} variant) {
 	if (info->flags & ({c:FlagUpperExpands} << variant)) {
-		return ({n:SpecialCase} const*) &{n:SpecialCases}[glyph + info->cases[variant]];
+		return ({n:SpecialCase} const*) &{n:SpecialCases}[info->cases[variant]];
 	}
 
 	return NULL;

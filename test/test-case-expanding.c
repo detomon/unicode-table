@@ -34,5 +34,29 @@ int main(int argc, char const* argv[])
 		return RESULT_FAIL;
 	}
 
+	UTSpecialCase const* specialCase = UTGetSpecialCase(glyph, info, UT_CASE_UPPER);
+
+	if (specialCase) {
+		int length = specialCase->count;
+
+		// prints "0x00DF expands to 2 chars in uppercase"
+		printf("0x%04X expands to %d chars in uppercase\n", glyph, length);
+
+		assert(length == 2);
+
+		// uppercase characters
+		// prints:
+		// "0: 0x0053"
+		// "1: 0x0053"
+		for (int i = 0; i < length; i ++) {
+			printf("%d: 0x%04X\n", i, specialCase->glyphs[i]);
+		}
+	}
+	else {
+		printf("Character 0x%04X does not expand\n", glyph);
+
+		return RESULT_FAIL;
+	}
+
 	return RESULT_PASS;
 }
