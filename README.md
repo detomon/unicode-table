@@ -34,44 +34,48 @@ Lookup Character
 
 Looking up a character with its Unicode value:
 
+*Info flag `flags` must be set.*
+
 ```c
-// character `Đ` (0x0110; LATIN CAPITAL LETTER D WITH STROKE)
+// Character `Đ` (0x0110; LATIN CAPITAL LETTER D WITH STROKE).
 UTGlyph glyph = 0x0110;
 UTInfo const* info = UTLookupGlyph(glyph);
 
-// get lowercase variant `đ` (0x0111; LATIN SMALL LETTER D WITH STROKE)
+// Get lowercase variant `đ` (0x0111; LATIN SMALL LETTER D WITH STROKE).
 UTGlyph lower = glyph + info->cases[UT_CASE_LOWER];
 
-// prints "Lowercase variant of 0x0110: 0x0111"
+// Prints "Lowercase variant of 0x0110: 0x0111".
 printf("Lowercase variant of 0x%04X: 0x%04X\n", glyph, lower);
 ```
 
 Numeric and Fraction Values
 ---------------------------
 
-Get the representing integer or fraction value:
+Get the representing integer or fraction value.
+
+*Info flags `flags` and `numbers` must be set.*
 
 ```c
 UTGlyph glyph;
 UTInfo const* info;
 
-// character `Ⅶ` (0x2166; ROMAN NUMERAL SEVEN)
+// Character `Ⅶ` (0x2166; ROMAN NUMERAL SEVEN).
 glyph = 0x2166;
 info = UTLookupGlyph(glyph);
 
-// check if character is a number
+// Check if character is a number.
 if (info->flags & UT_FLAG_NUMBER) {
-    // prints "Integer value of 2166: 7"
+    // Prints "Integer value of 2166: 7".
     printf("Integer value of %04X: %lld\n", glyph, info->num);
 }
 
-// character `¼` (0x00BC; VULGAR FRACTION ONE QUARTER)
+// Character `¼` (0x00BC; VULGAR FRACTION ONE QUARTER).
 glyph = 0x00BC;
 info = UTLookupGlyph(glyph);
 
-// check if character is a fraction
+// Check if character is a fraction.
 if (info->flags & UT_FLAG_FRACTION) {
-    // prints "String representation of 0x00BC: 1/4"
+    // Prints "String representation of 0x00BC: 1/4".
     printf("String representation of 0x%04X: %s\n", glyph, info->frac);
 }
 ```
@@ -79,27 +83,29 @@ if (info->flags & UT_FLAG_FRACTION) {
 Case-Fold Expansion
 -------------------
 
-Handling cases, where case-folding expands to multiple characters:
+Handling cases, where case-folding expands to multiple characters.
+
+*Info flags `flags` and `casing` must be set.*
 
 ```c
-// character `ß` (0x00DF; LATIN SMALL LETTER SHARP S)
+// Character `ß` (0x00DF; LATIN SMALL LETTER SHARP S).
 UTGlyph glyph = 0x00DF;
 UTInfo const* info = UTLookupGlyph(glyph);
 
-// check if expansion occurs to prevent invalid index
+// Check if expansion occurs to prevent invalid index.
 if (info->flags & UT_FLAG_UPPER_EXPANDS) {
-    // sequence index for uppercase variant
+    // Sequence index for uppercase variant.
     int idx = info->cases[UT_CASE_UPPER];
     int length = UTSpecialCases[idx];
 
-    // character sequence
+    // Character sequence.
     UTGlyph const* sequence = &UTSpecialCases[idx + 1];
 
-    // prints "0x00DF expands to 2 chars in uppercase"
+    // Prints "0x00DF expands to 2 chars in uppercase".
     printf("0x%04X expands to %d chars in uppercase\n", glyph, length);
 
-    // uppercase characters
-    // prints:
+    // Uppercase characters.
+    // Prints:
     // "0: 0x0053"
     // "1: 0x0053"
     for (int i = 0; i < length; i ++) {
@@ -128,17 +134,18 @@ make
 - `--enable-snake-case`, `--disable-snake-case` enables or disables snake-case symbol names (For example, `bla_lookup_glyph` instead of `blaLookupGlyph`). The default is `disable`.
 - `--enable-categories=Lu,Ll,Lt,Lm,Lo,Mn,Mc,Me,Nd,Nl,No,Pc,Pd,Ps,Pe,Pi,Pf,Po,Sm,Sc,Sk,So,Zs,Zl,Zp,Cc,Cf,Cs,Co,Cn` sets the required Unicode character categories to be include in the table. This can reduce the table size. All other characters will have their category set to `UT_CATEGORY_OTHER_NOT_ASSIGNED`. If omitted, all categories are included.
 - `--enable-include-info=flags,categories,casing,numbers` sets the required character informations to be included in the table. If omitted, all available informations are included.
-- `--enable-strict-level=0` sets the strict level, which excludes certain characters considered as unsafe, for example, surrogates. Defaut is 0.  
-0: do not exclude any characters  
-1: define surrogates as invalid  
+- `--enable-strict-level=0` sets the strict level, which excludes certain characters considered as unsafe, for example, surrogates. Defaut is 0.
+0: do not exclude any characters
+1: define surrogates as invalid
 
 ### Example
 
 ```sh
-./configure \  
-    --enable-symbol-prefix=bla \  
-    --enable-categories=Lu,Ll,Lt,Lm,Lo \  
-    --enable-snake-case \  
+./configure \
+    --enable-symbol-prefix=bla \
+    --enable-categories=Lu,Ll,Lt,Lm,Lo \
+    --enable-snake-case \
+    --enable-include-info=flags,categories \
     --enable-strict-level=1
 ```
 
@@ -150,23 +157,23 @@ This project is designed to be used as an Automake subproject. To match your pro
 ```sh
 ...
 
-# put before `AC_CONFIG_SUBDIRS`
+# Put before `AC_CONFIG_SUBDIRS`.
 
-# use symbol prefix
-# omit for default prefix
+# Use symbol prefix.
+# Omit for default prefix.
 export UT_SYMBOL_PREFIX="myprefix"
-# use snake case symbols
+# Use snake case symbols.
 export UT_SNAKE_CASE=1
-# define character categories to include
-# omit to include all categories
+# Define character categories to include.
+# Omit to include all categories.
 export UT_CATEGORIES=Lu,Ll,Lt
-# define character information to include
-# omit to include all available information
+# Define character information to include.
+# Omit to include all available information.
 export UT_INCLUDE_INFO=flags,categories
-# exclude additional characters, for example, surrogates
-# omit for using default (0)
-# 0: do not exclude any characters
-# 1: define surrogates as invalid
+# Exclude additional characters, for example, surrogates.
+# Omit for using default (0).
+# 0: Do not exclude any characters.
+# 1: Define surrogates as invalid.
 export UT_STRICT_LEVEL=0
 
 AC_CONFIG_SUBDIRS([unicode-table])
@@ -177,4 +184,4 @@ AC_CONFIG_SUBDIRS([unicode-table])
 Source Templates
 ----------------
 
-The source templates `unicode-table.h.in` and `unicode-table.c.in` located in `src` contain the structure and data placeholders for the header and source file. They can be editted if needed.
+The source templates [`unicode-table.h.in`](src/unicode-table.h.in) and [`unicode-table.c.in`](src/unicode-table.c.in) located in [`src`](src) contain the structure and data placeholders for the header and source file. They can be editted if needed.
