@@ -1,5 +1,5 @@
 UNICODE_FILES = UnicodeData.txt SpecialCasing.txt
-SRC_TEMPLATES = unicode-table.h.in unicode-table.c.in
+SRC_TEMPLATES = unicode-table.h.in unicode-table.c.in ../config.h
 GENERATE_PROG = generate.pl
 
 BUILT_SOURCES = unicode-table.h unicode-table.c

@@ -209,23 +209,37 @@ foreach (split /,/, $includeInfos) {
 }
 
 if (exists $infoFormat {'flags'}) {
-	push @infoFormat, '%1$5d';
 	$conditionalFlags {'addFlags'} = 1;
 }
 
 if (exists $infoFormat {'categories'}) {
-	push @infoFormat, '%2$3d';
 	$conditionalFlags {'addCategories'} = 1;
 }
 
 if (exists $infoFormat {'casing'}) {
-	push @infoFormat, '{%3$6d,%4$6d,%5$6d}';
+	$conditionalFlags {'addFlags'} = 1;
 	$conditionalFlags {'addCasing'} = 1;
 }
 
 if (exists $infoFormat {'numbers'}) {
-	push @infoFormat, ' {%6$s}';
+	$conditionalFlags {'addFlags'} = 1;
 	$conditionalFlags {'addNumbers'} = 1;
+}
+
+if (exists $conditionalFlags {'addFlags'}) {
+	push @infoFormat, '%1$5d';
+}
+
+if (exists $conditionalFlags {'addCategories'}) {
+	push @infoFormat, '%2$3d';
+}
+
+if (exists $conditionalFlags {'addCasing'}) {
+	push @infoFormat, '{%3$6d,%4$6d,%5$6d}';
+}
+
+if (exists $conditionalFlags {'addNumbers'}) {
+	push @infoFormat, ' {%6$s}';
 }
 
 $infoFormat = (join ',', @infoFormat);
