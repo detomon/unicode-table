@@ -8,10 +8,6 @@
 extern "C" {
 #endif
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <stddef.h>
 #include <stdint.h>
 
@@ -155,13 +151,12 @@ extern char const* const {n:CategoryNames}[];
  * @return Character info.
  */
 static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
-	{v:pagesType} page;
-	{v:infoType} offset = 0;
-
-	if (glyph <= {c:MAX_VALUE}) {
-		page = {n:PageIndex}[glyph >> 8];
-		offset = {n:InfoIndex}[page][glyph & 0xFF];
+	if (glyph > {c:MAX_VALUE}) {
+		return &{n:Infos}[0];
 	}
+
+	{v:pagesType} page = {n:PageIndex}[glyph >> 8];
+	{v:infoType} offset = {n:InfoIndex}[page][glyph & 0xFF];
 
 	return &{n:Infos}[offset];
 }
@@ -170,12 +165,11 @@ static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
 /**
  * Get special case-folding sequence of character.
  *
- * @param glyph A unicode character.
  * @param info Character information of @p glyph.
  * @param variant Case variant.
  * @return Case-folding sequence or `NULL` if none exists for given case variant.
  */
-static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Glyph} glyph, {n:Info} const* info, {n:Case} variant) {
+static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Info} const* info, {n:Case} variant) {
 	if (info->flags & ({c:FlagUpperExpands} << variant)) {
 		return ({n:SpecialCase} const*) &{n:SpecialCases}[info->cases[variant]];
 	}
@@ -190,7 +184,7 @@ static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Glyph} glyph, {n:Info
  * @param length Number of UTF-8 continuation bytes.
  * @return Minimum valid glyph value.
  */
-static inline {n:Glyph} {n:MinValidGlyph}(int length) {
+static inline {n:Glyph} {n:MinValidGlyph}(uint32_t length) {
 	return 1U << (({c:VALID_RANGES} >> (length * 5)) & 0x1F);
 }
 

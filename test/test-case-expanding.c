@@ -34,7 +34,7 @@ int main(int argc, char const* argv[])
 		return RESULT_FAIL;
 	}
 
-	UTSpecialCase const* specialCase = UTGetSpecialCase(glyph, info, UT_CASE_UPPER);
+	UTSpecialCase const* specialCase = UTGetSpecialCase(info, UT_CASE_UPPER);
 
 	if (specialCase) {
 		int length = specialCase->count;
