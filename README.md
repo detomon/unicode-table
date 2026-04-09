@@ -14,13 +14,13 @@ Available Informations
 
 ```c
 typedef struct {
-    uint32_t flags;    ///< Combination of UTFlag.
-    uint32_t category; ///< One of UTCategory.
-    int32_t cases[3];  ///< Distance to case variant. Indexable with UTCase.
-    union {
-        int64_t num;      ///< Number value if `flags & UT_FLAG_NUMBER`.
-        char const* frac; ///< Fraction string if `flags & UT_FLAG_FRACTION`.
-    };
+	uint32_t flags;    ///< Combination of UTFlag.
+	uint32_t category; ///< One of UTCategory.
+	int32_t cases[3];  ///< Distance to case variant. Indexable with UTCase.
+	union {
+		int64_t num;      ///< Number value if `flags & UT_FLAG_NUMBER`.
+		char const* frac; ///< Fraction string if `flags & UT_FLAG_FRACTION`.
+	};
 } UTInfo;
 ```
 
@@ -65,8 +65,8 @@ info = UTLookupGlyph(glyph);
 
 // Check if character is a number.
 if (info->flags & UT_FLAG_NUMBER) {
-    // Prints "Integer value of 2166: 7".
-    printf("Integer value of %04X: %lld\n", glyph, info->num);
+	// Prints "Integer value of 2166: 7".
+	printf("Integer value of %04X: %lld\n", glyph, info->num);
 }
 
 // Character `¼` (0x00BC; VULGAR FRACTION ONE QUARTER).
@@ -75,8 +75,8 @@ info = UTLookupGlyph(glyph);
 
 // Check if character is a fraction.
 if (info->flags & UT_FLAG_FRACTION) {
-    // Prints "String representation of 0x00BC: 1/4".
-    printf("String representation of 0x%04X: %s\n", glyph, info->frac);
+	// Prints "String representation of 0x00BC: 1/4".
+	printf("String representation of 0x%04X: %s\n", glyph, info->frac);
 }
 ```
 
@@ -94,26 +94,26 @@ UTInfo const* info = UTLookupGlyph(glyph);
 
 // Check if expansion occurs to prevent invalid index.
 if (info->flags & UT_FLAG_UPPER_EXPANDS) {
-    // Sequence index for uppercase variant.
-    int idx = info->cases[UT_CASE_UPPER];
-    int length = UTSpecialCases[idx];
+	// Sequence index for uppercase variant.
+	int idx = info->cases[UT_CASE_UPPER];
+	int length = UTSpecialCases[idx];
 
-    // Character sequence.
-    UTGlyph const* sequence = &UTSpecialCases[idx + 1];
+	// Character sequence.
+	UTGlyph const* sequence = &UTSpecialCases[idx + 1];
 
-    // Prints "0x00DF expands to 2 chars in uppercase".
-    printf("0x%04X expands to %d chars in uppercase\n", glyph, length);
+	// Prints "0x00DF expands to 2 chars in uppercase".
+	printf("0x%04X expands to %d chars in uppercase\n", glyph, length);
 
-    // Uppercase characters.
-    // Prints:
-    // "0: 0x0053"
-    // "1: 0x0053"
-    for (int i = 0; i < length; i ++) {
-        printf("%d: 0x%04X\n", i, sequence[i]);
-    }
+	// Uppercase characters.
+	// Prints:
+	// "0: 0x0053"
+	// "1: 0x0053"
+	for (int i = 0; i < length; i ++) {
+		printf("%d: 0x%04X\n", i, sequence[i]);
+	}
 }
 else {
-    printf("Character %04X does not expand\n", glyph);
+	printf("Character %04X does not expand\n", glyph);
 }
 ```
 
@@ -142,11 +142,11 @@ make
 
 ```sh
 ./configure \
-    --enable-symbol-prefix=bla \
-    --enable-categories=Lu,Ll,Lt,Lm,Lo \
-    --enable-snake-case \
-    --enable-include-info=flags,categories \
-    --enable-strict-level=1
+	--enable-symbol-prefix=bla \
+	--enable-categories=Lu,Ll,Lt,Lm,Lo \
+	--enable-snake-case \
+	--enable-include-info=flags,categories \
+	--enable-strict-level=1
 ```
 
 Using as Automake Subproject
