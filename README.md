@@ -34,7 +34,7 @@ Lookup Character
 
 Looking up a character with its Unicode value:
 
-*Info flag `flags` must be set.*
+*Info flag `flags` must be set with `--enable-include-info`.*
 
 ```c
 // Character `Đ` (0x0110; LATIN CAPITAL LETTER D WITH STROKE).
@@ -53,7 +53,7 @@ Numeric and Fraction Values
 
 Get the representing integer or fraction value.
 
-*Info flags `flags` and `numbers` must be set.*
+*Info flags `numbers` must be set.*
 
 ```c
 UTGlyph glyph;
@@ -83,9 +83,9 @@ if (info->flags & UT_FLAG_FRACTION) {
 Case-Fold Expansion
 -------------------
 
-Handling cases, where case-folding expands to multiple characters.
+Handling cases, where case-folding expands to multiple characters. Conditional case-folding is not supported.
 
-*Info flags `flags` and `casing` must be set.*
+*Info flags `casing` must be set with `--enable-include-info`.*
 
 ```c
 // Character `ß` (0x00DF; LATIN SMALL LETTER SHARP S).
@@ -116,6 +116,20 @@ else {
 	printf("Character %04X does not expand\n", glyph);
 }
 ```
+
+Additional Cases
+----------------
+
+These glyphs have additionaly flags set which are not determinable only from the category.
+
+| Unicode | Name | Flags |
+|---|---|---|
+| `0x0009` | `CHARACTER TABULATION` | `UT_FLAG_SPACE` |
+| `0x000A` | `LINE FEED (LF)` | `UT_FLAG_SPACE | UT_FLAG_LINEBREAK` |
+| `0x000B` | `LINE TABULATION` | `UT_FLAG_SPACE` |
+| `0x000C` | `FORM FEED (FF)` | `UT_FLAG_SPACE` |
+| `0x000D` | `CARRIAGE RETURN (CR)` | `UT_FLAG_SPACE | UT_FLAG_LINEBREAK` |
+| `0xFEFF` | `ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)` | `UT_FLAG_SPACE` |
 
 Building the Table
 ------------------

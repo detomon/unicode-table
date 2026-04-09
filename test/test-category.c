@@ -12,7 +12,7 @@ int main(int argc, char const* argv[])
 
 	uint32_t value;
 	char line[1024];
-	char name[63];
+	char name[64];
 	char categoryName[3];
 
 	UTInfo const* info;

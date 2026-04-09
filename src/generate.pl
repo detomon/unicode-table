@@ -239,10 +239,10 @@ if (exists $conditionalFlags {'addCasing'}) {
 }
 
 if (exists $conditionalFlags {'addNumbers'}) {
-	push @infoFormat, ' {%6$s}';
+	push @infoFormat, '{ %6$s }';
 }
 
-$infoFormat = (join ',', @infoFormat);
+$infoFormat = (join ', ', @infoFormat);
 $infoFormat =~ s/^\s+|\s+$//g;
 $infoFormat = "{$infoFormat},";
 
@@ -315,16 +315,15 @@ sub getTypeIndex {
 
 sub unsignedTypeFromSize {
 	my $size = shift;
-	my $type = 'uint32_t';
 
 	if ($size <= 0xFF) {
-		$type = 'uint8_t';
+		return 'uint8_t';
 	}
 	elsif ($size <= 0xFFFF) {
-		$type = 'uint16_t';
+		return 'uint16_t';
 	}
 
-	return $type;
+	return 'uint32_t';
 }
 
 #-------------------------------------------------------------------------------
@@ -412,7 +411,7 @@ while (<$dataFile>) {
 		if ($number =~ /\//) {
 			my ($v1, $v2) = split '/', $number;
 
-			$number = ".frac=\"$v1/$v2\"";
+			$number = ".frac = \"$v1/$v2\"";
 			$info |= moFractionGlyphInfo;
 		}
 		elsif ($info & moNumberGlyphInfo) {

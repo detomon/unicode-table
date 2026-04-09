@@ -167,8 +167,8 @@ static inline UTInfo const* UTLookupGlyph(UTGlyph glyph) {
 		return &UTInfos[0];
 	}
 
-	uint8_t page = UTPageIndex[glyph >> 8];
-	uint16_t offset = UTInfoIndex[page][glyph & 0xFF];
+	const uint8_t page = UTPageIndex[glyph >> 8];
+	const uint16_t offset = UTInfoIndex[page][glyph & 0xFF];
 
 	return &UTInfos[offset];
 }
