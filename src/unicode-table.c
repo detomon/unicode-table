@@ -548,10 +548,6 @@ UTInfo const UTInfos[UT_INFO_TABLE_SIZE] = {
 	{  257,  11, {     0,     0,     0}, { 20000000 }},
 };
 
-/**
- * All Unicode pages.
- * Points to UTInfoIndex.
- */
 uint8_t const UTPageIndex[UT_PAGE_INDEX_TABLE_SIZE] = {
 	  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
 	 17, 18, 19, 20, 21, 18, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
@@ -827,10 +823,6 @@ uint8_t const UTPageIndex[UT_PAGE_INDEX_TABLE_SIZE] = {
 	 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61,162,
 };
 
-/**
- * Indexes of UTInfos.
- * UTInfoIndex[page index][index in page].
- */
 uint16_t const UTInfoIndex[UT_INFO_INDEX_TABLE_SIZE][256] = {
 	{
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -3606,9 +3598,6 @@ uint16_t const UTInfoIndex[UT_INFO_INDEX_TABLE_SIZE][256] = {
 	}
 };
 
-/**
- * (length, (glyph){length})*
- */
 UTGlyph const UTSpecialCases[UT_SPECIAL_CASES_TABLE_SIZE] = {
 	2, 83, 115, 2, 83, 83, 2, 105, 775, 2, 70, 102, 2, 70, 70, 2,
 	70, 105, 2, 70, 73, 2, 70, 108, 2, 70, 76, 3, 70, 102, 105, 3,

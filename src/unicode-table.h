@@ -123,22 +123,25 @@ typedef struct {
 #define UT_CATEGORY_NAMES_TABLE_SIZE 31
 
 /**
- * Character information indexable with values from UTInfoIndex.
+ * Character information indexable with values from `UTInfoIndex`.
  */
 extern UTInfo const UTInfos[UT_INFO_TABLE_SIZE];
 
 /**
- * Character page lookup table.
+ * All Unicode pages.
+ * Points to entry in `UTInfoIndex`.
  */
 extern uint8_t const UTPageIndex[UT_PAGE_INDEX_TABLE_SIZE];
 
 /**
- * Character lookup table.
+ * Indices of `UTInfos`.
+ * `UTInfoIndex[page index][index in page]`.
  */
 extern uint16_t const UTInfoIndex[UT_INFO_INDEX_TABLE_SIZE][256];
 
 /**
  * Special case-folding sequences.
+ * A list of `UTSpecialCase` with variable number of `glyphs`.
  */
 extern UTGlyph const UTSpecialCases[UT_SPECIAL_CASES_TABLE_SIZE];
 
@@ -192,11 +195,11 @@ static inline UTSpecialCase const* UTGetSpecialCase(UTInfo const* info, UTCase v
  * ```
  */
 #define UT_VALID_RANGES (\
-	(7UL << 5) | \
-	(11UL << 10) | \
-	(16UL << 15) | \
-	(21UL << 20) | \
-	(26UL << 25))
+	(7U << 5) | \
+	(11U << 10) | \
+	(16U << 15) | \
+	(21U << 20) | \
+	(26U << 25))
 
 /**
  * Get minimum valid glyph value for UTF-8 sequence with @p length continuation bytes.
@@ -205,7 +208,7 @@ static inline UTSpecialCase const* UTGetSpecialCase(UTInfo const* info, UTCase v
  * @return Minimum valid glyph value.
  */
 static inline UTGlyph UTMinValidGlyph(uint32_t length) {
-	return 1U << ((UT_VALID_RANGES >> (length * 5)) & 0x1F);
+	return (1U << ((UT_VALID_RANGES >> (length * 5)) & 0x1F)) - 1;
 }
 
 #ifdef __cplusplus

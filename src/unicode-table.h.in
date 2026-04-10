@@ -107,23 +107,26 @@ typedef struct {
 #define {c:CategoryNamesTableSize} {v:categoryNamesTableSize}
 
 /**
- * Character information indexable with values from {n:InfoIndex}.
+ * Character information indexable with values from `{n:InfoIndex}`.
  */
 extern {n:Info} const {n:Infos}[{c:InfoTableSize}];
 
 /**
- * Character page lookup table.
+ * All Unicode pages.
+ * Points to entry in `{n:InfoIndex}`.
  */
 extern {v:pagesType} const {n:PageIndex}[{c:PageIndexTableSize}];
 
 /**
- * Character lookup table.
+ * Indices of `{n:Infos}`.
+ * `{n:InfoIndex}[page index][index in page]`.
  */
 extern {v:infoType} const {n:InfoIndex}[{c:InfoIndexTableSize}][256];
 
 {if:addCasing}
 /**
  * Special case-folding sequences.
+ * A list of `{n:SpecialCase}` with variable number of `glyphs`.
  */
 extern {n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}];
 {endif:}
@@ -182,11 +185,11 @@ static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Info} const* info, {n
  * ```
  */
 #define {c:VALID_RANGES} (\
-	(7UL << 5) | \
-	(11UL << 10) | \
-	(16UL << 15) | \
-	(21UL << 20) | \
-	(26UL << 25))
+	(7U << 5) | \
+	(11U << 10) | \
+	(16U << 15) | \
+	(21U << 20) | \
+	(26U << 25))
 
 /**
  * Get minimum valid glyph value for UTF-8 sequence with @p length continuation bytes.
@@ -195,7 +198,7 @@ static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Info} const* info, {n
  * @return Minimum valid glyph value.
  */
 static inline {n:Glyph} {n:MinValidGlyph}(uint32_t length) {
-	return 1U << (({c:VALID_RANGES} >> (length * 5)) & 0x1F);
+	return (1U << (({c:VALID_RANGES} >> (length * 5)) & 0x1F)) - 1;
 }
 
 #ifdef __cplusplus

@@ -8,26 +8,15 @@
 ##infos
 };
 
-/**
- * All Unicode pages.
- * Points to {n:InfoIndex}.
- */
 {v:pagesType} const {n:PageIndex}[{c:PageIndexTableSize}] = {
 ##pageIndex
 };
 
-/**
- * Indexes of {n:Infos}.
- * {n:InfoIndex}[page index][index in page].
- */
 {v:infoType} const {n:InfoIndex}[{c:InfoIndexTableSize}][256] = {
 ##infoIndex
 };
 
 {if:addCasing}
-/**
- * (length, (glyph){length})*
- */
 {n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}] = {
 ##specialCases
 };
