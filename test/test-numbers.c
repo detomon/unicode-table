@@ -11,7 +11,7 @@ int main(int argc, char const* argv[]) {
 	// Check if character is a number.
 	if (info->flags & UT_FLAG_NUMBER) {
 		// Prints "Integer value of 0x2166: 7".
-		printf("Integer value of 0x%04X: %lld\n", glyph, info->num);
+		printf("Integer value of 0x%04X: %"PRId64"\n" , glyph, info->num);
 	}
 	else {
 		return RESULT_FAIL;
