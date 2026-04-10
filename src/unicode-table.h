@@ -100,16 +100,19 @@ typedef struct {
 	uint32_t category; ///< One of `UTCategory`.
 	int32_t cases[3];  ///< Distance to case variant. Indexable with `UTCase`.
 	union {
-		int64_t num;      ///< Number value if `flags & UT_FLAG_NUMBER`.
-		char const* frac; ///< Fraction string if `flags & UT_FLAG_FRACTION`.
+		int64_t number;          ///< Number value if `flags & UT_FLAG_NUMBER`.
+		struct {
+			int32_t numerator;   ///< Fraction numerator if `flags & UT_FLAG_FRACTION`.
+			int32_t denominator; ///< Fraction denominator if `flags & UT_FLAG_FRACTION`.
+		};
 	};
 } UTInfo;
 
 /**
- * Helper struct for reading special case-folding sequences.
+ * Helper struct for reading special case-folding sequences  in `UTSpecialCases`.
  */
 typedef struct {
-	UTGlyph count;    ///< Number of characters.
+	UTGlyph count; ///< Number of characters.
 	UTGlyph glyphs[]; ///< Sequence of characters.
 } UTSpecialCase;
 
@@ -175,31 +178,12 @@ static inline UTInfo const* UTLookupGlyph(UTGlyph glyph) {
  * @return Case-folding sequence or `NULL` if none exists for given case variant.
  */
 static inline UTSpecialCase const* UTGetSpecialCase(UTInfo const* info, UTCase variant) {
-	if (info->flags & (UT_FLAG_UPPER_EXPANDS << variant)) {
+	if (info->flags & UT_FLAG_CASE_EXPANDS & (UT_FLAG_UPPER_EXPANDS << variant)) {
 		return (UTSpecialCase const*) &UTSpecialCases[info->cases[variant]];
 	}
 
 	return NULL;
 }
-
-/**
- * Minimum valid range for sequence sizes. Value is expressed as shift.
- *
- * ```
- * 0XXXXXXX                                               (0 << 0)
- * 110XXXXX 10XXXXXX                                      (1 << 7)
- * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
- * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
- * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
- * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
- * ```
- */
-#define UT_VALID_RANGES (\
-	(7U << 5) | \
-	(11U << 10) | \
-	(16U << 15) | \
-	(21U << 20) | \
-	(26U << 25))
 
 /**
  * Get minimum valid glyph value for UTF-8 sequence with @p length continuation bytes.
@@ -208,7 +192,26 @@ static inline UTSpecialCase const* UTGetSpecialCase(UTInfo const* info, UTCase v
  * @return Minimum valid glyph value.
  */
 static inline UTGlyph UTMinValidGlyph(uint32_t length) {
-	return (1U << ((UT_VALID_RANGES >> (length * 5)) & 0x1F)) - 1;
+	/**
+	 * Minimum valid range for sequence sizes. Value is expressed as shift.
+	 *
+	 * ```
+	 * 0XXXXXXX                                               (0 << 0)
+	 * 110XXXXX 10XXXXXX                                      (1 << 7)
+	 * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
+	 * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
+	 * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
+	 * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
+	 * ```
+	 */
+	static uint32_t const ranges =
+		(7U << 5) |
+		(11U << 10) |
+		(16U << 15) |
+		(21U << 20) |
+		(26U << 25);
+
+	return (1U << ((ranges >> (length * 5)) & 0x1F)) - 1;
 }
 
 #ifdef __cplusplus

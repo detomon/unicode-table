@@ -11,7 +11,7 @@ int main(int argc, char const* argv[]) {
 	// Check if character is a number.
 	if (info->flags & UT_FLAG_NUMBER) {
 		// Prints "Integer value of 0x2166: 7".
-		printf("Integer value of 0x%04X: %"PRId64"\n" , glyph, info->num);
+		printf("Integer value of 0x%04X: %"PRId64"\n" , glyph, info->number);
 	}
 	else {
 		return RESULT_FAIL;
@@ -23,8 +23,13 @@ int main(int argc, char const* argv[]) {
 
 	// Check if character is a fraction.
 	if (info->flags & UT_FLAG_FRACTION) {
+		if (info->numerator != 1 || info->denominator != 4) {
+			fprintf(stderr, "%d/%d != 1/4\n", info->numerator, info->denominator);
+			return RESULT_FAIL;
+		}
+
 		// Prints "String representation of 0x00BC: 1/4".
-		printf("String representation of 0x%04X: %s\n", glyph, info->frac);
+		printf("String representation of 0x%04X: %d/%d\n", glyph, info->numerator, info->denominator);
 	}
 	else {
 		return RESULT_FAIL;

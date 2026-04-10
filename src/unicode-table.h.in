@@ -71,28 +71,31 @@ typedef uint32_t {n:Glyph};
  */
 typedef struct {
 {if:addFlags}
-	uint32_t flags;    ///< Combination of `{n:Flag}`.
+	uint32_t flags; ///< Combination of `{n:Flag}`.
 {endif:}
 {if:addCategories}
 	uint32_t category; ///< One of `{n:Category}`.
 {endif:}
 {if:addCasing}
-	int32_t cases[3];  ///< Distance to case variant. Indexable with `{n:Case}`.
+	int32_t cases[3]; ///< Distance to case variant. Indexable with `{n:Case}`.
 {endif:}
 {if:addNumbers}
 	union {
-		int64_t num;      ///< Number value if `flags & {c:FlagNumber}`.
-		char const* frac; ///< Fraction string if `flags & {c:FlagFraction}`.
+		int64_t number;          ///< Number value if `flags & {c:FlagNumber}`.
+		struct {
+			int32_t numerator;   ///< Fraction numerator if `flags & {c:FlagFraction}`.
+			int32_t denominator; ///< Fraction denominator if `flags & {c:FlagFraction}`.
+		};
 	};
 {endif:}
 } {n:Info};
 
 {if:addCasing}
 /**
- * Helper struct for reading special case-folding sequences.
+ * Helper struct for reading special case-folding sequences  in `{n:SpecialCases}`.
  */
 typedef struct {
-	{n:Glyph} count;    ///< Number of characters.
+	{n:Glyph} count; ///< Number of characters.
 	{n:Glyph} glyphs[]; ///< Sequence of characters.
 } {n:SpecialCase};
 {endif:}
@@ -164,7 +167,7 @@ static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
  * @return Case-folding sequence or `NULL` if none exists for given case variant.
  */
 static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Info} const* info, {n:Case} variant) {
-	if (info->flags & ({c:FlagUpperExpands} << variant)) {
+	if (info->flags & {c:FlagCaseExpands} & ({c:FlagUpperExpands} << variant)) {
 		return ({n:SpecialCase} const*) &{n:SpecialCases}[info->cases[variant]];
 	}
 
@@ -173,32 +176,32 @@ static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Info} const* info, {n
 {endif:}
 
 /**
- * Minimum valid range for sequence sizes. Value is expressed as shift.
- *
- * ```
- * 0XXXXXXX                                               (0 << 0)
- * 110XXXXX 10XXXXXX                                      (1 << 7)
- * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
- * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
- * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
- * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
- * ```
- */
-#define {c:VALID_RANGES} (\
-	(7U << 5) | \
-	(11U << 10) | \
-	(16U << 15) | \
-	(21U << 20) | \
-	(26U << 25))
-
-/**
  * Get minimum valid glyph value for UTF-8 sequence with @p length continuation bytes.
  *
  * @param length Number of UTF-8 continuation bytes.
  * @return Minimum valid glyph value.
  */
 static inline {n:Glyph} {n:MinValidGlyph}(uint32_t length) {
-	return (1U << (({c:VALID_RANGES} >> (length * 5)) & 0x1F)) - 1;
+	/**
+	 * Minimum valid range for sequence sizes. Value is expressed as shift.
+	 *
+	 * ```
+	 * 0XXXXXXX                                               (0 << 0)
+	 * 110XXXXX 10XXXXXX                                      (1 << 7)
+	 * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
+	 * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
+	 * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
+	 * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
+	 * ```
+	 */
+	static uint32_t const ranges =
+		(7U << 5) |
+		(11U << 10) |
+		(16U << 15) |
+		(21U << 20) |
+		(26U << 25);
+
+	return (1U << ((ranges >> (length * 5)) & 0x1F)) - 1;
 }
 
 #ifdef __cplusplus

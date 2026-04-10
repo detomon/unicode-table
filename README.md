@@ -14,12 +14,15 @@ Available Informations
 
 ```c
 typedef struct {
-	uint32_t flags;    ///< Combination of UTFlag.
-	uint32_t category; ///< One of UTCategory.
-	int32_t cases[3];  ///< Distance to case variant. Indexable with UTCase.
+	uint32_t flags;    ///< Combination of `UTFlag`.
+	uint32_t category; ///< One of `UTCategory`.
+	int32_t cases[3];  ///< Distance to case variant. Indexable with `UTCase`.
 	union {
-		int64_t num;      ///< Number value if `flags & UT_FLAG_NUMBER`.
-		char const* frac; ///< Fraction string if `flags & UT_FLAG_FRACTION`.
+		int64_t number;          ///< Number value if `flags & UT_FLAG_NUMBER`.
+		struct {
+			int32_t numerator;   ///< Fraction numerator if `flags & UT_FLAG_FRACTION`.
+			int32_t denominator; ///< Fraction denominator if `flags & UT_FLAG_FRACTION`.
+		};
 	};
 } UTInfo;
 ```
@@ -27,7 +30,8 @@ typedef struct {
 - `category` contains one of the character categories listed in `UTCategory`
 - `flags` contains multiple flags listed in `UTFlag`
 - `cases` contains values to be added to the character value in order to convert it to the desired case variant (`UT_CASE_UPPER`,`UT_CASE_LOWER` or `UT_CASE_TITLE`). The field is indexable with `UTCase`. If a `case` field is `0`, that specific case variant does not exist or is the same case variant as the character value itself. If one of the flags `UT_FLAG_UPPER_EXPANDS`, `UT_FLAG_LOWER_EXPANDS` or `UT_FLAG_TITLE_EXPANDS` is set in `flags`, the character expands to multiple characters when case-folding. For example, the lowercase letter "ß" (`0x00DF; LATIN SMALL LETTER SHARP S `) expands to the 2 uppercase letters "SS" (`0x0053 0x0053; LATIN CAPITAL LETTER S `). `cases` then contains an index usable for the array `UTSpecialCases`. The index itself points to the number of character in the expanded sequence. The following array elements contain the expanded sequence's character values (see [example below](#user-content-case-fold-expansion)).
-- `number` contains numeric values for digits, number-like and fraction characters. For example, the roman number "Ⅶ" (`0x2166; ROMAN NUMERAL SEVEN `) has the value `7` in `num`. Fractions are represented by strings that contain the nominator and denominator separated by `/` (`"n/d"`). For example, the fraction character "¼" (`0x00BC; VULGAR FRACTION ONE QUARTER `) has the value `"1/4"` in `frac`.
+- If flags has `UT_FLAG_NUMBER`, ``number` contains numeric values for digits, number-like and characters. For example, the roman number "Ⅶ" (`0x2166; ROMAN NUMERAL SEVEN `) has the value `7` in `number`.
+- If flags has `UT_FLAG_FRACTION`, `numerator` and `denominator` contain the fractions `numerator` and `denominator`, respectively. For example, the fraction character "¼" (`0x00BC; VULGAR FRACTION ONE QUARTER `) has the value `1` in `numerator` and `4` in denominator`.
 
 Lookup Character
 ----------------
@@ -66,7 +70,7 @@ info = UTLookupGlyph(glyph);
 // Check if character is a number.
 if (info->flags & UT_FLAG_NUMBER) {
 	// Prints "Integer value of 2166: 7".
-	printf("Integer value of %04X: %lld\n", glyph, info->num);
+	printf("Integer value of %04X: %lld\n", glyph, info->number);
 }
 
 // Character `¼` (0x00BC; VULGAR FRACTION ONE QUARTER).
@@ -76,7 +80,7 @@ info = UTLookupGlyph(glyph);
 // Check if character is a fraction.
 if (info->flags & UT_FLAG_FRACTION) {
 	// Prints "String representation of 0x00BC: 1/4".
-	printf("String representation of 0x%04X: %s\n", glyph, info->frac);
+	printf("String representation of 0x%04X: %d/%d\n", glyph, info->numerator, info->denominator);
 }
 ```
 

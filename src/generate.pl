@@ -411,11 +411,11 @@ while (<$dataFile>) {
 		if ($number =~ /\//) {
 			my ($v1, $v2) = split '/', $number;
 
-			$number = ".frac = \"$v1/$v2\"";
+			$number = ".numerator = $v1, .denominator = $v2";
 			$info |= moFractionGlyphInfo;
 		}
 		elsif ($info & moNumberGlyphInfo) {
-			$number = int ($number);
+			$number = ".number = $number";
 		}
 		else {
 			$number = 0;

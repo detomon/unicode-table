@@ -25,7 +25,7 @@ int main(int argc, char const* argv[]) {
 		// Ss surrogate.
 		if ((value & ~0x07FF) == 0xD800) {
 			if (category != UT_CATEGORY_INVALID) {
-				fprintf(stderr, "ERROR: %x should be invalid (strict_level=%u)\n", value, UT_STRICT_LEVEL);
+				fprintf(stderr, "%x should be invalid (strict_level=%u)\n", value, UT_STRICT_LEVEL);
 				return RESULT_ERROR;
 			}
 
@@ -35,7 +35,7 @@ int main(int argc, char const* argv[]) {
 
 		// Test category.
 		if (strcmp(UTCategoryNames[category], categoryName) != 0) {
-			fprintf(stderr, "ERROR: %x: %s != %s (%d)\n", value, categoryName, UTCategoryNames[category], category);
+			fprintf(stderr, "%x: %s != %s (%d)\n", value, categoryName, UTCategoryNames[category], category);
 			return RESULT_ERROR;
 		}
 	}
