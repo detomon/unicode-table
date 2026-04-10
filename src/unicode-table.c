@@ -6,7 +6,7 @@
 
 #include "unicode-table.h"
 
-UTInfo const UTInfos[] = {
+UTInfo const UTInfos[UT_INFO_TABLE_SIZE] = {
 	{    0,   0, {     0,     0,     0}, { 0 }},
 	{ 1024,  26, {     0,     0,     0}, { 0 }},
 	{ 1040,  26, {     0,     0,     0}, { 0 }},
@@ -552,7 +552,7 @@ UTInfo const UTInfos[] = {
  * All Unicode pages.
  * Points to UTInfoIndex.
  */
-uint8_t const UTPageIndex[] = {
+uint8_t const UTPageIndex[UT_PAGE_INDEX_TABLE_SIZE] = {
 	  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
 	 17, 18, 19, 20, 21, 18, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
 	 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 34, 42, 43, 44, 45, 46,
@@ -831,7 +831,7 @@ uint8_t const UTPageIndex[] = {
  * Indexes of UTInfos.
  * UTInfoIndex[page index][index in page].
  */
-uint16_t const UTInfoIndex[][256] = {
+uint16_t const UTInfoIndex[UT_INFO_INDEX_TABLE_SIZE][256] = {
 	{
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -3607,9 +3607,9 @@ uint16_t const UTInfoIndex[][256] = {
 };
 
 /**
- * ([length][charcode]{length})*
+ * (length, (glyph){length})*
  */
-UTGlyph const UTSpecialCases[] = {
+UTGlyph const UTSpecialCases[UT_SPECIAL_CASES_TABLE_SIZE] = {
 	2, 83, 115, 2, 83, 83, 2, 105, 775, 2, 70, 102, 2, 70, 70, 2,
 	70, 105, 2, 70, 73, 2, 70, 108, 2, 70, 76, 3, 70, 102, 105, 3,
 	70, 70, 73, 3, 70, 102, 108, 3, 70, 70, 76, 2, 83, 116, 2, 83,
@@ -3647,7 +3647,7 @@ UTGlyph const UTSpecialCases[] = {
 	837, 3, 937, 834, 921,
 };
 
-char const* const UTCategoryNames[] = {
+char const* const UTCategoryNames[UT_CATEGORY_NAMES_TABLE_SIZE] = {
 	[UT_CATEGORY_INVALID]                   = "",
 	[UT_CATEGORY_LETTER_UPPERCASE]          = "Lu",
 	[UT_CATEGORY_LETTER_LOWERCASE]          = "Ll",

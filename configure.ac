@@ -87,6 +87,6 @@ AC_CONFIG_FILES([
 ])
 
 # Flags
-CFLAGS="$CFLAGS -std=c99 -Wall"
+CFLAGS="$CFLAGS -std=c99 -Wall -Werror"
 
 AC_OUTPUT

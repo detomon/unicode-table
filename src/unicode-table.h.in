@@ -16,25 +16,6 @@ extern "C" {
  */
 #define {c:MAX_VALUE} 0x10FFFF
 
-/**
- * Minimum valid range for sequence sizes. Value is expressed as shift.
- *
- * ```
- * 0XXXXXXX
- * 110XXXXX 10XXXXXX                                      (1 << 7)
- * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
- * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
- * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
- * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
- * ```
- */
-#define {c:VALID_RANGES} (\
-	(7UL << 5) | \
-	(11UL << 10) | \
-	(16UL << 15) | \
-	(21UL << 20) | \
-	(26UL << 25))
-
 {if:addFlags}
 /**
  * Flags for determining character type.
@@ -56,6 +37,7 @@ typedef enum {
 	{c:FlagUpperExpands} = 1 << 13, ///< Uppercase expands to multiple characters.
 	{c:FlagLowerExpands} = 1 << 14, ///< Lowercase expands to multiple characters.
 	{c:FlagTitleExpands} = 1 << 15, ///< Titlecase expands to multiple characters.
+	{c:FlagCaseExpands} = {c:FlagUpperExpands} | {c:FlagLowerExpands} | {c:FlagTitleExpands}, ///< Some case expands to multiple characters.
 } {n:Flag};
 {endif:}
 
@@ -70,7 +52,7 @@ typedef enum {
 
 {if:addCasing}
 /**
- * Case variant index usable for `cases` field in UTInfo.
+ * Case variant index usable for `cases` field in `UTInfo`.
  */
 typedef enum {
 	{c:CaseUpper} = 0, ///< Index for uppercase variant.
@@ -89,13 +71,13 @@ typedef uint32_t {n:Glyph};
  */
 typedef struct {
 {if:addFlags}
-	uint32_t flags;    ///< Combination of {n:Flag}.
+	uint32_t flags;    ///< Combination of `{n:Flag}`.
 {endif:}
 {if:addCategories}
-	uint32_t category; ///< One of {n:Category}.
+	uint32_t category; ///< One of `{n:Category}`.
 {endif:}
 {if:addCasing}
-	int32_t cases[3];  ///< Distance to case variant. Indexable with {n:Case}.
+	int32_t cases[3];  ///< Distance to case variant. Indexable with `{n:Case}`.
 {endif:}
 {if:addNumbers}
 	union {
@@ -115,33 +97,42 @@ typedef struct {
 } {n:SpecialCase};
 {endif:}
 
-{if:addCasing}
 /**
- * Special case-folding sequences.
+ * Table sizes.
  */
-extern {n:Glyph} const {n:SpecialCases}[];
-{endif:}
+#define {c:InfoTableSize} {v:infoTableSize}
+#define {c:PageIndexTableSize} {v:pageIndexTableSize}
+#define {c:InfoIndexTableSize} {v:infoIndexTableSize}
+#define {c:SpecialCasesTableSize} {v:specialCasesTableSize}
+#define {c:CategoryNamesTableSize} {v:categoryNamesTableSize}
 
 /**
  * Character information indexable with values from {n:InfoIndex}.
  */
-extern {n:Info} const {n:Infos}[];
+extern {n:Info} const {n:Infos}[{c:InfoTableSize}];
 
 /**
  * Character page lookup table.
  */
-extern {v:pagesType} const {n:PageIndex}[];
+extern {v:pagesType} const {n:PageIndex}[{c:PageIndexTableSize}];
 
 /**
  * Character lookup table.
  */
-extern {v:infoType} const {n:InfoIndex}[][256];
+extern {v:infoType} const {n:InfoIndex}[{c:InfoIndexTableSize}][256];
+
+{if:addCasing}
+/**
+ * Special case-folding sequences.
+ */
+extern {n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}];
+{endif:}
 
 {if:addCategories}
 /**
- * Category name indexable with {n:Category}.
+ * Category name indexable with `{n:Category}`.
  */
-extern char const* const {n:CategoryNames}[];
+extern char const* const {n:CategoryNames}[{c:CategoryNamesTableSize}];
 {endif:}
 
 /**
@@ -177,6 +168,25 @@ static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Info} const* info, {n
 	return NULL;
 }
 {endif:}
+
+/**
+ * Minimum valid range for sequence sizes. Value is expressed as shift.
+ *
+ * ```
+ * 0XXXXXXX
+ * 110XXXXX 10XXXXXX                                      (1 << 7)
+ * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
+ * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
+ * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
+ * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
+ * ```
+ */
+#define {c:VALID_RANGES} (\
+	(7UL << 5) | \
+	(11UL << 10) | \
+	(16UL << 15) | \
+	(21UL << 20) | \
+	(26UL << 25))
 
 /**
  * Get minimum valid glyph value for UTF-8 sequence with @p length continuation bytes.

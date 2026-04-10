@@ -19,25 +19,6 @@ extern "C" {
 #define UT_MAX_VALUE 0x10FFFF
 
 /**
- * Minimum valid range for sequence sizes. Value is expressed as shift.
- *
- * ```
- * 0XXXXXXX
- * 110XXXXX 10XXXXXX                                      (1 << 7)
- * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
- * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
- * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
- * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
- * ```
- */
-#define UT_VALID_RANGES (\
-	(7UL << 5) | \
-	(11UL << 10) | \
-	(16UL << 15) | \
-	(21UL << 20) | \
-	(26UL << 25))
-
-/**
  * Flags for determining character type.
  */
 typedef enum {
@@ -57,6 +38,7 @@ typedef enum {
 	UT_FLAG_UPPER_EXPANDS = 1 << 13, ///< Uppercase expands to multiple characters.
 	UT_FLAG_LOWER_EXPANDS = 1 << 14, ///< Lowercase expands to multiple characters.
 	UT_FLAG_TITLE_EXPANDS = 1 << 15, ///< Titlecase expands to multiple characters.
+	UT_FLAG_CASE_EXPANDS = UT_FLAG_UPPER_EXPANDS | UT_FLAG_LOWER_EXPANDS | UT_FLAG_TITLE_EXPANDS, ///< Some case expands to multiple characters.
 } UTFlag;
 
 /**
@@ -97,7 +79,7 @@ typedef enum {
 } UTCategory;
 
 /**
- * Case variant index usable for `cases` field in UTInfo.
+ * Case variant index usable for `cases` field in `UTInfo`.
  */
 typedef enum {
 	UT_CASE_UPPER = 0, ///< Index for uppercase variant.
@@ -114,9 +96,9 @@ typedef uint32_t UTGlyph;
  * Character info.
  */
 typedef struct {
-	uint32_t flags;    ///< Combination of UTFlag.
-	uint32_t category; ///< One of UTCategory.
-	int32_t cases[3];  ///< Distance to case variant. Indexable with UTCase.
+	uint32_t flags;    ///< Combination of `UTFlag`.
+	uint32_t category; ///< One of `UTCategory`.
+	int32_t cases[3];  ///< Distance to case variant. Indexable with `UTCase`.
 	union {
 		int64_t num;      ///< Number value if `flags & UT_FLAG_NUMBER`.
 		char const* frac; ///< Fraction string if `flags & UT_FLAG_FRACTION`.
@@ -132,29 +114,38 @@ typedef struct {
 } UTSpecialCase;
 
 /**
- * Special case-folding sequences.
+ * Table sizes.
  */
-extern UTGlyph const UTSpecialCases[];
+#define UT_INFO_TABLE_SIZE 539
+#define UT_PAGE_INDEX_TABLE_SIZE 4352
+#define UT_INFO_INDEX_TABLE_SIZE 163
+#define UT_SPECIAL_CASES_TABLE_SIZE 485
+#define UT_CATEGORY_NAMES_TABLE_SIZE 31
 
 /**
  * Character information indexable with values from UTInfoIndex.
  */
-extern UTInfo const UTInfos[];
+extern UTInfo const UTInfos[UT_INFO_TABLE_SIZE];
 
 /**
  * Character page lookup table.
  */
-extern uint8_t const UTPageIndex[];
+extern uint8_t const UTPageIndex[UT_PAGE_INDEX_TABLE_SIZE];
 
 /**
  * Character lookup table.
  */
-extern uint16_t const UTInfoIndex[][256];
+extern uint16_t const UTInfoIndex[UT_INFO_INDEX_TABLE_SIZE][256];
 
 /**
- * Category name indexable with UTCategory.
+ * Special case-folding sequences.
  */
-extern char const* const UTCategoryNames[];
+extern UTGlyph const UTSpecialCases[UT_SPECIAL_CASES_TABLE_SIZE];
+
+/**
+ * Category name indexable with `UTCategory`.
+ */
+extern char const* const UTCategoryNames[UT_CATEGORY_NAMES_TABLE_SIZE];
 
 /**
  * Lookup character by value.
@@ -187,6 +178,25 @@ static inline UTSpecialCase const* UTGetSpecialCase(UTInfo const* info, UTCase v
 
 	return NULL;
 }
+
+/**
+ * Minimum valid range for sequence sizes. Value is expressed as shift.
+ *
+ * ```
+ * 0XXXXXXX
+ * 110XXXXX 10XXXXXX                                      (1 << 7)
+ * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
+ * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
+ * 111110XX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX           (1 << 21)
+ * 1111110X 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX 10XXXXXX  (1 << 26)
+ * ```
+ */
+#define UT_VALID_RANGES (\
+	(7UL << 5) | \
+	(11UL << 10) | \
+	(16UL << 15) | \
+	(21UL << 20) | \
+	(26UL << 25))
 
 /**
  * Get minimum valid glyph value for UTF-8 sequence with @p length continuation bytes.

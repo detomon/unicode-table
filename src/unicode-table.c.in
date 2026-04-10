@@ -4,7 +4,7 @@
 
 #include "{v:outName}.h"
 
-{n:Info} const {n:Infos}[] = {
+{n:Info} const {n:Infos}[{c:InfoTableSize}] = {
 ##infos
 };
 
@@ -12,7 +12,7 @@
  * All Unicode pages.
  * Points to {n:InfoIndex}.
  */
-{v:pagesType} const {n:PageIndex}[] = {
+{v:pagesType} const {n:PageIndex}[{c:PageIndexTableSize}] = {
 ##pageIndex
 };
 
@@ -20,21 +20,21 @@
  * Indexes of {n:Infos}.
  * {n:InfoIndex}[page index][index in page].
  */
-{v:infoType} const {n:InfoIndex}[][256] = {
+{v:infoType} const {n:InfoIndex}[{c:InfoIndexTableSize}][256] = {
 ##infoIndex
 };
 
 {if:addCasing}
 /**
- * ([length][charcode]{length})*
+ * (length, (glyph){length})*
  */
-{n:Glyph} const {n:SpecialCases}[] = {
+{n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}] = {
 ##specialCases
 };
 {endif:}
 
 {if:addCategories}
-char const* const {n:CategoryNames}[] = {
+char const* const {n:CategoryNames}[{c:CategoryNamesTableSize}] = {
 ##categoryNames
 };
 {endif:}

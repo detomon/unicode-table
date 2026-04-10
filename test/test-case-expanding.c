@@ -23,7 +23,7 @@ int main(int argc, char const* argv[]) {
 		// prints:
 		// "0: 0x0053"
 		// "1: 0x0053"
-		for (int i = 0; i < length; i ++) {
+		for (int i = 0; i < length; i++) {
 			printf("%d: 0x%04X\n", i, sequence[i]);
 		}
 	}
@@ -47,7 +47,7 @@ int main(int argc, char const* argv[]) {
 		// prints:
 		// "0: 0x0053"
 		// "1: 0x0053"
-		for (int i = 0; i < length; i ++) {
+		for (int i = 0; i < length; i++) {
 			printf("%d: 0x%04X\n", i, specialCase->glyphs[i]);
 		}
 	}

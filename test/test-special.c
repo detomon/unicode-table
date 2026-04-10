@@ -22,9 +22,9 @@ int main(int argc, char const* argv[]) {
 	char lowerSequence[64];
 	int values[4];
 
-	// read SpecialCasing.txt
+	// Read SpecialCasing.txt
 	while (fgets(line, 1024, specialCasing)) {
-		for (int i = 0; line[i]; i ++) {
+		for (int i = 0; line[i]; i++) {
 			if (line[i] == '#') {
 				line[i] = '\0';
 				break;
@@ -37,14 +37,14 @@ int main(int argc, char const* argv[]) {
 			continue;
 		}
 
-		// ignore conditional case-folding
+		// Ignore conditional case-folding.
 		if (name[0]) {
 			continue;
 		}
 
 		UTInfo const* info = UTLookupGlyph(value);
 
-		if (!(info->flags & (UT_FLAG_UPPER_EXPANDS | UT_FLAG_LOWER_EXPANDS | UT_FLAG_TITLE_EXPANDS))) {
+		if (!(info->flags & UT_FLAG_CASE_EXPANDS)) {
 			fprintf(stderr, "No special case found for '%04x'\n", value);
 			return RESULT_FAIL;
 		}

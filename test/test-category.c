@@ -14,7 +14,7 @@ int main(int argc, char const* argv[]) {
 	char name[64];
 	char categoryName[3];
 
-	// read UnicodeData.txt
+	// Read UnicodeData.txt
 	while (fgets(line, 1024, data)) {
 		sscanf(line, "%x;%63[^;];%2[^;]", &value, name, categoryName);
 
@@ -22,7 +22,7 @@ int main(int argc, char const* argv[]) {
 		UTCategory category = info->category;
 
 #if UT_STRICT_LEVEL >= 1
-		// is surrogate
+		// Ss surrogate.
 		if ((value & ~0x07FF) == 0xD800) {
 			if (category != UT_CATEGORY_INVALID) {
 				fprintf(stderr, "ERROR: %x should be invalid (strict_level=%u)\n", value, UT_STRICT_LEVEL);
@@ -33,7 +33,7 @@ int main(int argc, char const* argv[]) {
 		}
 #endif
 
-		// test category
+		// Test category.
 		if (strcmp(UTCategoryNames[category], categoryName) != 0) {
 			fprintf(stderr, "ERROR: %x: %s != %s (%d)\n", value, categoryName, UTCategoryNames[category], category);
 			return RESULT_ERROR;

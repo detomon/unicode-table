@@ -457,7 +457,7 @@ while (<$dataFile>) {
 			}
 		}
 
-		for (; $code <= $code2; $code ++) {
+		for (; $code <= $code2; $code++) {
 			$pages[$code >> 8] = 1;
 			$data[$code] = $type;
 		}
@@ -478,7 +478,7 @@ close $dataFile;
 
 my $cacheCount = 1;
 
-for (my $i = 0; $i <= $#pages; $i ++) {
+for (my $i = 0; $i <= $#pages; $i++) {
 	next unless ($pages[$i]);
 
 	my $index = 0;
@@ -488,7 +488,7 @@ for (my $i = 0; $i <= $#pages; $i ++) {
 		$index = $pageCache{$page};
 	}
 	else {
-		$index = $cacheCount ++;
+		$index = $cacheCount++;
 		$pageCache{$page} = $index;
 	}
 
@@ -501,10 +501,12 @@ for (my $i = 0; $i <= $#pages; $i ++) {
 #
 #-------------------------------------------------------------------------------
 
-my @infoKeys  = keys %types;
-my $infoSize  = @infoKeys;
+my @infoKeys = keys %types;
+my $infoSize = @infoKeys;
 my $pagesSize = keys %pageCache;
-my $infoType  = unsignedTypeFromSize $infoSize;
+my @pageCacheKeys = keys %pageCache;
+my @categoryIndexKeys = keys %categoryIndexes;
+my $infoType = unsignedTypeFromSize $infoSize;
 my $pagesType = unsignedTypeFromSize $pagesSize;
 
 my %printMethods = ();
@@ -514,7 +516,13 @@ my $template = new Template(
 		'outName' => $outName,
 		'infoType' => $infoType,
 		'pagesType' => $pagesType,
+		'infoTableSize' => $infoSize,
+		'pageIndexTableSize' => $#pages + 1,
+		'infoIndexTableSize' => $#pageCacheKeys + 1,
+		'specialCasesTableSize' => $#specialCasing + 1,
+		'categoryNamesTableSize' => $#categoryIndexKeys + 1,
 	},
+
 	'prefix' => $prefix,
 	'makeSnakeCase' => $makeSnakeCase,
 	'printMethods' => \%printMethods,
@@ -535,7 +543,7 @@ my $template = new Template(
 		my $out = shift;
 
 		foreach (sort { $categoryIndexes{$a} <=> $categoryIndexes{$b} } keys %categoryIndexes) {
-			my $line = $categoryName {$_};
+			my $line = $categoryName{$_};
 
 			$line = $template->toConstant($line);
 			$line = sprintf "\t%-39s ///< %s", "$line,", $_;
@@ -562,7 +570,7 @@ my $template = new Template(
 			print $out "\n\t" if ($i > 0 && $i % 16 == 0);
 			printf $out "%3d,", $_;
 
-			$i ++;
+			$i++;
 		}
 
 		print $out "\n";
@@ -572,7 +580,7 @@ my $template = new Template(
 		my $p = 0;
 		my $i = 0;
 
-		foreach (sort { $pageCache{$a} <=> $pageCache{$b} } keys %pageCache) {
+		foreach (sort { $pageCache{$a} <=> $pageCache{$b} } @pageCacheKeys) {
 			print $out "\t{" if ($p == 0);
 			print $out "\n\t}, {" if ($p > 0);
 
@@ -580,10 +588,10 @@ my $template = new Template(
 				print $out "\n\t" if ($i % 16 == 0);
 				printf $out "%3d,", $_;
 
-				$i ++;
+				$i++;
 			}
 
-			$p ++;
+			$p++;
 		}
 
 		print $out "\n\t}\n";
@@ -612,8 +620,8 @@ my $template = new Template(
 	'categoryNames' => sub {
 		my $out = shift;
 
-		foreach (sort { $categoryIndexes{$a} <=> $categoryIndexes{$b} } keys %categoryIndexes) {
-			my $key = $categoryName {$_};
+		foreach (sort { $categoryIndexes{$a} <=> $categoryIndexes{$b} } @categoryIndexKeys) {
+			my $key = $categoryName{$_};
 
 			$key = $template->toConstant($key);
 
