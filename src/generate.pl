@@ -34,6 +34,7 @@ use Template;
 
 use constant unicodeVersion => '17.0.0';
 use constant tableSize      => 0x110000;
+use constant pageSizeShift  => 8;
 
 use constant moLetterGlyphInfo       => 1 << 0;
 use constant moUppercaseGlyphInfo    => 1 << 1;
@@ -261,11 +262,11 @@ my $srcFileIn = "unicode-table.c.in";
 my @data           = (0) x tableSize;
 my %special        = ();
 my %types          = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
-my @pages          = (0) x (tableSize >> 8);
+my @pages          = (0) x (tableSize >> pageSizeShift);
 my %pageCache      = ();
 my @specialCasing  = (0);
 
-$pageCache{join ',', ((0) x 256)} = 0;
+$pageCache{join ',', ((0) x (1 << pageSizeShift))} = 0;
 
 #-------------------------------------------------------------------------------
 #
@@ -458,12 +459,12 @@ while (<$dataFile>) {
 		}
 
 		for (; $code <= $code2; $code++) {
-			$pages[$code >> 8] = 1;
+			$pages[$code >> pageSizeShift] = 1;
 			$data[$code] = $type;
 		}
 	}
 	else {
-		$pages[$code >> 8] = 1;
+		$pages[$code >> pageSizeShift] = 1;
 		$data[$code] = $type;
 	}
 }
@@ -482,7 +483,7 @@ for (my $i = 0; $i <= $#pages; $i++) {
 	next unless ($pages[$i]);
 
 	my $index = 0;
-	my $page  = join ',',  @data[($i << 8) .. ((($i + 1) << 8) - 1)];
+	my $page  = join ',',  @data[($i << pageSizeShift) .. ((($i + 1) << pageSizeShift) - 1)];
 
 	if ($pageCache{$page}) {
 		$index = $pageCache{$page};
