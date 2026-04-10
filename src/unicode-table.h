@@ -183,7 +183,7 @@ static inline UTSpecialCase const* UTGetSpecialCase(UTInfo const* info, UTCase v
  * Minimum valid range for sequence sizes. Value is expressed as shift.
  *
  * ```
- * 0XXXXXXX
+ * 0XXXXXXX                                               (0 << 0)
  * 110XXXXX 10XXXXXX                                      (1 << 7)
  * 1110XXXX 10XXXXXX 10XXXXXX                             (1 << 11)
  * 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX                    (1 << 16)
