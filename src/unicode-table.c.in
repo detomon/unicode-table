@@ -17,7 +17,7 @@
 };
 
 {if:addCasing}
-{n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}] = {
+{v:specialCasingType} const {n:SpecialCases}[{c:SpecialCasesTableSize}] = {
 ##specialCases
 };
 {endif:}

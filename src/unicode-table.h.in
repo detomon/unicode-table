@@ -131,7 +131,7 @@ extern {v:infoType} const {n:InfoIndex}[{c:InfoIndexTableSize}][256];
  * Special case-folding sequences.
  * A list of `{n:SpecialCase}` with variable number of `glyphs`.
  */
-extern {n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}];
+extern {v:specialCasingType} const {n:SpecialCases}[{c:SpecialCasesTableSize}];
 {endif:}
 
 {if:addCategories}

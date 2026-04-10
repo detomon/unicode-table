@@ -84,9 +84,9 @@ sub replaceName {
 }
 
 sub readLine {
-	my $self = shift;
-	my $line = shift;
-	my $out = shift;
+	my $self = $_[0];
+	my $line = $_[1];
+	my $out = $_[2];
 	my %methods = %{$self->{printMethods}};
 	my $conditions = $self->{conditional};
 
@@ -127,9 +127,9 @@ sub readToEndIf {
 }
 
 sub readLines {
-	my $self = shift;
-	my $infile = shift;
-	my $outfile = shift;
+	my $self = $_[0];
+	my $infile = $_[1];
+	my $outfile = $_[2];
 
 	while (<$infile>) {
 		if (!$self->readLine($_, $outfile)) {

@@ -3598,7 +3598,7 @@ uint16_t const UTInfoIndex[UT_INFO_INDEX_TABLE_SIZE][256] = {
 	}
 };
 
-UTGlyph const UTSpecialCases[UT_SPECIAL_CASES_TABLE_SIZE] = {
+uint16_t const UTSpecialCases[UT_SPECIAL_CASES_TABLE_SIZE] = {
 	0, 2, 83, 115, 2, 83, 83, 2, 105, 775, 2, 70, 102, 2, 70, 70, 2,
 	70, 105, 2, 70, 73, 2, 70, 108, 2, 70, 76, 3, 70, 102, 105, 3,
 	70, 70, 73, 3, 70, 102, 108, 3, 70, 70, 76, 2, 83, 116, 2, 83,
