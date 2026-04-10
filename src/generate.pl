@@ -263,7 +263,7 @@ my %special        = ();
 my %types          = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
 my @pages          = (0) x (tableSize >> 8);
 my %pageCache      = ();
-my @specialCasing  = ();
+my @specialCasing  = (0);
 
 $pageCache{join ',', ((0) x 256)} = 0;
 
@@ -279,11 +279,11 @@ sub makeCharSequence {
 	$codes =~/\s*(.+)\s*/;
 
 	my @sequence = split /\s+/, $1;
-	my $offset   = $#specialCasing + 1;
 
 	# Ignore single glyph.
 	return -1 if ($#sequence == 0);
 
+	my $offset = $#specialCasing + 1;
 	push @specialCasing, $#sequence + 1;
 	push @specialCasing, hex $_ foreach (@sequence);
 

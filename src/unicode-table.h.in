@@ -71,10 +71,10 @@ typedef uint32_t {n:Glyph};
  */
 typedef struct {
 {if:addFlags}
-	uint32_t flags; ///< Combination of `{n:Flag}`.
+	uint16_t flags; ///< Combination of `{n:Flag}`.
 {endif:}
 {if:addCategories}
-	uint32_t category; ///< One of `{n:Category}`.
+	uint8_t category; ///< One of `{n:Category}`.
 {endif:}
 {if:addCasing}
 	int32_t cases[3]; ///< Distance to case variant. Indexable with `{n:Case}`.
@@ -149,7 +149,7 @@ extern char const* const {n:CategoryNames}[{c:CategoryNamesTableSize}];
  */
 static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
 	if (glyph > {c:MAX_VALUE}) {
-		return &{n:Infos}[0];
+		glyph = 0; // Map glyph to invalid category.
 	}
 
 	const {v:pagesType} page = {n:PageIndex}[glyph >> 8];
@@ -167,11 +167,13 @@ static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
  * @return Case-folding sequence or `NULL` if none exists for given case variant.
  */
 static inline {n:SpecialCase} const* {n:GetSpecialCase}({n:Info} const* info, {n:Case} variant) {
+	uint32_t offset = 0;
+
 	if (info->flags & {c:FlagCaseExpands} & ({c:FlagUpperExpands} << variant)) {
-		return ({n:SpecialCase} const*) &{n:SpecialCases}[info->cases[variant]];
+		offset = info->cases[variant];
 	}
 
-	return NULL;
+	return ({n:SpecialCase} const*) &{n:SpecialCases}[offset];
 }
 {endif:}
 

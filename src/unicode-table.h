@@ -96,9 +96,9 @@ typedef uint32_t UTGlyph;
  * Character info.
  */
 typedef struct {
-	uint32_t flags;    ///< Combination of `UTFlag`.
-	uint32_t category; ///< One of `UTCategory`.
-	int32_t cases[3];  ///< Distance to case variant. Indexable with `UTCase`.
+	uint16_t flags; ///< Combination of `UTFlag`.
+	uint8_t category; ///< One of `UTCategory`.
+	int32_t cases[3]; ///< Distance to case variant. Indexable with `UTCase`.
 	union {
 		int64_t number;          ///< Number value if `flags & UT_FLAG_NUMBER`.
 		struct {
@@ -122,7 +122,7 @@ typedef struct {
 #define UT_INFO_TABLE_SIZE 539
 #define UT_PAGE_INDEX_TABLE_SIZE 4352
 #define UT_INFO_INDEX_TABLE_SIZE 163
-#define UT_SPECIAL_CASES_TABLE_SIZE 485
+#define UT_SPECIAL_CASES_TABLE_SIZE 486
 #define UT_CATEGORY_NAMES_TABLE_SIZE 31
 
 /**
@@ -161,7 +161,7 @@ extern char const* const UTCategoryNames[UT_CATEGORY_NAMES_TABLE_SIZE];
  */
 static inline UTInfo const* UTLookupGlyph(UTGlyph glyph) {
 	if (glyph > UT_MAX_VALUE) {
-		return &UTInfos[0];
+		glyph = 0; // Map glyph to invalid category.
 	}
 
 	const uint8_t page = UTPageIndex[glyph >> 8];
@@ -178,11 +178,13 @@ static inline UTInfo const* UTLookupGlyph(UTGlyph glyph) {
  * @return Case-folding sequence or `NULL` if none exists for given case variant.
  */
 static inline UTSpecialCase const* UTGetSpecialCase(UTInfo const* info, UTCase variant) {
+	uint32_t offset = 0;
+
 	if (info->flags & UT_FLAG_CASE_EXPANDS & (UT_FLAG_UPPER_EXPANDS << variant)) {
-		return (UTSpecialCase const*) &UTSpecialCases[info->cases[variant]];
+		offset = info->cases[variant];
 	}
 
-	return NULL;
+	return (UTSpecialCase const*) &UTSpecialCases[offset];
 }
 
 /**
