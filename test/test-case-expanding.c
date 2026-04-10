@@ -1,7 +1,6 @@
 #include "test.h"
 
-int main(int argc, char const* argv[])
-{
+int main(int argc, char const* argv[]) {
 	// character `ß` (0x00DF; LATIN SMALL LETTER SHARP S)
 	UTGlyph glyph = 0x00DF;
 	UTInfo const* info = UTLookupGlyph(glyph);

@@ -69,7 +69,6 @@ sub toConstant {
 
 sub replaceName {
 	my ($self, $type, $name) = @_;
-	my %vars = %{$self->{vars}};
 
 	if ($type eq 'n') {
 		$name = $self->toUserCase($name);
@@ -98,16 +97,16 @@ sub readLine {
 			die "Print method '$method' does not exist\n";
 		}
 
-		$methods {$method} -> ($out);
+		$methods{$method}->($out);
 
-		# do not output line
+		# Do not output line.
 		return 1;
 	}
-	# handle if:
+	# Handle 'if:'.
 	elsif ($line =~ /{(if:)([\w_]+)}/) {
-		return $conditions -> ($2);
+		return $conditions->($2);
 	}
-	# ignore endif:
+	# Ignore 'endif:'.
 	elsif ($line =~ /{(endif:)([\w_]*)}/) {
 		return 1;
 	}
@@ -147,7 +146,7 @@ sub new {
 		'makeSnakeCase' => 0,
 		'printMethods' => {},
 		'conditional' => sub {},
-		# overwrite default values
+		# Overwrite default values.
 		@_,
 	};
 

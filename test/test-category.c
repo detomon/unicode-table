@@ -1,7 +1,6 @@
 #include "test.h"
 
-int main(int argc, char const* argv[])
-{
+int main(int argc, char const* argv[]) {
 	char const* dataName = "../src/UnicodeData.txt";
 	FILE* data = fopen(dataName, "r");
 
@@ -15,15 +14,12 @@ int main(int argc, char const* argv[])
 	char name[64];
 	char categoryName[3];
 
-	UTInfo const* info;
-	UTCategory category;
-
 	// read UnicodeData.txt
 	while (fgets(line, 1024, data)) {
 		sscanf(line, "%x;%63[^;];%2[^;]", &value, name, categoryName);
 
-		info = UTLookupGlyph(value);
-		category = info->category;
+		UTInfo const* info = UTLookupGlyph(value);
+		UTCategory category = info->category;
 
 #if UT_STRICT_LEVEL >= 1
 		// is surrogate

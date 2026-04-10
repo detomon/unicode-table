@@ -185,7 +185,7 @@ if ($args =~ /--snake-case=(\d+)/) {
 
 if ($args =~ /--categories=([\w_,]+)/) {
 	foreach (split /,/, $1) {
-		$useCategories {$_} = 1;
+		$useCategories{$_} = 1;
 	}
 
 	$useCategories = 1;
@@ -196,49 +196,49 @@ if ($args =~ /--include-info=([\w_,]+)/) {
 }
 
 if ($args =~ /--strict-level=(\d+)/) {
-	$excludeSurrogates = int $1 > 0;
+	$excludeSurrogates = int($1) > 0;
 }
 
-# full format: '{%1$5d,%2$3d,{%3$6d,%4$6d,%5$6d}, {%6$s}},'
+# Full format: '{%1$5d, %2$3d, {%3$6d,%4$6d,%5$6d}, { %6$s }},'.
 my $infoFormat = '';
 my %infoFormat = ();
 my @infoFormat = ();
 
 foreach (split /,/, $includeInfos) {
-	$infoFormat {$_} = 1;
+	$infoFormat{$_} = 1;
 }
 
-if (exists $infoFormat {'flags'}) {
-	$conditionalFlags {'addFlags'} = 1;
+if (exists $infoFormat{'flags'}) {
+	$conditionalFlags{'addFlags'} = 1;
 }
 
-if (exists $infoFormat {'categories'}) {
-	$conditionalFlags {'addCategories'} = 1;
+if (exists $infoFormat{'categories'}) {
+	$conditionalFlags{'addCategories'} = 1;
 }
 
-if (exists $infoFormat {'casing'}) {
-	$conditionalFlags {'addFlags'} = 1;
-	$conditionalFlags {'addCasing'} = 1;
+if (exists $infoFormat{'casing'}) {
+	$conditionalFlags{'addFlags'} = 1;
+	$conditionalFlags{'addCasing'} = 1;
 }
 
-if (exists $infoFormat {'numbers'}) {
-	$conditionalFlags {'addFlags'} = 1;
-	$conditionalFlags {'addNumbers'} = 1;
+if (exists $infoFormat{'numbers'}) {
+	$conditionalFlags{'addFlags'} = 1;
+	$conditionalFlags{'addNumbers'} = 1;
 }
 
-if (exists $conditionalFlags {'addFlags'}) {
+if (exists $conditionalFlags{'addFlags'}) {
 	push @infoFormat, '%1$5d';
 }
 
-if (exists $conditionalFlags {'addCategories'}) {
+if (exists $conditionalFlags{'addCategories'}) {
 	push @infoFormat, '%2$3d';
 }
 
-if (exists $conditionalFlags {'addCasing'}) {
+if (exists $conditionalFlags{'addCasing'}) {
 	push @infoFormat, '{%3$6d,%4$6d,%5$6d}';
 }
 
-if (exists $conditionalFlags {'addNumbers'}) {
+if (exists $conditionalFlags{'addNumbers'}) {
 	push @infoFormat, '{ %6$s }';
 }
 
@@ -265,7 +265,7 @@ my @pages          = (0) x (tableSize >> 8);
 my %pageCache      = ();
 my @specialCasing  = ();
 
-$pageCache {join ',', ((0) x 256)} = 0;
+$pageCache{join ',', ((0) x 256)} = 0;
 
 #-------------------------------------------------------------------------------
 #
@@ -281,11 +281,11 @@ sub makeCharSequence {
 	my @sequence = split /\s+/, $1;
 	my $offset   = $#specialCasing + 1;
 
-	# ignore single glyph
+	# Ignore single glyph.
 	return -1 if ($#sequence == 0);
 
 	push @specialCasing, $#sequence + 1;
-	push @specialCasing, hex ($_) foreach (@sequence);
+	push @specialCasing, hex $_ foreach (@sequence);
 
 	return $offset;
 }
@@ -300,13 +300,13 @@ sub getTypeIndex {
 
 	my $type = sprintf ($infoFormat, $info, $catIdx, $upper, $lower, $title, $number);
 
-	if ($types {$type}) {
-		$type = $types {$type};
+	if ($types{$type}) {
+		$type = $types{$type};
 	}
 	else {
 		my $count = keys %types;
 
-		$types {$type} = $count;
+		$types{$type} = $count;
 		$type = $count;
 	}
 
@@ -337,24 +337,24 @@ open my $specialFile, '<', $ARGV[1] or die "File '$ARGV[1]' not found";
 while (<$specialFile>) {
 	chomp;
 
-	# ignore empty lines and comments
+	# Ignore empty lines and comments.
 	next if ($_ =~ /^$|^#/);
 
 	$_ =~ /(.+);\s*#/;
 
 	my @line = split ';', $1;
 
-	# ignore conditional case-folding
-	next if ($line [4]);
+	# Ignore conditional case-folding.
+	next if ($line[4]);
 
-	my $code  = hex ($line [0]);
-	my $lower = makeCharSequence $line [1];
-	my $title = makeCharSequence $line [2];
-	my $upper = makeCharSequence $line [3];
+	my $code  = hex ($line[0]);
+	my $lower = makeCharSequence $line[1];
+	my $title = makeCharSequence $line[2];
+	my $upper = makeCharSequence $line[3];
 
 	my @cases = ($upper, $lower, $title);
 
-	@{$special {$code}} = @cases;
+	@{$special{$code}} = @cases;
 
 	@line = split ';', $_;
 }
@@ -382,16 +382,16 @@ while (<$dataFile>) {
 	chomp;
 
 	my @line = split /;/, $_;
-	my $code = hex ($line [0]);
-	my $cat  = $line [2];
-	my $info = $categoryFlags {$cat};
+	my $code = hex $line[0];
+	my $cat  = $line[2];
+	my $info = $categoryFlags{$cat};
 
-	my $number = $line [8];
-	my $upper  = hex ($line [12] || 0);
-	my $lower  = hex ($line [13] || 0);
-	my $title  = hex ($line [14] || 0);
+	my $number = $line[8];
+	my $upper  = hex ($line[12] || 0);
+	my $lower  = hex ($line[13] || 0);
+	my $title  = hex ($line[14] || 0);
 
-	if ($useCategories && !$useCategories {$cat}) {
+	if ($useCategories && !$useCategories{$cat}) {
 		$info   = moOtherGlyphInfo;
 		$cat    = 'Cn';
 		$number = 0;
@@ -400,8 +400,8 @@ while (<$dataFile>) {
 		$title  = 0;
 	}
 	else {
-		if ($specialChars {$code}) {
-			$info |= $specialChars {$code};
+		if (exists $specialChars{$code}) {
+			$info |= $specialChars{$code};
 		}
 
 		$upper = $upper - $code if ($upper);
@@ -421,35 +421,35 @@ while (<$dataFile>) {
 			$number = 0;
 		}
 
-		if ($special {$code}) {
-			my @cases = @{$special {$code}};
+		if (exists $special{$code}) {
+			my @cases = @{$special{$code}};
 
-			if ($cases [0] != -1) {
-				$upper = $cases [0];
+			if ($cases[0] != -1) {
+				$upper = $cases[0];
 				$info |= moUpperExpandsGlyphInfo;
 			}
 
-			if ($cases [1] != -1) {
-				$lower = $cases [1];
+			if ($cases[1] != -1) {
+				$lower = $cases[1];
 				$info |= moLowerExpandsGlyphInfo;
 			}
 
-			if ($cases [2] != -1) {
-				$title = $cases [2];
+			if ($cases[2] != -1) {
+				$title = $cases[2];
 				$info |= moTitleExpandsGlyphInfo;
 			}
 		}
 	}
 
-	my $type = getTypeIndex ($info, $categoryIndexes {$cat}, $upper, $lower, $title, $number);
+	my $type = getTypeIndex ($info, $categoryIndexes{$cat}, $upper, $lower, $title, $number);
 
-	# read range
-	if ($line [1] =~ /First>$/i) {
+	# Read range.
+	if ($line[1] =~ /First>$/i) {
 		$_ = <$dataFile>;
 		chomp;
 
 		my @line2 = split /;/, $_;
-		my $code2 = hex ($line2 [0]);
+		my $code2 = hex $line2[0];
 
 		if ($excludeSurrogates) {
 			if ($cat =~ /Cs/i) {
@@ -458,13 +458,13 @@ while (<$dataFile>) {
 		}
 
 		for (; $code <= $code2; $code ++) {
-			$pages [$code >> 8] = 1;
-			$data [$code] = $type;
+			$pages[$code >> 8] = 1;
+			$data[$code] = $type;
 		}
 	}
 	else {
-		$pages [$code >> 8] = 1;
-		$data [$code] = $type;
+		$pages[$code >> 8] = 1;
+		$data[$code] = $type;
 	}
 }
 
@@ -479,20 +479,20 @@ close $dataFile;
 my $cacheCount = 1;
 
 for (my $i = 0; $i <= $#pages; $i ++) {
-	next unless ($pages [$i]);
+	next unless ($pages[$i]);
 
 	my $index = 0;
-	my $page  = join ',',  @data [($i << 8) .. ((($i + 1) << 8) - 1)];
+	my $page  = join ',',  @data[($i << 8) .. ((($i + 1) << 8) - 1)];
 
-	if ($pageCache {$page}) {
-		$index = $pageCache {$page};
+	if ($pageCache{$page}) {
+		$index = $pageCache{$page};
 	}
 	else {
 		$index = $cacheCount ++;
-		$pageCache {$page} = $index;
+		$pageCache{$page} = $index;
 	}
 
-	$pages [$i] = $index;
+	$pages[$i] = $index;
 }
 
 #-------------------------------------------------------------------------------
@@ -511,15 +511,15 @@ my %printMethods = ();
 
 my $template = new Template(
 	'vars' => {
-		'outName'   => $outName,
-		'infoType'  => $infoType,
+		'outName' => $outName,
+		'infoType' => $infoType,
 		'pagesType' => $pagesType,
 	},
 	'prefix' => $prefix,
 	'makeSnakeCase' => $makeSnakeCase,
 	'printMethods' => \%printMethods,
 	'conditional' => sub {
-		return exists $conditionalFlags {$_[0]};
+		return exists $conditionalFlags{$_[0]};
 	},
 );
 
@@ -534,7 +534,7 @@ my $template = new Template(
 	'categories' => sub {
 		my $out = shift;
 
-		foreach (sort { $categoryIndexes {$a} <=> $categoryIndexes {$b} } keys %categoryIndexes) {
+		foreach (sort { $categoryIndexes{$a} <=> $categoryIndexes{$b} } keys %categoryIndexes) {
 			my $line = $categoryName {$_};
 
 			$line = $template->toConstant($line);
@@ -547,7 +547,7 @@ my $template = new Template(
 	'infos' => sub {
 		my $out = shift;
 
-		foreach (sort { $types {$a} <=> $types {$b} } keys %types) {
+		foreach (sort { $types{$a} <=> $types{$b} } keys %types) {
 			print $out "	$_\n";
 		}
 	},
@@ -572,7 +572,7 @@ my $template = new Template(
 		my $p = 0;
 		my $i = 0;
 
-		foreach (sort { $pageCache {$a} <=> $pageCache {$b} } keys %pageCache) {
+		foreach (sort { $pageCache{$a} <=> $pageCache{$b} } keys %pageCache) {
 			print $out "\t{" if ($p == 0);
 			print $out "\n\t}, {" if ($p > 0);
 
@@ -612,7 +612,7 @@ my $template = new Template(
 	'categoryNames' => sub {
 		my $out = shift;
 
-		foreach (sort { $categoryIndexes {$a} <=> $categoryIndexes {$b} } keys %categoryIndexes) {
+		foreach (sort { $categoryIndexes{$a} <=> $categoryIndexes{$b} } keys %categoryIndexes) {
 			my $key = $categoryName {$_};
 
 			$key = $template->toConstant($key);

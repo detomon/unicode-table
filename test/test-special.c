@@ -9,21 +9,18 @@ int main(int argc, char const* argv[]) {
 	FILE* specialCasing = fopen(specialCasingName, "r");
 
 	if (!specialCasing) {
-		fprintf(stderr, "File  '%s' not found\n", specialCasingName);
+		fprintf(stderr, "File '%s' not found\n", specialCasingName);
 		return RESULT_ERROR;
 	}
 
 	uint32_t value;
 	char line[1024];
-	char name[63];
+	char name[64];
 
 	char upperSequence[64];
-	char lowerSequence[64];
 	char titleSequence[64];
-	int length;
+	char lowerSequence[64];
 	int values[4];
-
-	UTInfo const* info;
 
 	// read SpecialCasing.txt
 	while (fgets(line, 1024, specialCasing)) {
@@ -45,23 +42,23 @@ int main(int argc, char const* argv[]) {
 			continue;
 		}
 
-		info = UTLookupGlyph(value);
+		UTInfo const* info = UTLookupGlyph(value);
 
 		if (!(info->flags & (UT_FLAG_UPPER_EXPANDS | UT_FLAG_LOWER_EXPANDS | UT_FLAG_TITLE_EXPANDS))) {
 			fprintf(stderr, "No special case found for '%04x'\n", value);
 			return RESULT_FAIL;
 		}
 
-		length = getSequence(upperSequence, values);
+		int length = getSequence(upperSequence, values);
 
 		if (length > 1) {
 			if (!(info->flags & UT_FLAG_UPPER_EXPANDS)) {
-				fprintf(stderr, "Missing upper special seqeunce for '%04x'", value);
+				fprintf(stderr, "Missing upper special sequence for '%04x'", value);
 				return RESULT_FAIL;
 			}
 
 			if (UTSpecialCases[info->cases[UT_CASE_UPPER]] != length) {
-				fprintf(stderr, "Wrong upper seqeunce length for '%04x'", value);
+				fprintf(stderr, "Wrong upper sequence length for '%04x'", value);
 				return RESULT_FAIL;
 			}
 		}
@@ -70,12 +67,12 @@ int main(int argc, char const* argv[]) {
 
 		if (length > 1) {
 			if (!(info->flags & UT_FLAG_LOWER_EXPANDS)) {
-				fprintf(stderr, "Missing lower special seqeunce for '%04x'", value);
+				fprintf(stderr, "Missing lower special sequence for '%04x'", value);
 				return RESULT_FAIL;
 			}
 
 			if (UTSpecialCases[info->cases[UT_CASE_LOWER]] != length) {
-				fprintf(stderr, "Wrong lower seqeunce length for '%04x'", value);
+				fprintf(stderr, "Wrong lower sequence length for '%04x'", value);
 				return RESULT_FAIL;
 			}
 		}
@@ -84,12 +81,12 @@ int main(int argc, char const* argv[]) {
 
 		if (length > 1) {
 			if (!(info->flags & UT_FLAG_TITLE_EXPANDS)) {
-				fprintf(stderr, "Missing title special seqeunce for '%04x'", value);
+				fprintf(stderr, "Missing title special sequence for '%04x'", value);
 				return RESULT_FAIL;
 			}
 
 			if (UTSpecialCases[info->cases[UT_CASE_TITLE]] != length) {
-				fprintf(stderr, "Wrong title seqeunce length for '%04x'", value);
+				fprintf(stderr, "Wrong title sequence length for '%04x'", value);
 				return RESULT_FAIL;
 			}
 		}

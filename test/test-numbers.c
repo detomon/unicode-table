@@ -1,7 +1,6 @@
 #include "test.h"
 
-int main(int argc, char const* argv[])
-{
+int main(int argc, char const* argv[]) {
 	UTGlyph glyph;
 	UTInfo const* info;
 
