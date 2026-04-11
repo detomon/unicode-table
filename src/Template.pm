@@ -40,7 +40,7 @@ sub toSnakeCase {
 	my ($self, $var) = @_;
 	my $prefix = $self->{prefix};
 
-	$var = "$prefix"."_$var" if ($prefix);
+	$var = "${prefix}_${var}" if ($prefix);
 
 	$var =~ s/([a-z])([A-Z])/"$1_$2"/ge;
 	$var = lc $var;
@@ -84,9 +84,7 @@ sub replaceName {
 }
 
 sub readLine {
-	my $self = $_[0];
-	my $line = $_[1];
-	my $out = $_[2];
+	my ($self, $line, $out) = @_;
 	my %methods = %{$self->{printMethods}};
 	my $conditions = $self->{conditional};
 
@@ -127,9 +125,7 @@ sub readToEndIf {
 }
 
 sub readLines {
-	my $self = $_[0];
-	my $infile = $_[1];
-	my $outfile = $_[2];
+	my ($self, $infile, $outfile) = @_;
 
 	while (<$infile>) {
 		if (!$self->readLine($_, $outfile)) {
@@ -141,11 +137,11 @@ sub readLines {
 sub new {
 	my $class = shift;
 	my $self = {
-		'vars' => {},
-		'prefix' => '',
-		'makeSnakeCase' => 0,
-		'printMethods' => {},
-		'conditional' => sub {},
+		vars => {},
+		prefix => '',
+		makeSnakeCase => 0,
+		printMethods => {},
+		conditional => sub {},
 		# Overwrite default values.
 		@_,
 	};

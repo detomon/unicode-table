@@ -466,7 +466,6 @@ my $template = new Template(
 	pageIndex => sub {
 		my ($out) = @_;
 		my $i = 0;
-		my $p = 0;
 
 		print $out "\t";
 
@@ -481,12 +480,12 @@ my $template = new Template(
 	infoIndex => sub {
 		my ($out) = @_;
 		my $p = 0;
-		my $i = 0;
 
 		foreach (sort { $pageCache{$a} <=> $pageCache{$b} } @pageCacheKeys) {
 			print $out "\t{" if ($p == 0);
 			print $out "\n\t}, {" if ($p > 0);
 
+			my $i = 0;
 			foreach (split /,/, $_) {
 				print $out "\n\t" if ($i % 16 == 0);
 				printf $out "%3d,", $_;
@@ -522,10 +521,10 @@ my $template = new Template(
 		my ($out) = @_;
 
 		foreach (sort { $categories{$a}->[categoryIndex] <=> $categories{$b}->[categoryIndex] } @categoryKeys) {
-			my $key = $categories{$_}->[categoryName];
-			$key = $template->toConstant($key);
+			my $name = $categories{$_}->[categoryName];
+			$name = $template->toConstant($name);
 
-			printf $out "\t%-39s = \"%s\",\n", "[$key]", $_;
+			printf $out "\t%-39s = \"%s\",\n", "[$name]", $_;
 		}
 	},
 );
