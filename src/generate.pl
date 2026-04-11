@@ -228,7 +228,7 @@ if (exists $infoFormat{'numbers'}) {
 }
 
 if (exists $conditionalFlags{'addFlags'}) {
-	push @infoFormat, '%1$5d';
+	push @infoFormat, '0x%1$04X';
 }
 
 if (exists $conditionalFlags{'addCategories'}) {
@@ -259,12 +259,12 @@ my $srcFileIn = "unicode-table.c.in";
 #
 #-------------------------------------------------------------------------------
 
-my @data           = (0) x tableSize;
-my %special        = ();
-my %types          = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
-my @pages          = (0) x (tableSize >> pageSizeShift);
-my %pageCache      = ();
-my @specialCasing  = (0);
+my @data          = (0) x tableSize;
+my %special       = ();
+my %types         = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
+my @pages         = (0) x (tableSize >> pageSizeShift);
+my %pageCache     = ();
+my @specialCasing = (0);
 
 $pageCache{join ',', ((0) x (1 << pageSizeShift))} = 0;
 
@@ -292,14 +292,8 @@ sub makeCharSequence {
 }
 
 sub getTypeIndex {
-	my $info = $_[0];
-	my $catIdx = $_[1];
-	my $upper = $_[2];
-	my $lower = $_[3];
-	my $title = $_[4];
-	my $number = $_[5];
-
-	my $type = sprintf ($infoFormat, $info, $catIdx, $upper, $lower, $title, $number);
+	my ($info, $catIdx, $upper, $lower, $title, $number) = @_;
+	my $type = sprintf $infoFormat, $info, $catIdx, $upper, $lower, $title, $number;
 
 	if ($types{$type}) {
 		$type = $types{$type};
@@ -496,9 +490,11 @@ for (my $i = 0; $i <= $#pages; $i++) {
 	next unless ($pages[$i]);
 
 	my $index = 0;
-	my $page  = join ',',  @data[($i << pageSizeShift) .. ((($i + 1) << pageSizeShift) - 1)];
+	my $pageStart = $i << pageSizeShift;
+	my $pageEnd = (($i + 1) << pageSizeShift) - 1;
+	my $page = join ',', @data[$pageStart..$pageEnd];
 
-	if ($pageCache{$page}) {
+	if (exists $pageCache{$page}) {
 		$index = $pageCache{$page};
 	}
 	else {

@@ -146,7 +146,7 @@ extern uint16_t const UTInfoIndex[UT_INFO_INDEX_TABLE_SIZE][256];
  * Special case-folding sequences.
  * A list of `UTSpecialCase` with variable number of `glyphs`.
  */
-extern uint16_t const UTSpecialCases[UT_SPECIAL_CASES_TABLE_SIZE];
+extern UTGlyph const UTSpecialCases[UT_SPECIAL_CASES_TABLE_SIZE];
 
 /**
  * Category name indexable with `UTCategory`.
