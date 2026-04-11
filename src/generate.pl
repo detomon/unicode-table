@@ -107,41 +107,36 @@ if (($#ARGV + 1) < 2) {
 my $args = join ' ', @ARGV;
 my $prefix = 'UT';
 my $makeSnakeCase = 0;
-my $useCategories = 0;
 my %useCategories = ();
 my $includeInfos = 'flags,categories,casing,numbers';
 my %includeInfos = ();
 my $excludeSurrogates = 0;
-my %conditionalFlags = ();
+my @categoryKeys = keys %categories;
+my %namedArgs = (
+	'categories' => join ',', @categoryKeys,
+);
 
-if ($args =~ /--symbol-prefix=([\w_]+)/) {
-	$prefix = $1;
-}
-
-if ($args =~ /--snake-case=(\d+)/) {
-	$makeSnakeCase = int $1;
-}
-
-if ($args =~ /--categories=([\w_,]+)/) {
-	foreach (split /,/, $1) {
-		$useCategories{$_} = 1;
+foreach (@ARGV) {
+	if ($_ =~ /^--([^=]+)=(.+)$/) {
+		$namedArgs{$1} = $2;
 	}
-
-	$useCategories = 1;
 }
 
-if ($args =~ /--include-info=([\w_,]+)/) {
-	$includeInfos = $1;
-}
+$prefix = $namedArgs{'symbol-prefix'} if (exists $namedArgs{'symbol-prefix'});
+$makeSnakeCase = int $namedArgs{'snake-case'} if (exists $namedArgs{'snake-case'});
+$includeInfos = $namedArgs{'include-info'} if (exists $namedArgs{'include-info'});
+$excludeSurrogates = int($namedArgs{'strict-level'}) > 0 if (exists $namedArgs{'strict-level'});
 
-if ($args =~ /--strict-level=(\d+)/) {
-	$excludeSurrogates = int($1) > 0;
+foreach (split /,/, $namedArgs{'categories'}) {
+	die "Category '$_' not defined." if (not exists $categories{$_});
+	$useCategories{$_} = 1;
 }
 
 # Full format: '{%1$5d, %2$3d, {%3$6d,%4$6d,%5$6d}, { %6$s }},'.
 my $infoFormat = '';
 my %infoFormat = ();
 my @infoFormat = ();
+my %conditionalFlags = ();
 
 foreach (split /,/, $includeInfos) {
 	$infoFormat{$_} = 1;
@@ -272,6 +267,23 @@ sub maxValue {
 	return $max;
 }
 
+sub readLine {
+	my ($file) = @_;
+
+	while (<$file>) {
+		chomp;
+		next if (/^\s*($|#)/); # Ignore empty and comment-only lines.
+		s/#.*$//g; # Cut off comment.
+
+		my @line = split ';';
+		@line = map { s/^\s+|\s+$//g; $_; } @line;
+
+		return \@line;
+	}
+
+	return undef;
+}
+
 #-------------------------------------------------------------------------------
 #
 # Read special cases
@@ -280,20 +292,13 @@ sub maxValue {
 
 open my $specialFile, '<', $ARGV[1] or die "File '$ARGV[1]' not found";
 
-while (<$specialFile>) {
-	chomp;
-
-	# Ignore empty lines and comments.
-	next if ($_ =~ /^$|^#/);
-
-	$_ =~ /(.+);\s*#/;
-
-	my @line = split ';', $1;
+while (my $line = readLine $specialFile) {
+	my @line = @$line;
 
 	# Ignore conditional case-folding.
 	next if ($line[4]);
 
-	my $code  = hex ($line[0]);
+	my $code  = hex $line[0];
 	my $lower = makeCharSequence $line[1];
 	my $title = makeCharSequence $line[2];
 	my $upper = makeCharSequence $line[3];
@@ -301,8 +306,6 @@ while (<$specialFile>) {
 	my @cases = ($upper, $lower, $title);
 
 	@{$special{$code}} = @cases;
-
-	@line = split ';', $_;
 }
 
 close $specialFile;
@@ -324,20 +327,18 @@ my %specialChars = (
 
 open my $dataFile, '<', $ARGV[0] or die "File '$ARGV[0]' not found";
 
-while (<$dataFile>) {
-	chomp;
-
-	my @line = split /;/, $_;
+while (my $line = readLine $dataFile) {
+	my @line = @$line;
 	my $code = hex $line[0];
 	my $cat  = $line[2];
 	my $info = $categories{$cat}->[categoryFlags];
 
 	my $number = $line[8];
-	my $upper  = hex ($line[12] || 0);
-	my $lower  = hex ($line[13] || 0);
-	my $title  = hex ($line[14] || 0);
+	my $upper  = hex ($line[12] or 0);
+	my $lower  = hex ($line[13] or 0);
+	my $title  = hex ($line[14] or 0);
 
-	if ($useCategories && !$useCategories{$cat}) {
+	if (not exists $useCategories{$cat}) {
 		$info   = glyphInfoOther;
 		$cat    = 'Cn';
 		$number = 0;
@@ -453,7 +454,6 @@ my @infoKeys = keys %types;
 my $infoSize = @infoKeys;
 my $pagesSize = keys %pageCache;
 my @pageCacheKeys = keys %pageCache;
-my @categoryKeys = keys %categories;
 my $infoType = unsignedTypeFromSize $infoSize;
 my $pagesType = unsignedTypeFromSize $pagesSize;
 my $specialCasingType = unsignedTypeFromSize (maxValue \@specialCasing);
