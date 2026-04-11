@@ -34,11 +34,15 @@ use constant {
 	unicodeVersion => '17.0.0',
 	tableSize => 0x110000,
 	pageSizeShift => 8,
+};
 
+use constant {
 	categoryIndex => 0,
 	categoryName => 1,
 	categoryFlags => 2,
+};
 
+use constant {
 	glyphInfoLetter => 1 << 0,
 	glyphInfoUppercase => 1 << 1,
 	glyphInfoLowercase => 1 << 2,
@@ -96,17 +100,9 @@ my %categories = (
 #-------------------------------------------------------------------------------
 
 if (($#ARGV + 1) < 2) {
-	print "usage $0 UnicodeData.txt SpecialCasing.txt\n";
-	exit 1;
+	die "usage $0 UnicodeData.txt SpecialCasing.txt\n";
 }
 
-my $args = join ' ', @ARGV;
-my $prefix = 'UT';
-my $makeSnakeCase = 0;
-my %useCategories = ();
-my $includeInfos = 'flags,categories,casing,numbers';
-my %includeInfos = ();
-my $excludeSurrogates = 0;
 my @categoryKeys = keys %categories;
 my %namedArgs = (
 	categories => join ',', @categoryKeys,
@@ -119,12 +115,12 @@ foreach (@ARGV) {
 	}
 }
 
-$prefix = $namedArgs{'symbol-prefix'} if (exists $namedArgs{'symbol-prefix'});
-$makeSnakeCase = int $namedArgs{'snake-case'} if (exists $namedArgs{'snake-case'});
-$includeInfos = $namedArgs{'include-info'} if (exists $namedArgs{'include-info'});
-$namedArgs{'categories'} = $namedArgs{'categories'} if (exists $namedArgs{'categories'});
-$excludeSurrogates = int($namedArgs{'strict-level'}) > 0 if (exists $namedArgs{'strict-level'});
+my $prefix = $namedArgs{'symbol-prefix'} || 'UT';
+my $makeSnakeCase = int($namedArgs{'snake-case'} || 0);
+my $includeInfos = $namedArgs{'include-info'} || 'flags,categories,casing,numbers';
+my $excludeSurrogates = int($namedArgs{'strict-level'} || 0) > 0;
 
+my %useCategories = ();
 foreach (split /,/, $namedArgs{'categories'}) {
 	die "Category '$_' not defined." if (not exists $categories{$_});
 	$useCategories{$_} = 1;
@@ -175,7 +171,7 @@ my %special = ();
 my %types = (sprintf ($infoFormat, 0, 0, 0, 0, 0, 0) => 0);
 my @pages = (0) x (tableSize >> pageSizeShift);
 my %pageCache = ();
-my @specialCasing = (0);
+my @specialCasing = (0); # Empty case-folding sequence.
 
 $pageCache{join ',', ((0) x (1 << pageSizeShift))} = 0;
 
@@ -305,15 +301,7 @@ while (my $line = readLine $dataFile) {
 	my $lower = hex ($line[13] or 0);
 	my $title = hex ($line[14] or 0);
 
-	if (not exists $useCategories{$cat}) {
-		$info= glyphInfoOther;
-		$cat= 'Cn';
-		$number = 0;
-		$upper = 0;
-		$lower = 0;
-		$title = 0;
-	}
-	else {
+	if (exists $useCategories{$cat}) {
 		if (exists $specialChars{$code}) {
 			$info |= $specialChars{$code};
 		}
@@ -338,40 +326,43 @@ while (my $line = readLine $dataFile) {
 		if (exists $special{$code}) {
 			my @cases = @{$special{$code}};
 
-			if ($cases[0] != -1) {
+			if ($cases[0] >= 0) {
 				$upper = $cases[0];
 				$info |= glyphInfoUpperExpands;
 			}
 
-			if ($cases[1] != -1) {
+			if ($cases[1] >= 0) {
 				$lower = $cases[1];
 				$info |= glyphInfoLowerExpands;
 			}
 
-			if ($cases[2] != -1) {
+			if ($cases[2] >= 0) {
 				$title = $cases[2];
 				$info |= glyphInfoTitleExpands;
 			}
 		}
+	}
+	else {
+		$info= glyphInfoOther;
+		$cat = 'Cn';
+		$number = 0;
+		$upper = 0;
+		$lower = 0;
+		$title = 0;
 	}
 
 	my $type = getTypeIndex ($info, $categories{$cat}->[categoryIndex], $upper, $lower, $title, $number);
 
 	# Read range.
 	if ($line[1] =~ /First>$/i) {
-		$_ = <$dataFile>;
-		chomp;
-
-		my @line2 = split /;/, $_;
-		my $code2 = hex $line2[0];
+		@line = @{readLine $dataFile};
+		my $codeEnd = hex $line[0];
 
 		if ($excludeSurrogates) {
-			if ($cat =~ /Cs/i) {
-				next;
-			}
+			next if ($cat =~ /Cs/i);
 		}
 
-		for (; $code <= $code2; $code++) {
+		for (; $code <= $codeEnd; $code++) {
 			$pages[$code >> pageSizeShift] = 1;
 			$data[$code] = $type;
 		}
@@ -482,7 +473,6 @@ my $template = new Template(
 		foreach (@pages) {
 			print $out "\n\t" if ($i > 0 && $i % 16 == 0);
 			printf $out "%3d,", $_;
-
 			$i++;
 		}
 
@@ -546,20 +536,18 @@ sub main {
 	my $sourceFile = "$outName.c";
 	my $sourceFileIn = "$outName.c.in";
 
-	open my $hdrin, '<', $headerFileIn or die "File '$headerFileIn' not found";
-	open my $hdrout, '>', $headerFile or die "File '$headerFile' not writable";
+	open my $headerIn, '<', $headerFileIn or die "File '$headerFileIn' not found";
+	open my $headerOut, '>', $headerFile or die "File '$headerFile' not writable";
+	open my $sourceIn, '<', $sourceFileIn or die "File '$sourceFileIn' not found";
+	open my $sourceOut, '>', $sourceFile or die "File '$sourceFile' not writable";
 
-	open my $srcin, '<', $sourceFileIn or die "File '$sourceFileIn' not found";
-	open my $srcout, '>', $sourceFile or die "File '$sourceFile' not writable";
+	$template->readLines($headerIn, $headerOut);
+	$template->readLines($sourceIn, $sourceOut);
 
-	$template->readLines($hdrin, $hdrout);
-	$template->readLines($srcin, $srcout);
-
-	close $hdrin;
-	close $hdrout;
-
-	close $srcin;
-	close $srcout;
+	close $headerIn;
+	close $headerOut;
+	close $sourceIn;
+	close $sourceOut;
 
 	return 0;
 }
