@@ -133,7 +133,6 @@ foreach (split /,/, $namedArgs{'categories'}) {
 }
 
 # Full format: '{%1$5d, %2$3d, {%3$6d,%4$6d,%5$6d}, { %6$s }},'.
-my $infoFormat = '';
 my %infoFormat = ();
 my @infoFormat = ();
 my %conditionalFlags = ();
@@ -160,31 +159,14 @@ if (exists $infoFormat{'numbers'}) {
 	$conditionalFlags{'addNumbers'} = 1;
 }
 
-if (exists $conditionalFlags{'addFlags'}) {
-	push @infoFormat, '0x%1$04X';
-}
+push @infoFormat, '0x%1$04X' if (exists $conditionalFlags{'addFlags'});
+push @infoFormat, '%2$3d' if (exists $conditionalFlags{'addCategories'});
+push @infoFormat, '{%3$6d,%4$6d,%5$6d}' if (exists $conditionalFlags{'addCasing'});
+push @infoFormat, '{ %6$s }' if (exists $conditionalFlags{'addNumbers'});
 
-if (exists $conditionalFlags{'addCategories'}) {
-	push @infoFormat, '%2$3d';
-}
-
-if (exists $conditionalFlags{'addCasing'}) {
-	push @infoFormat, '{%3$6d,%4$6d,%5$6d}';
-}
-
-if (exists $conditionalFlags{'addNumbers'}) {
-	push @infoFormat, '{ %6$s }';
-}
-
-$infoFormat = (join ', ', @infoFormat);
+my $infoFormat = (join ', ', @infoFormat);
 $infoFormat =~ s/^\s+|\s+$//g;
 $infoFormat = "{$infoFormat},";
-
-my $outName   = 'unicode-table';
-my $hdrFile   = "$outName.h";
-my $hdrFileIn = "unicode-table.h.in";
-my $srcFile   = "$outName.c";
-my $srcFileIn = "unicode-table.c.in";
 
 #-------------------------------------------------------------------------------
 #
@@ -450,6 +432,7 @@ for (my $i = 0; $i <= $#pages; $i++) {
 #
 #-------------------------------------------------------------------------------
 
+my $outName   = 'unicode-table';
 my @infoKeys = keys %types;
 my $infoSize = @infoKeys;
 my $pagesSize = keys %pageCache;
@@ -580,11 +563,16 @@ my $template = new Template(
 );
 
 sub main {
-	open my $hdrin,  '<', $hdrFileIn or die "File '$hdrFileIn' not found";
-	open my $hdrout, '>', $hdrFile or die "File '$hdrFile' not writable";
+	my $headerFile = "$outName.h";
+	my $headerFileIn = "unicode-table.h.in";
+	my $sourceFile = "$outName.c";
+	my $sourceFileIn = "unicode-table.c.in";
 
-	open my $srcin,  '<', $srcFileIn or die "File '$srcFileIn' not found";
-	open my $srcout, '>', $srcFile or die "File '$srcFile' not writable";
+	open my $hdrin,  '<', $headerFileIn or die "File '$headerFileIn' not found";
+	open my $hdrout, '>', $headerFile or die "File '$headerFile' not writable";
+
+	open my $srcin,  '<', $sourceFileIn or die "File '$sourceFileIn' not found";
+	open my $srcout, '>', $sourceFile or die "File '$sourceFile' not writable";
 
 	$template->readLines($hdrin, $hdrout);
 	$template->readLines($srcin, $srcout);
