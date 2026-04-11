@@ -32,127 +32,65 @@ use Template;
 #
 #-------------------------------------------------------------------------------
 
-use constant unicodeVersion => '17.0.0';
-use constant tableSize      => 0x110000;
-use constant pageSizeShift  => 8;
+use constant {
+	unicodeVersion => '17.0.0',
+	tableSize => 0x110000,
+	pageSizeShift  => 8,
 
-use constant moLetterGlyphInfo       => 1 << 0;
-use constant moUppercaseGlyphInfo    => 1 << 1;
-use constant moLowercaseGlyphInfo    => 1 << 2;
-use constant moTitlecaseGlyphInfo    => 1 << 3;
-use constant moSpaceGlyphInfo        => 1 << 4;
-use constant moLinebreakGlyphInfo    => 1 << 5;
-use constant moPunctuationGlyphInfo  => 1 << 6;
-use constant moDigitGlyphInfo        => 1 << 7;
-use constant moNumberGlyphInfo       => 1 << 8;
-use constant moFractionGlyphInfo     => 1 << 9;
-use constant moControlGlyphInfo      => 1 << 10;
-use constant moSymbolGlyphInfo       => 1 << 11;
-use constant moOtherGlyphInfo        => 1 << 12;
-use constant moUpperExpandsGlyphInfo => 1 << 13;
-use constant moLowerExpandsGlyphInfo => 1 << 14;
-use constant moTitleExpandsGlyphInfo => 1 << 15;
+	categoryIndex => 0,
+	categoryName => 1,
+	categoryFlags => 2,
 
-my %categoryFlags = (
-	''   => 0,
-	'Lu' => moLetterGlyphInfo | moUppercaseGlyphInfo,
-	'Ll' => moLetterGlyphInfo | moLowercaseGlyphInfo,
-	'Lt' => moLetterGlyphInfo | moTitlecaseGlyphInfo,
-	'Lm' => moLetterGlyphInfo,
-	'Lo' => moLetterGlyphInfo,
-	'Mn' => moOtherGlyphInfo,
-	'Mc' => moOtherGlyphInfo,
-	'Me' => moOtherGlyphInfo,
-	'Nd' => moLetterGlyphInfo | moDigitGlyphInfo | moNumberGlyphInfo,
-	'Nl' => moLetterGlyphInfo | moNumberGlyphInfo,
-	'No' => moLetterGlyphInfo | moNumberGlyphInfo,
-	'Pc' => moPunctuationGlyphInfo,
-	'Pd' => moPunctuationGlyphInfo,
-	'Ps' => moPunctuationGlyphInfo,
-	'Pe' => moPunctuationGlyphInfo,
-	'Pi' => moPunctuationGlyphInfo,
-	'Pf' => moPunctuationGlyphInfo,
-	'Po' => moPunctuationGlyphInfo,
-	'Sm' => moSymbolGlyphInfo,
-	'Sc' => moSymbolGlyphInfo,
-	'Sk' => moSymbolGlyphInfo,
-	'So' => moSymbolGlyphInfo,
-	'Zs' => moSpaceGlyphInfo,
-	'Zl' => moSpaceGlyphInfo | moLinebreakGlyphInfo,
-	'Zp' => moSpaceGlyphInfo | moLinebreakGlyphInfo,
-	'Cc' => moControlGlyphInfo,
-	'Cf' => moOtherGlyphInfo,
-	'Cs' => moOtherGlyphInfo,
-	'Co' => moOtherGlyphInfo,
-	'Cn' => moOtherGlyphInfo,
-);
+	glyphInfoLetter => 1 << 0,
+	glyphInfoUppercase => 1 << 1,
+	glyphInfoLowercase => 1 << 2,
+	glyphInfoTitlecase => 1 << 3,
+	glyphInfoSpace => 1 << 4,
+	glyphInfoLinebreak => 1 << 5,
+	glyphInfoPunctuation => 1 << 6,
+	glyphInfoDigit => 1 << 7,
+	glyphInfoNumber => 1 << 8,
+	glyphInfoFraction => 1 << 9,
+	glyphInfoControl => 1 << 10,
+	glyphInfoSymbol => 1 << 11,
+	glyphInfoOther => 1 << 12,
+	glyphInfoUpperExpands => 1 << 13,
+	glyphInfoLowerExpands => 1 << 14,
+	glyphInfoTitleExpands => 1 << 15,
+};
 
-my %categoryIndexes = (
-	''   => 0,
-	'Lu' => 1,
-	'Ll' => 2,
-	'Lt' => 3,
-	'Lm' => 4,
-	'Lo' => 5,
-	'Mn' => 6,
-	'Mc' => 7,
-	'Me' => 8,
-	'Nd' => 9,
-	'Nl' => 10,
-	'No' => 11,
-	'Pc' => 12,
-	'Pd' => 13,
-	'Ps' => 14,
-	'Pe' => 15,
-	'Pi' => 16,
-	'Pf' => 17,
-	'Po' => 18,
-	'Sm' => 19,
-	'Sc' => 20,
-	'Sk' => 21,
-	'So' => 22,
-	'Zs' => 23,
-	'Zl' => 24,
-	'Zp' => 25,
-	'Cc' => 26,
-	'Cf' => 27,
-	'Cs' => 28,
-	'Co' => 29,
-	'Cn' => 30,
-);
-
-my %categoryName = (
-	'',  => 'CategoryInvalid',
-	'Lu' => 'CategoryLetterUppercase',
-	'Ll' => 'CategoryLetterLowercase',
-	'Lt' => 'CategoryLetterTitlecase',
-	'Lm' => 'CategoryLetterModifier',
-	'Lo' => 'CategoryLetterOther',
-	'Mn' => 'CategoryMarkNonspacing',
-	'Mc' => 'CategoryMarkSpacingCombining',
-	'Me' => 'CategoryMarkEnclosing',
-	'Nd' => 'CategoryNumberDecimalDigit',
-	'Nl' => 'CategoryNumberLetter',
-	'No' => 'CategoryNumberOther',
-	'Pc' => 'CategoryPunctuationConnector',
-	'Pd' => 'CategoryPunctuationDash',
-	'Ps' => 'CategoryPunctuationOpen',
-	'Pe' => 'CategoryPunctuationClose',
-	'Pi' => 'CategoryPunctuationInitialQuote',
-	'Pf' => 'CategoryPunctuationFinalQuote',
-	'Po' => 'CategoryPunctuationOther',
-	'Sm' => 'CategorySymbolMath',
-	'Sc' => 'CategorySymbolCurrency',
-	'Sk' => 'CategorySymbolModifier',
-	'So' => 'CategorySymbolOther',
-	'Zs' => 'CategorySeparatorSpace',
-	'Zl' => 'CategorySeparatorLine',
-	'Zp' => 'CategorySeparatorParagraph',
-	'Cc' => 'CategoryOtherControl',
-	'Cf' => 'CategoryOtherFormat',
-	'Cs' => 'CategoryOtherSurrogate',
-	'Co' => 'CategoryOtherPrivateUse',
-	'Cn' => 'CategoryOtherNotAssigned',
+my %categories = (
+	''   => [0, 'CategoryInvalid', 0],
+	'Lu' => [1, 'CategoryLetterUppercase', glyphInfoLetter | glyphInfoUppercase],
+	'Ll' => [2, 'CategoryLetterLowercase', glyphInfoLetter | glyphInfoLowercase],
+	'Lt' => [3, 'CategoryLetterTitlecase', glyphInfoLetter | glyphInfoTitlecase],
+	'Lm' => [4, 'CategoryLetterModifier', glyphInfoLetter],
+	'Lo' => [5, 'CategoryLetterOther', glyphInfoLetter],
+	'Mn' => [6, 'CategoryMarkNonspacing', glyphInfoOther],
+	'Mc' => [7, 'CategoryMarkSpacingCombining', glyphInfoOther],
+	'Me' => [8, 'CategoryMarkEnclosing', glyphInfoOther],
+	'Nd' => [9, 'CategoryNumberDecimalDigit', glyphInfoLetter | glyphInfoDigit | glyphInfoNumber],
+	'Nl' => [10, 'CategoryNumberLetter', glyphInfoLetter | glyphInfoNumber],
+	'No' => [11, 'CategoryNumberOther', glyphInfoLetter | glyphInfoNumber],
+	'Pc' => [12, 'CategoryPunctuationConnector', glyphInfoPunctuation],
+	'Pd' => [13, 'CategoryPunctuationDash', glyphInfoPunctuation],
+	'Ps' => [14, 'CategoryPunctuationOpen', glyphInfoPunctuation],
+	'Pe' => [15, 'CategoryPunctuationClose', glyphInfoPunctuation],
+	'Pi' => [16, 'CategoryPunctuationInitialQuote', glyphInfoPunctuation],
+	'Pf' => [17, 'CategoryPunctuationFinalQuote', glyphInfoPunctuation],
+	'Po' => [18, 'CategoryPunctuationOther', glyphInfoPunctuation],
+	'Sm' => [19, 'CategorySymbolMath', glyphInfoSymbol],
+	'Sc' => [20, 'CategorySymbolCurrency', glyphInfoSymbol],
+	'Sk' => [21, 'CategorySymbolModifier', glyphInfoSymbol],
+	'So' => [22, 'CategorySymbolOther', glyphInfoSymbol],
+	'Zs' => [23, 'CategorySeparatorSpace', glyphInfoSpace],
+	'Zl' => [24, 'CategorySeparatorLine', glyphInfoSpace | glyphInfoLinebreak],
+	'Zp' => [25, 'CategorySeparatorParagraph', glyphInfoSpace | glyphInfoLinebreak],
+	'Cc' => [26, 'CategoryOtherControl', glyphInfoControl],
+	'Cf' => [27, 'CategoryOtherFormat', glyphInfoOther],
+	'Cs' => [28, 'CategoryOtherSurrogate', glyphInfoOther],
+	'Co' => [29, 'CategoryOtherPrivateUse', glyphInfoOther],
+	'Cn' => [30, 'CategoryOtherNotAssigned', glyphInfoOther],
 );
 
 #-------------------------------------------------------------------------------
@@ -376,12 +314,12 @@ close $specialFile;
 #-------------------------------------------------------------------------------
 
 my %specialChars = (
-	0x0009 => moSpaceGlyphInfo,                        # CHARACTER TABULATION
-	0x000A => moSpaceGlyphInfo | moLinebreakGlyphInfo, # LINE FEED (LF)
-	0x000B => moSpaceGlyphInfo,                        # LINE TABULATION
-	0x000C => moSpaceGlyphInfo,                        # FORM FEED (FF)
-	0x000D => moSpaceGlyphInfo | moLinebreakGlyphInfo, # CARRIAGE RETURN (CR)
-	0xFEFF => moSpaceGlyphInfo,                        # ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)
+	0x0009 => glyphInfoSpace,                      # CHARACTER TABULATION
+	0x000A => glyphInfoSpace | glyphInfoLinebreak, # LINE FEED (LF)
+	0x000B => glyphInfoSpace,                      # LINE TABULATION
+	0x000C => glyphInfoSpace,                      # FORM FEED (FF)
+	0x000D => glyphInfoSpace | glyphInfoLinebreak, # CARRIAGE RETURN (CR)
+	0xFEFF => glyphInfoSpace,                      # ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)
 );
 
 open my $dataFile, '<', $ARGV[0] or die "File '$ARGV[0]' not found";
@@ -392,7 +330,7 @@ while (<$dataFile>) {
 	my @line = split /;/, $_;
 	my $code = hex $line[0];
 	my $cat  = $line[2];
-	my $info = $categoryFlags{$cat};
+	my $info = $categories{$cat}->[categoryFlags];
 
 	my $number = $line[8];
 	my $upper  = hex ($line[12] || 0);
@@ -400,7 +338,7 @@ while (<$dataFile>) {
 	my $title  = hex ($line[14] || 0);
 
 	if ($useCategories && !$useCategories{$cat}) {
-		$info   = moOtherGlyphInfo;
+		$info   = glyphInfoOther;
 		$cat    = 'Cn';
 		$number = 0;
 		$upper  = 0;
@@ -420,9 +358,9 @@ while (<$dataFile>) {
 			my ($v1, $v2) = split '/', $number;
 
 			$number = ".numerator = $v1, .denominator = $v2";
-			$info |= moFractionGlyphInfo;
+			$info |= glyphInfoFraction;
 		}
-		elsif ($info & moNumberGlyphInfo) {
+		elsif ($info & glyphInfoNumber) {
 			$number = ".number = $number";
 		}
 		else {
@@ -434,22 +372,22 @@ while (<$dataFile>) {
 
 			if ($cases[0] != -1) {
 				$upper = $cases[0];
-				$info |= moUpperExpandsGlyphInfo;
+				$info |= glyphInfoUpperExpands;
 			}
 
 			if ($cases[1] != -1) {
 				$lower = $cases[1];
-				$info |= moLowerExpandsGlyphInfo;
+				$info |= glyphInfoLowerExpands;
 			}
 
 			if ($cases[2] != -1) {
 				$title = $cases[2];
-				$info |= moTitleExpandsGlyphInfo;
+				$info |= glyphInfoTitleExpands;
 			}
 		}
 	}
 
-	my $type = getTypeIndex ($info, $categoryIndexes{$cat}, $upper, $lower, $title, $number);
+	my $type = getTypeIndex ($info, $categories{$cat}->[categoryIndex], $upper, $lower, $title, $number);
 
 	# Read range.
 	if ($line[1] =~ /First>$/i) {
@@ -515,7 +453,7 @@ my @infoKeys = keys %types;
 my $infoSize = @infoKeys;
 my $pagesSize = keys %pageCache;
 my @pageCacheKeys = keys %pageCache;
-my @categoryIndexKeys = keys %categoryIndexes;
+my @categoryKeys = keys %categories;
 my $infoType = unsignedTypeFromSize $infoSize;
 my $pagesType = unsignedTypeFromSize $pagesSize;
 my $specialCasingType = unsignedTypeFromSize (maxValue \@specialCasing);
@@ -532,7 +470,7 @@ my $template = new Template(
 		'pageIndexTableSize' => $#pages + 1,
 		'infoIndexTableSize' => $#pageCacheKeys + 1,
 		'specialCasesTableSize' => $#specialCasing + 1,
-		'categoryNamesTableSize' => $#categoryIndexKeys + 1,
+		'categoryNamesTableSize' => $#categoryKeys + 1,
 	},
 	'prefix' => $prefix,
 	'makeSnakeCase' => $makeSnakeCase,
@@ -553,8 +491,8 @@ my $template = new Template(
 	'categories' => sub {
 		my $out = $_[0];
 
-		foreach (sort { $categoryIndexes{$a} <=> $categoryIndexes{$b} } keys %categoryIndexes) {
-			my $line = $categoryName{$_};
+		foreach (sort { $categories{$a}->[categoryIndex] <=> $categories{$b}->[categoryIndex] } @categoryKeys) {
+			my $line = $categories{$_}->[categoryName];
 
 			$line = $template->toConstant($line);
 			$line = sprintf "\t%-39s ///< %s", "$line,", $_;
@@ -631,8 +569,8 @@ my $template = new Template(
 	'categoryNames' => sub {
 		my $out = $_[0];
 
-		foreach (sort { $categoryIndexes{$a} <=> $categoryIndexes{$b} } @categoryIndexKeys) {
-			my $key = $categoryName{$_};
+		foreach (sort { $categories{$a}->[categoryIndex] <=> $categories{$b}->[categoryIndex] } @categoryKeys) {
+			my $key = $categories{$_}->[categoryName];
 
 			$key = $template->toConstant($key);
 
