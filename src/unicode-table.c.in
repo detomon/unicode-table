@@ -16,13 +16,13 @@
 ##infoIndex
 };
 
-{if:addCasing}
+{if:casing}
 {n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}] = {
 ##specialCases
 };
 {endif:}
 
-{if:addCategories}
+{if:categories}
 char const* const {n:CategoryNames}[{c:CategoryNamesTableSize}] = {
 ##categoryNames
 };

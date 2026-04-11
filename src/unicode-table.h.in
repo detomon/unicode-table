@@ -16,7 +16,7 @@ extern "C" {
  */
 #define {c:MAX_VALUE} 0x10FFFF
 
-{if:addFlags}
+{if:flags}
 /**
  * Flags for determining character type.
  */
@@ -41,7 +41,7 @@ typedef enum {
 } {n:Flag};
 {endif:}
 
-{if:addCategories}
+{if:categories}
 /**
  * Character categories.
  */
@@ -50,7 +50,7 @@ typedef enum {
 } {n:Category};
 {endif:}
 
-{if:addCasing}
+{if:casing}
 /**
  * Case variant index usable for `cases` field in `UTInfo`.
  */
@@ -70,16 +70,16 @@ typedef uint32_t {n:Glyph};
  * Character info.
  */
 typedef struct {
-{if:addFlags}
+{if:flags}
 	uint16_t flags; ///< Combination of `{n:Flag}`.
 {endif:}
-{if:addCategories}
+{if:categories}
 	uint8_t category; ///< One of `{n:Category}`.
 {endif:}
-{if:addCasing}
+{if:casing}
 	int32_t cases[3]; ///< Distance to case variant. Indexable with `{n:Case}`.
 {endif:}
-{if:addNumbers}
+{if:numbers}
 	union {
 		int64_t number;          ///< Number value if `flags & {c:FlagNumber}`.
 		struct {
@@ -90,7 +90,7 @@ typedef struct {
 {endif:}
 } {n:Info};
 
-{if:addCasing}
+{if:casing}
 /**
  * Helper struct for reading special case-folding sequences  in `{n:SpecialCases}`.
  */
@@ -126,7 +126,7 @@ extern {v:pagesType} const {n:PageIndex}[{c:PageIndexTableSize}];
  */
 extern {v:infoType} const {n:InfoIndex}[{c:InfoIndexTableSize}][256];
 
-{if:addCasing}
+{if:casing}
 /**
  * Special case-folding sequences.
  * A list of `{n:SpecialCase}` with variable number of `glyphs`.
@@ -134,7 +134,7 @@ extern {v:infoType} const {n:InfoIndex}[{c:InfoIndexTableSize}][256];
 extern {n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}];
 {endif:}
 
-{if:addCategories}
+{if:categories}
 /**
  * Category name indexable with `{n:Category}`.
  */
@@ -158,7 +158,7 @@ static inline {n:Info} const* {n:LookupGlyph}({n:Glyph} glyph) {
 	return &{n:Infos}[offset];
 }
 
-{if:addCasing}
+{if:casing}
 /**
  * Get special case-folding sequence of character.
  *
