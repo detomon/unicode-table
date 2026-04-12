@@ -1,5 +1,4 @@
-Unicode Lookup Table
-====================
+# Unicode Lookup Table
 
 [![Build Status](https://github.com/detomon/unicode-table/actions/workflows/c.yml/badge.svg)](https://github.com/detomon/unicode-table/actions/workflows/c.yml)
 
@@ -7,8 +6,7 @@ This script generates a Unicode character lookup table with linear access time. 
 
 The only function is `UTLookupGlyph` that looks up a single character by its Unicode value. It returns a pointer to a `UTInfo` struct containing the character informations. It always returns a valid pointer, even for invalid characters. In this case, the field `category` has the value `UT_CATEGORY_INVALID` assigned.
 
-Available Informations
-----------------------
+## Available Glyph Informations
 
 `UTInfo` contains the following fields:
 
@@ -33,8 +31,7 @@ typedef struct {
 - If flags has `UT_FLAG_NUMBER`, ``number` contains numeric values for digits, number-like and characters. For example, the roman number "Ⅶ" (`0x2166; ROMAN NUMERAL SEVEN `) has the value `7` in `number`.
 - If flags has `UT_FLAG_FRACTION`, `numerator` and `denominator` contain the fractions `numerator` and `denominator`, respectively. For example, the fraction character "¼" (`0x00BC; VULGAR FRACTION ONE QUARTER `) has the value `1` in `numerator` and `4` in denominator`.
 
-Lookup Character
-----------------
+## Lookup Character
 
 Looking up a character with its Unicode value:
 
@@ -52,8 +49,7 @@ UTGlyph lower = glyph + info->cases[UT_CASE_LOWER];
 printf("Lowercase variant of 0x%04X: 0x%04X\n", glyph, lower);
 ```
 
-Numeric and Fraction Values
----------------------------
+## Numeric and Fraction Values
 
 Get the representing integer or fraction value.
 
@@ -84,8 +80,7 @@ if (info->flags & UT_FLAG_FRACTION) {
 }
 ```
 
-Case-Fold Expansion
--------------------
+## Case-Fold Expansion
 
 Handling cases, where case-folding expands to multiple characters. Conditional case-folding is not supported.
 
@@ -112,7 +107,7 @@ if (info->flags & UT_FLAG_UPPER_EXPANDS) {
 	// Prints:
 	// "0: 0x0053"
 	// "1: 0x0053"
-	for (int i = 0; i < length; i ++) {
+	for (int i = 0; i < length; i++) {
 		printf("%d: 0x%04X\n", i, sequence[i]);
 	}
 }
@@ -121,8 +116,7 @@ else {
 }
 ```
 
-Additional Cases
-----------------
+## Additional Cases
 
 These glyphs have additionaly flags set which are not determinable only from the category.
 
@@ -135,8 +129,7 @@ These glyphs have additionaly flags set which are not determinable only from the
 | `0x000D` | `CARRIAGE RETURN (CR)` | `UT_FLAG_SPACE | UT_FLAG_LINEBREAK` |
 | `0xFEFF` | `ZERO WIDTH NO-BREAK SPACE (BYTE ORDER MARK)` | `UT_FLAG_SPACE` |
 
-Building the Table
-------------------
+## Building the Table
 
 Run `./autogen.sh` to generate the build system. Then run `./configure` and `make` to build `libunicodetable.a` in the `src` directory:
 
@@ -167,8 +160,7 @@ make
 	--enable-strict-level=1
 ```
 
-Using as Automake Subproject
-----------------------------
+## Using as Automake Subproject
 
 This project is designed to be used as an Automake subproject. To match your projects namespace, export the enviroment variables inside the main project's `configure.ac`:
 
@@ -199,7 +191,6 @@ AC_CONFIG_SUBDIRS([unicode-table])
 ...
 ```
 
-Source Templates
-----------------
+## Source Templates
 
 The source templates [`unicode-table.h.in`](src/unicode-table.h.in) and [`unicode-table.c.in`](src/unicode-table.c.in) located in [`src`](src) contain the structure and data placeholders for the header and source file. They can be editted if needed.
