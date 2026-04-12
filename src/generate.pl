@@ -411,6 +411,7 @@ my @pageCacheKeys = keys %pageCache;
 my $infoType = unsignedTypeFromSize $infoSize;
 my $pagesType = unsignedTypeFromSize $pagesSize;
 my $specialCasingType = unsignedTypeFromSize (maxValue \@specialCasing);
+my @categoryCodes = sort { $categories{$a}->[categoryIndex] <=> $categories{$b}->[categoryIndex] } @categoryKeys;
 
 my %printMethods = ();
 
@@ -445,9 +446,8 @@ my $template = new Template(
 	categories => sub {
 		my ($out) = @_;
 
-		foreach (sort { $categories{$a}->[categoryIndex] <=> $categories{$b}->[categoryIndex] } @categoryKeys) {
+		foreach (@categoryCodes) {
 			my $line = $categories{$_}->[categoryName];
-
 			$line = $template->toConstant($line);
 			$line = sprintf "\t%s ///< %s", "$line,", $_;
 			$line =~ s/\s+$//;
@@ -478,11 +478,11 @@ my $template = new Template(
 	},
 	infoIndex => sub {
 		my ($out) = @_;
-		my $p = 0;
+		my $page = 0;
 
 		foreach (sort { $pageCache{$a} <=> $pageCache{$b} } @pageCacheKeys) {
-			print $out "\t{" if ($p == 0);
-			print $out "\n\t}, {" if ($p > 0);
+			print $out "\t{" if ($page == 0);
+			print $out "\n\t}, {" if ($page > 0);
 
 			my $i = 0;
 			foreach (split /,/, $_) {
@@ -491,7 +491,7 @@ my $template = new Template(
 				$i++;
 			}
 
-			$p++;
+			$page++;
 		}
 
 		print $out "\n\t}\n";
@@ -519,7 +519,7 @@ my $template = new Template(
 	categoryNames => sub {
 		my ($out) = @_;
 
-		foreach (sort { $categories{$a}->[categoryIndex] <=> $categories{$b}->[categoryIndex] } @categoryKeys) {
+		foreach (@categoryCodes) {
 			my $name = $categories{$_}->[categoryName];
 			$name = $template->toConstant($name);
 
@@ -529,14 +529,14 @@ my $template = new Template(
 );
 
 sub main {
-	my $headerFile = "$outName.h";
 	my $headerFileIn = "$outName.h.in";
-	my $sourceFile = "$outName.c";
 	my $sourceFileIn = "$outName.c.in";
+	my $headerFile = "$outName.h";
+	my $sourceFile = "$outName.c";
 
 	open my $headerIn, '<', $headerFileIn or die "File '$headerFileIn' not found";
-	open my $headerOut, '>', $headerFile or die "File '$headerFile' not writable";
 	open my $sourceIn, '<', $sourceFileIn or die "File '$sourceFileIn' not found";
+	open my $headerOut, '>', $headerFile or die "File '$headerFile' not writable";
 	open my $sourceOut, '>', $sourceFile or die "File '$sourceFile' not writable";
 
 	$template->readLines($headerIn, $headerOut);
