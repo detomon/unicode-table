@@ -526,7 +526,7 @@ UTInfo const UTInfos[UT_INFO_TABLE_SIZE] = {
 	{0x0301, 11, {     0,     0,     0}, { .numerator = 1, .denominator = 64 }},
 	{0x0301, 11, {     0,     0,     0}, { .numerator = 1, .denominator = 32 }},
 	{0x0301, 11, {     0,     0,     0}, { .numerator = 3, .denominator = 64 }},
-	{0x0201,  5, {     0,     0,     0}, { .numerator = 1, .denominator = 2 }},
+	{0x0301,  5, {     0,     0,     0}, { .numerator = 1, .denominator = 2 }},
 	{0x0101, 10, {     0,     0,     0}, { .number = 216000 }},
 	{0x0101, 10, {     0,     0,     0}, { .number = 432000 }},
 	{0x0301, 10, {     0,     0,     0}, { .numerator = 1, .denominator = 3 }},

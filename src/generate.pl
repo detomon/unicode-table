@@ -312,9 +312,8 @@ while (my $line = readLine $dataFile) {
 
 		if ($number =~ /\//) {
 			my ($v1, $v2) = split '/', $number;
-
 			$number = ".numerator = $v1, .denominator = $v2";
-			$info |= glyphInfoFraction;
+			$info |= glyphInfoNumber | glyphInfoFraction;
 		}
 		elsif ($info & glyphInfoNumber) {
 			$number = ".number = $number";

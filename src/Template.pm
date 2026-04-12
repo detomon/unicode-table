@@ -19,10 +19,10 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+package Template;
+
 use strict;
 use warnings;
-
-package Template;
 
 sub toCamelCase {
 	my ($self, $var) = @_;
@@ -101,15 +101,15 @@ sub readLine {
 		return 1;
 	}
 	# Handle 'if:'.
-	elsif ($line =~ /{(if:)([\w_]+)}/) {
-		return $conditions->($2);
+	elsif ($line =~ /{if:([\w_]+)}/) {
+		return $conditions->($1);
 	}
 	# Ignore 'endif:'.
-	elsif ($line =~ /{(endif:)([\w_]*)}/) {
+	elsif ($line =~ /{endif:}/) {
 		return 1;
 	}
 
-	$line =~ s/{((\w+):)([\w_]+)}/$self->replaceName($2, $3)/ge;
+	$line =~ s/{(\w+):([\w_]+)}/$self->replaceName($1, $2)/ge;
 
 	print $out $line;
 
@@ -120,16 +120,16 @@ sub readToEndIf {
 	my ($self, $file) = @_;
 
 	while (<$file>) {
-		return if ($_ =~ /{(endif:)([\w_]*)}/);
+		last if (/{endif:}/);
 	}
 }
 
 sub readLines {
-	my ($self, $infile, $outfile) = @_;
+	my ($self, $inFile, $outfile) = @_;
 
-	while (<$infile>) {
+	while (<$inFile>) {
 		if (!$self->readLine($_, $outfile)) {
-			$self->readToEndIf($infile);
+			$self->readToEndIf($inFile);
 		}
 	}
 }
@@ -146,9 +146,7 @@ sub new {
 		@_,
 	};
 
-	bless $self, $class;
-
-    return $self;
+    return bless $self, $class;
 }
 
 1;
