@@ -154,7 +154,7 @@ if (exists $infoFormat{'numbers'}) {
 }
 
 push @infoFormat, '0x%1$04X' if (exists $conditionalFlags{'flags'});
-push @infoFormat, '%2$3d' if (exists $conditionalFlags{'categories'});
+push @infoFormat, '%2$2d' if (exists $conditionalFlags{'categories'});
 push @infoFormat, '{%3$6d,%4$6d,%5$6d}' if (exists $conditionalFlags{'casing'});
 push @infoFormat, '{ %6$s }' if (exists $conditionalFlags{'numbers'});
 
@@ -258,10 +258,10 @@ sub readLine {
 open my $specialFile, '<', $ARGV[1] or die "File '$ARGV[1]' not found";
 
 while (my $line = readLine $specialFile) {
-	my ($code, $lower, $title, $upper, $caseFoldingCondition) = @$line;
+	my ($code, $lower, $title, $upper, $condition) = @$line;
 
 	# Ignore conditional case-folding.
-	next if ($caseFoldingCondition);
+	next if ($condition);
 
 	$code = hex $code;
 	$lower = makeCharSequence $lower;
@@ -450,7 +450,7 @@ my $template = new Template(
 			my $line = $categories{$_}->[categoryName];
 
 			$line = $template->toConstant($line);
-			$line = sprintf "\t%-39s ///< %s", "$line,", $_;
+			$line = sprintf "\t%s ///< %s", "$line,", $_;
 			$line =~ s/\s+$//;
 
 			print $out "$line\n";
@@ -524,7 +524,7 @@ my $template = new Template(
 			my $name = $categories{$_}->[categoryName];
 			$name = $template->toConstant($name);
 
-			printf $out "\t%-39s = \"%s\",\n", "[$name]", $_;
+			printf $out "\t%s = \"%s\",\n", "[$name]", $_;
 		}
 	},
 );
