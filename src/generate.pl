@@ -449,10 +449,8 @@ my $template = new Template(
 		foreach (@categoryCodes) {
 			my $line = $categories{$_}->[categoryName];
 			$line = $template->toConstant($line);
-			$line = sprintf "\t%s ///< %s", "$line,", $_;
-			$line =~ s/\s+$//;
 
-			print $out "$line\n";
+			printf $out "\t%s ///< %s\n", "$line,", $_;
 		}
 	},
 	infos => sub {
