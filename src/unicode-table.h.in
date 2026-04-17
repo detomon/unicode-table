@@ -1,4 +1,4 @@
-/*
+/**
 ##header
  */
 
@@ -81,9 +81,9 @@ typedef struct {
 {endif:}
 {if:numbers}
 	union {
-		int64_t number;          ///< Number value if `flags & {c:FlagNumber}`.
+		int64_t number; ///< Number value if `flags & {c:FlagNumber}`.
 		struct {
-			int32_t numerator;   ///< Fraction numerator if `flags & {c:FlagFraction}`.
+			int32_t numerator; ///< Fraction numerator if `flags & {c:FlagFraction}`.
 			int32_t denominator; ///< Fraction denominator if `flags & {c:FlagFraction}`.
 		};
 	};
@@ -92,7 +92,7 @@ typedef struct {
 
 {if:casing}
 /**
- * Helper struct for reading special case-folding sequences  in `{n:SpecialCases}`.
+ * Helper struct for reading special case-folding sequences in `{n:SpecialCases}`.
  */
 typedef struct {
 	{n:Glyph} count; ///< Number of characters.

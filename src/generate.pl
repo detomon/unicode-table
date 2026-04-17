@@ -182,7 +182,7 @@ $pageCache{join ',', ((0) x (1 << pageSizeShift))} = 0;
 sub makeCharSequence {
 	my ($codes) = @_;
 
-	$codes =~/\s*(.+)\s*/;
+	$codes =~/\s*(.*)\s*/;
 
 	my @sequence = split /\s+/, $1;
 
@@ -213,12 +213,18 @@ sub getTypeIndex {
 	return $type;
 }
 
-sub unsignedTypeFromSize {
+sub bitsFromSize {
 	my ($size) = @_;
 
-	return 'uint8_t' if ($size <= 0xFF);
-	return 'uint16_t' if ($size <= 0xFFFF);
-	return 'uint32_t';
+	return 8 if ($size <= 0xFF);
+	return 16 if ($size <= 0xFFFF);
+	return 32;
+}
+
+sub typeFromSize {
+	my ($type, $size) = @_;
+
+	return sprintf $type, bitsFromSize($size);
 }
 
 sub maxValue {
@@ -240,7 +246,7 @@ sub readLine {
 	while (<$file>) {
 		chomp;
 		next if (/^\s*($|#)/); # Ignore empty and comment-only lines.
-		s/#.*$//g; # Cut off comment.
+		s/#.*$//; # Cut off comment.
 
 		my @line = split ';';
 		@line = map { s/^\s+|\s+$//g; $_; } @line;
@@ -310,9 +316,8 @@ while (my $line = readLine $dataFile) {
 		$lower = $lower - $code if ($lower);
 		$title = $title - $code if ($title);
 
-		if ($number =~ /\//) {
-			my ($v1, $v2) = split '/', $number;
-			$number = ".numerator = $v1, .denominator = $v2";
+		if ($number =~ /^(-?\d+)\/(-?\d+)$/) {
+			$number = ".numerator = $1, .denominator = $2";
 			$info |= glyphInfoNumber | glyphInfoFraction;
 		}
 		elsif ($info & glyphInfoNumber) {
@@ -408,9 +413,9 @@ my @infoKeys = keys %types;
 my $infoSize = @infoKeys;
 my $pagesSize = keys %pageCache;
 my @pageCacheKeys = keys %pageCache;
-my $infoType = unsignedTypeFromSize $infoSize;
-my $pagesType = unsignedTypeFromSize $pagesSize;
-my $specialCasingType = unsignedTypeFromSize (maxValue \@specialCasing);
+my $infoType = typeFromSize 'uint%u_t', $infoSize;
+my $pagesType = typeFromSize 'uint%u_t', $pagesSize;
+my $specialCasingType = typeFromSize 'uint%u_t', (maxValue \@specialCasing);
 my @categoryCodes = sort { $categories{$a}->[categoryIndex] <=> $categories{$b}->[categoryIndex] } @categoryKeys;
 
 my %printMethods = ();
@@ -449,8 +454,10 @@ my $template = new Template(
 		foreach (@categoryCodes) {
 			my $line = $categories{$_}->[categoryName];
 			$line = $template->toConstant($line);
+			$line = sprintf "\t%s ///< %s", "$line,", $_;
+			$line =~ s/\s+$//;
 
-			printf $out "\t%s ///< %s\n", "$line,", $_;
+			print $out "$line\n";
 		}
 	},
 	infos => sub {
@@ -479,8 +486,11 @@ my $template = new Template(
 		my $page = 0;
 
 		foreach (sort { $pageCache{$a} <=> $pageCache{$b} } @pageCacheKeys) {
-			print $out "\t{" if ($page == 0);
-			print $out "\n\t}, {" if ($page > 0);
+			if ($page == 0) {
+				print $out "\t{";
+			} else {
+				print $out "\n\t}, {";
+			}
 
 			my $i = 0;
 			foreach (split /,/, $_) {
