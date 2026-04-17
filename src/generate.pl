@@ -218,7 +218,6 @@ sub getTypeIndex {
 	}
 	else {
 		my $count = keys %types;
-
 		$types{$type} = $count;
 		$type = $count;
 	}
@@ -304,16 +303,18 @@ while (my $line = readLine $dataFile) {
 	my @line = @$line;
 	my $code = hex $line[0];
 	my $cat = $line[2];
-	my $info = categories->{$cat}->[categoryFlags];
+
+	if (not exists categories->{$cat}) {
+		die "Invalid category '$cat'";
+	}
 
 	my $number = $line[8];
 	my $upper = hex ($line[12] or 0);
 	my $lower = hex ($line[13] or 0);
 	my $title = hex ($line[14] or 0);
 
-	if (not exists categories->{$cat}) {
-		die "Invalid category '$cat'";
-	}
+	my $category = categories->{$cat};
+	my $info = $category->[categoryFlags];
 
 	if (exists $useCategories{$cat}) {
 		if (exists specialChars->{$code}) {
@@ -363,7 +364,7 @@ while (my $line = readLine $dataFile) {
 		$title = 0;
 	}
 
-	my $type = getTypeIndex ($info, categories->{$cat}->[categoryIndex], $upper, $lower, $title, $number);
+	my $type = getTypeIndex ($info, $category->[categoryIndex], $upper, $lower, $title, $number);
 
 	# Read range.
 	if ($line[1] =~ /First>$/i) {
