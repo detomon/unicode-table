@@ -1,29 +1,29 @@
 /**
-##header
+{m:header}
  */
 
 #include "{v:outName}.h"
 
 {n:Info} const {n:Infos}[{c:InfoTableSize}] = {
-##infos
+{m:infos}
 };
 
 {v:pagesType} const {n:PageIndex}[{c:PageIndexTableSize}] = {
-##pageIndex
+{m:pageIndex}
 };
 
 {v:infoType} const {n:InfoIndex}[{c:InfoIndexTableSize}][256] = {
-##infoIndex
+{m:infoIndex}
 };
 
 {if:casing}
 {n:Glyph} const {n:SpecialCases}[{c:SpecialCasesTableSize}] = {
-##specialCases
+{m:specialCases}
 };
 {endif:}
 
 {if:categories}
 char const* const {n:CategoryNames}[{c:CategoryNamesTableSize}] = {
-##categoryNames
+{m:categoryNames}
 };
 {endif:}

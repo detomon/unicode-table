@@ -135,7 +135,7 @@ my $excludeSurrogates = int($namedArgs{'strict-level'} || 0) > 0;
 
 my %useCategories = ();
 foreach (split /,/, $namedArgs{'categories'}) {
-	die "Category '$_' not defined." if (not exists categories->{$_});
+	die "Category '$_' not defined." unless (exists categories->{$_});
 	$useCategories{$_} = 1;
 }
 
@@ -304,7 +304,7 @@ while (my $line = readLine $dataFile) {
 	my $code = hex $line[0];
 	my $cat = $line[2];
 
-	if (not exists categories->{$cat}) {
+	unless (exists categories->{$cat}) {
 		die "Invalid category '$cat'";
 	}
 

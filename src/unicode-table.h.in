@@ -1,5 +1,5 @@
 /**
-##header
+{m:header}
  */
 
 #pragma once
@@ -46,7 +46,7 @@ typedef enum {
  * Character categories.
  */
 typedef enum {
-##categories
+{m:categories}
 } {n:Category};
 {endif:}
 

@@ -85,23 +85,24 @@ sub replaceName {
 
 sub readLine {
 	my ($self, $line, $out) = @_;
-	my %methods = %{$self->{printMethods}};
-	my $conditions = $self->{conditional};
 
-	if ($line =~ /##([\w_]+)/) {
+	if ($line =~ /{m:([\w_]+)}/) {
+		my $methods = $self->{printMethods};
 		my $method = $1;
 
-		unless (exists $methods {$method}) {
+		unless (exists $methods->{$method}) {
 			die "Print method '$method' does not exist\n";
 		}
 
-		$methods{$method}->($out);
+		$methods->{$method}->($out);
 
 		# Do not output line.
 		return 1;
 	}
 	# Handle 'if:'.
 	elsif ($line =~ /{if:([\w_]+)}/) {
+		my $conditions = $self->{conditional};
+
 		return $conditions->($1);
 	}
 	# Ignore 'endif:'.
@@ -110,7 +111,6 @@ sub readLine {
 	}
 
 	$line =~ s/{(\w+):([\w_]+)}/$self->replaceName($1, $2)/ge;
-
 	print $out $line;
 
 	return 1;
