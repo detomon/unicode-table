@@ -98,7 +98,7 @@ typedef uint32_t UTGlyph;
 typedef struct {
 	uint16_t flags; ///< Combination of `UTFlag`.
 	uint8_t category; ///< One of `UTCategory`.
-	int32_t cases[3]; ///< Distance to case variant. Indexable with `UTCase`.
+	int32_t cases[3]; ///< Distance to case variant. Indexable with `UTCase`. `0` if no variant exists.
 	union {
 		int64_t number; ///< Number value if `flags & UT_FLAG_NUMBER`.
 		struct {

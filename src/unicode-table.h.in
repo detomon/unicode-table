@@ -77,7 +77,7 @@ typedef struct {
 	uint8_t category; ///< One of `{n:Category}`.
 {endif:}
 {if:casing}
-	int32_t cases[3]; ///< Distance to case variant. Indexable with `{n:Case}`.
+	int32_t cases[3]; ///< Distance to case variant. Indexable with `{n:Case}`. `0` if no variant exists.
 {endif:}
 {if:numbers}
 	union {
